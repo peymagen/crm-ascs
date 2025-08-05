@@ -6,8 +6,9 @@ import Loader from "./components/Loader";
 import Basic from "./components/Layout/basic";
 import ProtectedRoute from "./components/Layout/protectedRoute";
 import Layout from "./components/Layout";
-import PublicLayout from "./components/Layout";
+import PublicLayout from "./components/Layout/publicLayout";
 import PublicRoute from "./components/Layout/publicRoute";
+import "./i18n";
 
 function App() {
   return (
@@ -20,9 +21,7 @@ function App() {
               <Basic />
             </PublicRoute>
           }
-        >
-          <Route path="/" element={<Login />} />
-        </Route>
+        ></Route>
 
         {/* Public routes - accessible to all users with Header and Footer */}
         <Route

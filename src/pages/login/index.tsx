@@ -12,6 +12,7 @@ import { useLoginUserMutation } from "../../store/services/user.api";
 import { toast } from "react-toastify";
 import { setTokens } from "../../store/reducers/authReducer";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 // Validation schema
 const schema = yup.object().shape({
@@ -91,11 +92,16 @@ const Login: React.FC = () => {
     },
   };
 
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem("i18nextLng", lng); // optional if you want to persist
+  };
   return (
     <div className={styles.loginPage}>
       <div className={styles.leftSection}>
         <div className={styles.logoContainer}>
-          <h1 className={styles.collegeName}>National Fire Service College</h1>
+          <h1 className={styles.collegeName}>{t("welcome")}</h1>
           <p className={styles.portalTitle}>Placement Portal</p>
         </div>
         <div className={styles.imageContainer}>
@@ -133,14 +139,15 @@ const Login: React.FC = () => {
                 />
                 <Button
                   type="button"
-                  onClick={() => setShowForgotPassword(true)}
+                  onClick={() => changeLanguage("en")}
                   buttonType="link"
                   title="Forget Password?"
                 />
 
                 <Button
-                  type="submit"
+                  type="button"
                   isLoading={isLoading}
+                  onClick={() => changeLanguage("hi")}
                   buttonType="primary"
                   title="Sign In"
                 />

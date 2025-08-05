@@ -1,9 +1,2 @@
-const Footer = () => {
-  return (
-    <div>
-      <h1>Footer</h1>
-    </div>
-  );
-};
-
-export default Footer;
+// Re-export the main Footer component as default
+export { default } from "./Footer";

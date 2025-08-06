@@ -1,0 +1,152 @@
+.footer-top-container {
+  width: 100%;
+  font-family: Arial, sans-serif;
+}
+
+.footer-top-middle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+  background-color: var(--light-text-color);
+}
+
+.footer-top-carousel {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 200px;
+}
+
+.footer-top-carousel-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-top-naco-logo {
+  height: 150px;
+}
+
+.footer-top-portal-logo,
+.footer-top-di-logo {
+  height: 100px;
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  background-color: var(--secondary-color);
+  color: var(--dark-text-color);
+  font-family: "Segoe UI", sans-serif;
+  padding: 40px 20px 10px;
+}
+
+.footer-bottom-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.footer-bottom-section {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px;
+}
+
+.footer-bottom-section.left {
+  max-width: 250px;
+}
+
+.main_logo {
+  max-width: 100%;
+  height: auto;
+  max-height: 150px;
+  object-fit: contain;
+}
+
+.slogan {
+  margin-top: 15px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dark-text-color);
+  line-height: 1.5;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-bottom-section-header {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: var(--dark-text-color);
+}
+
+.footer-bottom-link-item {
+  margin: 8px 0;
+}
+
+.footer-bottom-link-item a {
+  text-decoration: none;
+  color: var(--primary-color);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  padding: 4px 0;
+  display: inline-block;
+  border-bottom: 2px solid transparent;
+}
+
+.footer-bottom-link-item a:hover {
+  color: var(--dark-text-color);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+/* Social Links */
+.social-links {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+  justify-content: flex-start;
+}
+
+.social-links a {
+  color: var(--primary-color);
+  font-size: 22px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-links a:hover {
+  transform: scale(1.2);
+  color: var(--dark-text-color);
+}
+
+/* Divider and Footer Info */
+.footer-divider {
+  width: 90%;
+  margin: 30px auto 20px;
+  background-color: var(--dark-text-color);
+  height: 1px;
+  border: none;
+}
+
+.footer-bottom-info {
+  text-align: center;
+}
+
+.footer-bottom-manufacture > p {
+  color: var(--primary-color);
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.footer-bottom-copyright {
+  color: rgba(14, 14, 14, 0.6);
+  font-size: 12px;
+  padding-bottom: 20px;
+}

@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import "./Sidebar.css";
+import React, { useState, useRef, useEffect, type ReactElement } from "react";
+import styles from "./Sidebar.module.css";
 
 type DropdownItem = {
   label: string;
@@ -72,10 +72,13 @@ const secondaryNav: NavItem[] = [
   },
 ];
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  children: ReactElement;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
-
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -88,8 +91,7 @@ const Sidebar: React.FC = () => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleDropdown = (index: number) => {
@@ -98,94 +100,104 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <aside
-      className={`sidebar${collapsed ? " collapsed" : ""}`}
-      id="sidebar"
-      ref={sidebarRef}
-    >
-      <header className="sidebar-header">
-        <button
-          className="sidebar-toggler"
-          //onClick={() => setCollapsed(!collapsed)}
-          onClick={() => {
-      setOpenDropdown(null); 
-      setCollapsed(prev => !prev);
-}}
+    <>
+      <aside
+        className={`${styles.sidebar}${
+          collapsed ? " " + styles.collapsed : ""
+        }`}
+        id="sidebar"
+        ref={sidebarRef}
+      >
+        <header className={styles.sidebarHeader}>
+          <button
+            className={styles.sidebarToggler}
+            onClick={() => {
+              setOpenDropdown(null);
+              setCollapsed((prev) => !prev);
+            }}
+          >
+            <span className={styles.materialSymbols}>chevron_left</span>
+          </button>
+        </header>
 
-        >
-          <span className="material-symbols-rounded">chevron_left</span>
-        </button>
-      </header>
-      <nav className="sidebar-nav">
-        <ul className="nav-list primary-nav">
-          {navItems.map((item, idx) =>
-            item.dropdown ? (
-              <li
-                className={`nav-item dropdown-container${
-                  openDropdown === idx ? " open" : ""
-                }`}
-                key={item.label}
-              >
-                <a
-                  href="#"
-                  className="nav-link dropdown-toggle"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleDropdown(idx);
-                  }}
+        <nav className={styles.sidebarNav}>
+          <ul className={`${styles.navList} ${styles.primaryNav}`}>
+            {navItems.map((item, idx) =>
+              item.dropdown ? (
+                <li
+                  className={`${styles.navItem} ${styles.dropdownContainer}${
+                    openDropdown === idx ? " " + styles.open : ""
+                  }`}
+                  key={item.label}
                 >
-                  <span className="material-symbols-rounded">{item.icon}</span>
-                  <span className="nav-label">{item.label}</span>
-                  <span className="dropdown-icon material-symbols-rounded">
-                    keyboard_arrow_down
-                  </span>
-                </a>
-                <ul className="dropdown-menu">
-                  {item.dropdown.map((dItem) => (
-                    <li key={dItem.label}>
-                      <a href={dItem.link} className="nav-link dropdown-link">
+                  <a
+                    href="#"
+                    className={`${styles.navLink} ${styles.dropdownToggle}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleDropdown(idx);
+                    }}
+                  >
+                    <span className={styles.materialSymbols}>{item.icon}</span>
+                    <span className={styles.navLabel}>{item.label}</span>
+                    <span
+                      className={`${styles.dropdownIcon} ${styles.materialSymbols}`}
+                    >
+                      keyboard_arrow_down
+                    </span>
+                  </a>
+                  <ul className={styles.dropdownMenu}>
+                    {item.dropdown.map((dItem) => (
+                      <li key={dItem.label}>
+                        <a
+                          href={dItem.link}
+                          className={`${styles.navLink} ${styles.dropdownLink}`}
+                        >
+                          {dItem.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className={styles.hoverDropdown}>
+                    <div className={styles.dropdownTitle}>{item.label}</div>
+                    {item.dropdown.map((dItem) => (
+                      <a
+                        href={dItem.link}
+                        className={styles.dropdownLink}
+                        key={dItem.label}
+                      >
                         {dItem.label}
                       </a>
-                    </li>
-                  ))}
-                </ul>
-                <div className="hover-dropdown">
-                  <div className="dropdown-title">{item.label}</div>
-                  {item.dropdown.map((dItem) => (
-                    <a
-                      href={dItem.link}
-                      className="dropdown-link"
-                      key={dItem.label}
-                    >
-                      {dItem.label}
-                    </a>
-                  ))}
-                </div>
-              </li>
-            ) : (
-              <li className="nav-item" key={item.label}>
-                <a href={item.link} className="nav-link">
-                  <span className="material-symbols-rounded">{item.icon}</span>
-                  <span className="nav-label">{item.label}</span>
+                    ))}
+                  </div>
+                </li>
+              ) : (
+                <li className={styles.navItem} key={item.label}>
+                  <a href={item.link} className={styles.navLink}>
+                    <span className={styles.materialSymbols}>{item.icon}</span>
+                    <span className={styles.navLabel}>{item.label}</span>
+                  </a>
+                  <div className={styles.hoverTooltip}>{item.label}</div>
+                </li>
+              )
+            )}
+          </ul>
+
+          <ul className={`${styles.navList} ${styles.secondaryNav}`}>
+            {secondaryNav.map((item) => (
+              <li className={styles.navItem} key={item.label}>
+                <a href={item.link} className={styles.navLink}>
+                  <span className={styles.materialSymbols}>{item.icon}</span>
+                  <span className={styles.navLabel}>{item.label}</span>
                 </a>
-                <div className="hover-tooltip">{item.label}</div>
+                <div className={styles.hoverTooltip}>{item.label}</div>
               </li>
-            )
-          )}
-        </ul>
-        <ul className="nav-list secondary-nav">
-          {secondaryNav.map((item) => (
-            <li className="nav-item" key={item.label}>
-              <a href={item.link} className="nav-link">
-                <span className="material-symbols-rounded">{item.icon}</span>
-                <span className="nav-label">{item.label}</span>
-              </a>
-              <div className="hover-tooltip">{item.label}</div>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </aside>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+      <main className={styles.mainContent}>{children}</main>
+    </>
   );
 };
 

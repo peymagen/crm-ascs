@@ -1,9 +1,9 @@
-.footer-top-container {
+.footerTopContainer {
   width: 100%;
   font-family: Arial, sans-serif;
 }
 
-.footer-top-middle {
+.footerTopMiddle {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,7 +11,7 @@
   background-color: var(--light-text-color);
 }
 
-.footer-top-carousel {
+.footerTopCarousel {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -19,30 +19,30 @@
   gap: 200px;
 }
 
-.footer-top-carousel-item {
+.footerTopCarouselItem {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.footer-top-naco-logo {
+.footerTopNacoLogo {
   height: 150px;
 }
 
-.footer-top-portal-logo,
-.footer-top-di-logo {
+.footerTopPortalLogo,
+.footerTopDiLogo {
   height: 100px;
 }
 
 /* Footer Bottom */
-.footer-bottom {
+.footerBottom {
   background-color: var(--secondary-color);
   color: var(--dark-text-color);
   font-family: "Segoe UI", sans-serif;
   padding: 40px 20px 10px;
 }
 
-.footer-bottom-top {
+.footerBottomTop {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -50,24 +50,24 @@
   gap: 40px;
 }
 
-.footer-bottom-section {
+.footerBottomSection {
   flex: 1;
   min-width: 200px;
   padding: 10px;
 }
 
-.footer-bottom-section.left {
+.footerBranding {
   max-width: 250px;
 }
 
-.main_logo {
+.mainLogo {
   max-width: 100%;
   height: auto;
   max-height: 150px;
   object-fit: contain;
 }
 
-.slogan {
+.footerSlogan {
   margin-top: 15px;
   font-size: 14px;
   font-weight: 500;
@@ -81,18 +81,18 @@ ul {
   margin: 0;
 }
 
-.footer-bottom-section-header {
+.footerBottomSectionHeader {
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 15px;
   color: var(--dark-text-color);
 }
 
-.footer-bottom-link-item {
+.footerBottomLinkItem {
   margin: 8px 0;
 }
 
-.footer-bottom-link-item a {
+.footerBottomLinkItem a {
   text-decoration: none;
   color: var(--primary-color);
   font-weight: 500;
@@ -102,32 +102,37 @@ ul {
   border-bottom: 2px solid transparent;
 }
 
-.footer-bottom-link-item a:hover {
+.footerBottomLinkItem a:hover {
   color: var(--dark-text-color);
   border-bottom: 2px solid var(--primary-color);
 }
 
 /* Social Links */
-.social-links {
+.footerSocial {
+  /* Inherited flex from footerBottomSection */
+}
+
+.footerSocialIcons {
   display: flex;
+  flex-direction: column;
   gap: 16px;
   margin-top: 20px;
   justify-content: flex-start;
 }
 
-.social-links a {
+.footerSocialIcons a {
   color: var(--primary-color);
   font-size: 22px;
   transition: transform 0.3s ease, color 0.3s ease;
 }
 
-.social-links a:hover {
+.footerSocialIcons a:hover {
   transform: scale(1.2);
   color: var(--dark-text-color);
 }
 
 /* Divider and Footer Info */
-.footer-divider {
+.footerDivider {
   width: 90%;
   margin: 30px auto 20px;
   background-color: var(--dark-text-color);
@@ -135,18 +140,28 @@ ul {
   border: none;
 }
 
-.footer-bottom-info {
+.footerBottomInfo {
   text-align: center;
 }
 
-.footer-bottom-manufacture > p {
+.footerBottomManufacture > p {
   color: var(--primary-color);
   font-size: 13px;
   margin-bottom: 10px;
 }
 
-.footer-bottom-copyright {
+.footerBottomCopyright {
   color: rgba(14, 14, 14, 0.6);
   font-size: 12px;
   padding-bottom: 20px;
+}
+.footerSocialIcons p {
+  margin: 0;
+}
+.quickLinks {
+  /* no extra styling, but defined for clarity */
+}
+
+.sectionLinks2 {
+  /* no extra styling, but defined for clarity */
 }

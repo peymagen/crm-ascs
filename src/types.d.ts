@@ -22,3 +22,11 @@ interface IUser {
   password?: string;
   role: string;
 }
+
+interface Menu {
+  id: number;
+  name: string;
+  path: string;
+  description: string;
+  position: number;
+}

@@ -50,7 +50,7 @@ const Login: React.FC = () => {
       if (response.success && response.data) {
         const { accessToken, refreshToken, user } = response.data;
 
-        if (!accessToken || !refreshToken) {
+        if (!accessToken) {
           toast.error("Missing tokens in response");
           setIsLoading(false);
           return;
@@ -145,9 +145,9 @@ const Login: React.FC = () => {
                 />
 
                 <Button
-                  type="button"
+                  type="submit"
                   isLoading={isLoading}
-                  onClick={() => changeLanguage("hi")}
+                  // onClick={() => changeLanguage("hi")}
                   buttonType="primary"
                   title="Sign In"
                 />

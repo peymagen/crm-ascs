@@ -102,7 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
               : ""
           }`}
         >
-          {menuItems[user?.role].map((item) => (
+          {menuItems["ADMIN"].map((item) => (
             <Link
               key={item.path}
               to={item.path}

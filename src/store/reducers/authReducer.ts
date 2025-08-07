@@ -50,6 +50,9 @@ export const authSlice = createSlice({
       state.refreshToken = "";
       state.user = {};
       state.isAuthenticated = false;
+      localStorage.setItem("accessToken", "");
+      localStorage.setItem("refreshToken", "");
+      localStorage.setItem("user", "");
     },
   },
 });

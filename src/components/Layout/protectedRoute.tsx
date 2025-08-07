@@ -7,25 +7,14 @@ interface ProtectedRouteProps {
   children: ReactElement;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  allowedRoles,
-  children,
-}) => {
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth) as {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const { isAuthenticated } = useAppSelector((state) => state.auth) as {
     isAuthenticated: boolean;
     user: IUser;
   };
 
   if (!isAuthenticated) {
     return <Navigate to="/" />;
-  }
-
-  const userRoles: string = user?.role || "";
-
-  const hasAccess = allowedRoles.includes(userRoles);
-
-  if (!hasAccess) {
-    return <Navigate to="/dashboard" replace />;
   }
 
   return children;

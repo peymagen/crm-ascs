@@ -1,3 +1,4 @@
+/* Layout */
 .dashboard-container {
   padding: 2rem;
   background-color: #f8fafc;
@@ -20,17 +21,14 @@
 }
 
 @media (min-width: 640px) {
-  .card-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .card-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (min-width: 1024px) {
-  .card-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  .card-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
+/* Card */
 .card {
   background: white;
   border-radius: 12px;
@@ -45,9 +43,7 @@
 .card::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   height: 4px;
   transition: all 0.3s ease;
 }
@@ -64,9 +60,7 @@
   margin-bottom: 1rem;
 }
 
-.card-info {
-  flex: 1;
-}
+.card-info { flex: 1; }
 
 .card-count {
   font-size: 2.5rem;
@@ -83,18 +77,6 @@
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-}
-
-.card-icon {
-  color: #94a3b8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  background: #f1f5f9;
-  border-radius: 8px;
-  transition: all 0.3s ease;
 }
 
 .card-footer {
@@ -121,30 +103,50 @@
   text-decoration: none;
 }
 
+/* Top accent bar (kept for default style; disabled on solid variants) */
+.bg-light-blue::before { background: #38bdf8; }
+.bg-green::before { background: #10b981; }
+.bg-yellow::before { background: #f59e0b; }
 
-.bg-light-blue::before {
-  background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+/* Full solid background variants */
+.card.bg-light-blue {
+  background: #0ea5e9;
+  color: #ffffff;
+  border-color: transparent;
 }
 
-.bg-light-blue:hover .card-icon {
-  background: #e0f2fe;
-  color: #38bdf8;
+.card.bg-green {
+  background: #10b981;
+  color: #ffffff;
+  border-color: transparent;
 }
 
-.bg-green::before {
-  background: linear-gradient(90deg, #10b981, #059669);
+.card.bg-yellow {
+  background: #f59e0b;
+  color: #111827; /* better contrast on yellow */
+  border-color: transparent;
 }
 
-.bg-green:hover .card-icon {
-  background: #d1fae5;
-  color: #10b981;
-}
+/* Remove the top accent bar when using full background */
+.card.bg-light-blue::before,
+.card.bg-green::before,
+.card.bg-yellow::before { display: none; }
 
-.bg-yellow::before {
-  background: linear-gradient(90deg, #f59e0b, #d97706);
-}
+/* Ensure inner text/buttons adapt to background */
+.card.bg-light-blue .card-count,
+.card.bg-light-blue .card-title,
+.card.bg-light-blue .more-info { color: #ffffff; }
 
-.bg-yellow:hover .card-icon {
-  background: #fef3c7;
-  color: #f59e0b;
-}
+.card.bg-green .card-count,
+.card.bg-green .card-title,
+.card.bg-green .more-info { color: #ffffff; }
+
+.card.bg-yellow .card-count,
+.card.bg-yellow .card-title,
+.card.bg-yellow .more-info { color: #111827; }
+
+/* Footer divider contrast on colored cards */
+.card.bg-light-blue .card-footer,
+.card.bg-green .card-footer { border-top-color: rgba(255, 255, 255, 0.35); }
+
+.card.bg-yellow .card-footer { border-top-color: rgba(0, 0, 0, 0.15); }

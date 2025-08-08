@@ -9,6 +9,8 @@ import Layout from "./components/Layout";
 import PublicLayout from "./components/Layout/publicLayout";
 import PublicRoute from "./components/Layout/publicRoute";
 import "./i18n";
+import Home from "./pages/home";
+import Dashboard from "./pages/admin/dashboard";
 
 function App() {
   return (
@@ -21,7 +23,9 @@ function App() {
               <Basic />
             </PublicRoute>
           }
-        ></Route>
+        >
+          <Route path="/admin/login" element={<Login />} />
+        </Route>
 
         {/* Public routes - accessible to all users with Header and Footer */}
         <Route
@@ -31,7 +35,7 @@ function App() {
             </PublicRoute>
           }
         >
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<Home />} />
         </Route>
 
         {/* Protected routes - accessible to all authenticated users */}
@@ -41,7 +45,9 @@ function App() {
               <Layout />
             </ProtectedRoute>
           }
-        ></Route>
+        >
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
       </Routes>
     </Suspense>
   );

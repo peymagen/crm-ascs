@@ -12,6 +12,7 @@ import "./i18n";
 import Home from "./pages/home";
 import Dashboard from "./pages/admin/dashboard";
 import ListBottomData from "./pages/admin/submenu";
+import TelephonicData from "./pages/admin/telephonic";
 
 
 
@@ -52,6 +53,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
  <Route path="/admin/submenu" element={<ListBottomData/>}/>
+ <Route path="/admin/telephonic" element={<TelephonicData/>}/>
       </Routes>
     </Suspense>
   );

@@ -11,6 +11,9 @@ import PublicRoute from "./components/Layout/publicRoute";
 import "./i18n";
 import Home from "./pages/home";
 import Dashboard from "./pages/admin/dashboard";
+import ListBottomData from "./pages/admin/submenu";
+
+
 
 function App() {
   return (
@@ -48,6 +51,7 @@ function App() {
         >
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
+ <Route path="/admin/submenu" element={<ListBottomData/>}/>
       </Routes>
     </Suspense>
   );

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { DataTable } from "../../../components/DataTable";
-import AddMenuModal from "../Modals/AddMenu/AddMenuModal";
-import ConfirmDeleteModal from "../Modals/ConfirmDelete/ConfirmDeleteModal";
+import AddMenuModal from "./AddMenu/AddMenuModal";
+import ConfirmDeleteModal from "./ConfirmDelete/ConfirmDeleteModal";
 import "./MenuManagement.css";
 import Button from "../../../components/Button";
 

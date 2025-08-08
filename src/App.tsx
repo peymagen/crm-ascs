@@ -9,7 +9,7 @@ import Layout from "./components/Layout";
 import PublicLayout from "./components/Layout/publicLayout";
 import PublicRoute from "./components/Layout/publicRoute";
 import "./i18n";
-import MenuManagement from "./pages/Admin/MenuManagement/MenuManagement";
+import MenuManagement from "./pages/Admin/MenuManagement";
 
 function App() {
   return (

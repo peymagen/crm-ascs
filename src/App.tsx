@@ -10,13 +10,12 @@ import PublicLayout from "./components/Layout/publicLayout";
 import PublicRoute from "./components/Layout/publicRoute";
 import "./i18n";
 import Home from "./pages/home";
-import Dashboard from "./pages/admin/dashboard";
+import Dashboard from "./pages/admin/dashboard/dashboard"; 
 
 function App() {
   return (
     <Suspense fallback={<Loader />}>
       <Routes>
-        {/* Public routes - accessible to all users */}
         <Route
           element={
             <PublicRoute>
@@ -27,7 +26,7 @@ function App() {
           <Route path="/admin/login" element={<Login />} />
         </Route>
 
-        {/* Public routes - accessible to all users with Header and Footer */}
+      
         <Route
           element={
             <PublicRoute>
@@ -38,7 +37,7 @@ function App() {
           <Route path="/" element={<Home />} />
         </Route>
 
-        {/* Protected routes - accessible to all authenticated users */}
+  
         <Route
           element={
             <ProtectedRoute allowedRoles={["ADMIN"]}>
@@ -46,6 +45,7 @@ function App() {
             </ProtectedRoute>
           }
         >
+          
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
       </Routes>

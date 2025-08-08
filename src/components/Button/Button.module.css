@@ -1,0 +1,42 @@
+.btn {
+  width: auto; /* Crucial fix: allows buttons to sit side-by-side */
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  background-color: #ccc;
+  opacity: 0.6;
+}
+
+.primary {
+  background-color: var(--primary-color);
+  color: var(--light-text-color);
+  border: none;
+}
+
+.secondary {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+.btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.link {
+  color: var(--primary-color);
+  font-size: 0.85rem;
+  text-decoration: none;
+  background: none;
+  border: none;
+  width: fit-content;
+  align-self: self-end;
+  padding: 0;
+}

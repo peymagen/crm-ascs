@@ -1,0 +1,25 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    background-color: var(--news-card-background-color);
+    padding: 20px;
+    border-radius: 8px;
+    gap: 10px; /* Adds space between wrapped rows */
+}
+
+.headerTitle {
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.headerNav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+/* Other styles like .menuToggle remain the same */

@@ -46,8 +46,10 @@ function App() {
           }
         >
           
-          <Route path="/dashboard" element={<Dashboard />} />
+          
         </Route>
+
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Suspense>
   );

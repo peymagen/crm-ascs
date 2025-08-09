@@ -1,4 +1,4 @@
-/* Layout */
+
 .dashboard-container {
   padding: 2rem;
   background-color: #f8fafc;
@@ -28,7 +28,7 @@
   .card-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* Card */
+
 .card {
   background: white;
   border-radius: 12px;
@@ -103,12 +103,11 @@
   text-decoration: none;
 }
 
-/* Top accent bar (kept for default style; disabled on solid variants) */
+
 .bg-light-blue::before { background: #38bdf8; }
 .bg-green::before { background: #10b981; }
 .bg-yellow::before { background: #f59e0b; }
 
-/* Full solid background variants */
 .card.bg-light-blue {
   background: #0ea5e9;
   color: #ffffff;
@@ -123,16 +122,15 @@
 
 .card.bg-yellow {
   background: #f59e0b;
-  color: #111827; /* better contrast on yellow */
+  color: #111827; 
   border-color: transparent;
 }
 
-/* Remove the top accent bar when using full background */
+
 .card.bg-light-blue::before,
 .card.bg-green::before,
 .card.bg-yellow::before { display: none; }
 
-/* Ensure inner text/buttons adapt to background */
 .card.bg-light-blue .card-count,
 .card.bg-light-blue .card-title,
 .card.bg-light-blue .more-info { color: #ffffff; }
@@ -145,7 +143,6 @@
 .card.bg-yellow .card-title,
 .card.bg-yellow .more-info { color: #111827; }
 
-/* Footer divider contrast on colored cards */
 .card.bg-light-blue .card-footer,
 .card.bg-green .card-footer { border-top-color: rgba(255, 255, 255, 0.35); }
 

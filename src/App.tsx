@@ -12,6 +12,8 @@ import "./i18n";
 import Home from "./pages/home";
 import Dashboard from "./pages/admin/dashboard";
 
+import ListSetting from "./pages/admin/settings";
+
 function App() {
   return (
     <Suspense fallback={<Loader />}>
@@ -36,6 +38,7 @@ function App() {
           }
         >
           <Route path="/" element={<Home />} />
+         
         </Route>
 
         {/* Protected routes - accessible to all authenticated users */}
@@ -47,7 +50,9 @@ function App() {
           }
         >
           <Route path="/dashboard" element={<Dashboard />} />
+         
         </Route>
+         <Route path="/admin/setting" element={<ListSetting/>} />
       </Routes>
     </Suspense>
   );

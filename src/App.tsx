@@ -10,6 +10,8 @@ import PublicLayout from "./components/Layout/publicLayout";
 import PublicRoute from "./components/Layout/publicRoute";
 import "./i18n";
 import MenuManagement from "./pages/Admin/MenuManagement";
+import GalleryCategory from "./pages/Admin/GalleryCategory";
+import GalleryImageManagement from "./pages/Admin/GalleryImage";
 
 function App() {
   return (
@@ -45,6 +47,11 @@ function App() {
         ></Route>
 
         <Route path="/admin/test" element={<MenuManagement />}></Route>
+        <Route path="/admin/Gallery" element={<GalleryCategory />}></Route>
+        <Route
+          path="/admin/Gallery/Image"
+          element={<GalleryImageManagement />}
+        ></Route>
       </Routes>
     </Suspense>
   );

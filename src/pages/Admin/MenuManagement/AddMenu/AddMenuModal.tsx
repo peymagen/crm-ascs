@@ -1,12 +1,14 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 
 import Input from "../../../../components/Input";
 import Button from "../../../../components/Button";
 import Textarea from "../../../../components/Textarea";
 import Select from "../../../../components/Select";
 
-import "./AddMenuModal.css";
+import styles from "./AddMenu.module.css"; // CSS module import
 
 interface Props {
   onClose: () => void;
@@ -27,8 +29,22 @@ interface MenuFormInputs {
   target: string;
 }
 
-const urlRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/; // Matches "my-seo-url"
-const numberRegex = /^[1-9]\d*$/; // Matches positive integers
+const schema = Yup.object({
+  website: Yup.string().required("Website is required"),
+  displayArea: Yup.string().required("Display area is required"),
+  displayOnMenu: Yup.string().required("Display on menu is required"),
+  menuName: Yup.string().required("Menu name is required"),
+  menuSubHeading: Yup.string().nullable(),
+  menuPosition: Yup.string()
+    .matches(/^[1-9]\d*$/, "Menu position must be a positive number")
+    .required("Menu position is required"),
+  menuDescription: Yup.string().nullable(),
+  seoUrl: Yup.string()
+    .matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Invalid SEO URL format")
+    .required("SEO URL is required"),
+  otherUrl: Yup.string().nullable(),
+  target: Yup.string().required("Target is required"),
+});
 
 const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
   const {
@@ -37,6 +53,7 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
     formState: { errors, isSubmitting },
     reset,
   } = useForm<MenuFormInputs>({
+    resolver: yupResolver(schema),
     defaultValues: {
       website: "English",
       displayArea: "Main Navigation",
@@ -62,40 +79,28 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
   }, [editMenu, reset]);
 
   const onSubmit = (data: MenuFormInputs) => {
-    if (!urlRegex.test(data.seoUrl)) {
-      alert("SEO URL must be in a valid format (e.g., 'my-seo-url').");
-      return;
-    }
-
-    if (!numberRegex.test(data.menuPosition)) {
-      alert("Menu Position must be a positive number.");
-      return;
-    }
-
     onAdd({
       name: data.menuName,
       path: data.seoUrl || data.otherUrl || "",
       description: data.menuDescription || "",
       position: parseInt(data.menuPosition, 10),
     });
-
     onClose();
   };
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content">
-        <h2 className="modal-title">
+    <div className={styles.modalBackdrop}>
+      <div className={styles.modalContent}>
+        <h2 className={styles.modalTitle}>
           {editMenu ? "Edit Menu" : "Add New Menu"}
         </h2>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="modal-form">
-          <div className="modal-form-grid">
-            <div className="modal-section-header">
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.modalForm}>
+          <div className={styles.modalFormGrid}>
+            <div className={styles.modalSectionHeader}>
               <h3>General Information</h3>
             </div>
 
-            {/* Select Website */}
             <Select
               label="Select Website"
               name="website"
@@ -104,7 +109,6 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               errors={errors}
             />
 
-            {/* Display Area */}
             <Select
               label="Display Area/Region"
               name="displayArea"
@@ -116,7 +120,6 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               errors={errors}
             />
 
-            {/* Display on Menu */}
             <Select
               label="Display on Menu"
               name="displayOnMenu"
@@ -128,7 +131,6 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               errors={errors}
             />
 
-            {/* Menu Name */}
             <Input
               label="Enter Menu Name"
               name="menuName"
@@ -137,7 +139,6 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               required
             />
 
-            {/* Sub Heading */}
             <Input
               label="Enter Menu Sub Heading"
               name="menuSubHeading"
@@ -145,7 +146,6 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               errors={errors}
             />
 
-            {/* Menu Position */}
             <Input
               label="Enter Menu Position"
               name="menuPosition"
@@ -153,11 +153,9 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               errors={errors}
               required
               placeholder="Enter numeric position"
-              type="text"
             />
 
-            {/* Description */}
-            <div className="col-span-full">
+            <div className={styles.colSpanFull}>
               <Textarea
                 label="Description"
                 name="menuDescription"
@@ -167,13 +165,11 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
             </div>
           </div>
 
-          {/* Hyperlink Info */}
-          <div className="modal-form-grid">
-            <div className="modal-section-header">
+          <div className={styles.modalFormGrid}>
+            <div className={styles.modalSectionHeader}>
               <h3>Hyperlink Information</h3>
             </div>
 
-            {/* SEO URL */}
             <Input
               label="Enter SEO URL"
               name="seoUrl"
@@ -183,7 +179,6 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               placeholder="SEO-friendly URL (e.g., my-page)"
             />
 
-            {/* Other URL */}
             <Input
               label="Enter Other URL"
               name="otherUrl"
@@ -192,7 +187,6 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               placeholder="Other URL (if any)"
             />
 
-            {/* Target */}
             <Select
               label="Select Target"
               name="target"
@@ -205,8 +199,7 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
             />
           </div>
 
-          {/* Action Buttons */}
-          <div className="modal-actions">
+          <div className={styles.modalActions}>
             <Button
               title="Cancel"
               type="button"
@@ -214,7 +207,7 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               buttonType="secondary"
             />
             <Button
-              title="Add Menu"
+              title={editMenu ? "Update Menu" : "Add Menu"}
               type="submit"
               isLoading={isSubmitting}
               buttonType="primary"

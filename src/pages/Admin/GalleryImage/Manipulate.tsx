@@ -5,14 +5,14 @@ import * as yup from "yup";
 import { useDropzone } from "react-dropzone";
 import Input from "../../../components/Input";
 import Button from "../../../components/Button";
-import Select from "../../../components/Select";
+// import Select from "../../../components/Select";
 import styles from "./GalleryImageManagement.module.css";
 
 interface GalleryImageItem {
   id?: number;
   ref_id: number;
   image: string;
-  category: string; // Use consistent name: category (string)
+  // Use consistent name: category (string)
 }
 
 // Props interface
@@ -24,11 +24,11 @@ interface Props {
 }
 
 // Example category options
-const categoryOptions = [
-  { label: "Nature", value: "nature" },
-  { label: "People", value: "people" },
-  { label: "Architecture", value: "architecture" },
-];
+// const categoryOptions = [
+//   { label: "Nature", value: "nature" },
+//   { label: "People", value: "people" },
+//   { label: "Architecture", value: "architecture" },
+// ];
 
 // Yup validation schema
 const schema = yup.object({
@@ -51,7 +51,6 @@ const schema = yup.object({
         return isUrl || isBase64;
       }
     ),
-  category: yup.string().required("Category is required"),
 });
 
 const Manipulate: React.FC<Props> = ({ mode, imageData, onSave, onClose }) => {
@@ -67,7 +66,6 @@ const Manipulate: React.FC<Props> = ({ mode, imageData, onSave, onClose }) => {
     defaultValues: {
       ref_id: 0,
       image: "",
-      category: "",
     },
   });
 
@@ -76,7 +74,7 @@ const Manipulate: React.FC<Props> = ({ mode, imageData, onSave, onClose }) => {
     if (mode === "edit" && imageData) {
       reset(imageData);
     } else {
-      reset({ ref_id: 0, image: "", category: "" });
+      reset({ ref_id: 0, image: "" });
     }
   }, [mode, imageData, reset]);
 
@@ -102,7 +100,6 @@ const Manipulate: React.FC<Props> = ({ mode, imageData, onSave, onClose }) => {
       id: imageData?.id,
       ref_id: data.ref_id,
       image: data.image.trim(),
-      category: data.category,
     });
   };
 
@@ -128,19 +125,18 @@ const Manipulate: React.FC<Props> = ({ mode, imageData, onSave, onClose }) => {
             <p className={styles.errorText}>{errors.ref_id.message}</p>
           )}
 
-          <Select
+          {/* <Select
             label="Category"
-            name="category"
+           
             register={register}
             errors={errors}
             options={categoryOptions}
             required
             placeholder="Select a category"
-          />
+          /> */}
           {/* Show error below Category */}
-          {errors.category && (
-            <p className={styles.errorText}>{errors.category.message}</p>
-          )}
+          {/* {errors.category && (
+            <p className={styles.errorText}>{errors.category.message}</p> */}
 
           <div
             {...getRootProps()}

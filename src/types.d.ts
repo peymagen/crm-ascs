@@ -12,15 +12,30 @@ declare module "*.module.css" {
 
 interface Base {
   id?: number;
-  status: number;
+  status?: number;
   created_at?: string;
   updated_at?: string;
 }
 
-interface IUser {
+interface IUser extends Base {
   email: string;
   password?: string;
-  role: string;
+}
+
+interface ILoginFormInputs {
+  email: string;
+  password: string;
+}
+
+interface IResponse {
+  total?: number;
+  data?: {
+    accessToken: string;
+    refreshToken: string;
+    user?: object;
+  };
+  message: string;
+  success: boolean;
 }
 
 interface Menu {

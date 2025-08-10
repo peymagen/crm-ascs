@@ -1,132 +1,90 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { DataTable } from "../../../components/DataTable";
 import Button from "../../../components/Button";
 import Manipulate from "./Manipulate";
 import ConfirmDelete from "./ConfirmDelete";
 import styles from "./GalleryImageManagement.module.css";
 
+import {
+  useGetGalleryImagesQuery,
+  useAddGalleryImageMutation,
+  useUpdateGalleryImageMutation,
+  useDeleteGalleryImageMutation,
+} from "../../../store/services/galleryImage.api";
+
 export interface GalleryImageItem {
   id: number;
   ref_id: number;
   image: string;
-  category: string; // Added category field
 }
 
-const initialData: GalleryImageItem[] = [
-  {
-    id: 1,
-    ref_id: 101,
-    image: "https://via.placeholder.com/150?text=Image+1",
-    category: "nature",
-  },
-  {
-    id: 2,
-    ref_id: 102,
-    image: "https://via.placeholder.com/150?text=Image+2",
-    category: "people",
-  },
-];
-
-// Helper to truncate long URLs
-const truncateText = (text: string, maxLength = 25) =>
-  text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-
 const GalleryImageManagement: React.FC = () => {
-  const [images, setImages] = useState<GalleryImageItem[]>(initialData);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+
   const [modalData, setModalData] = useState<{
     mode: "add" | "edit";
     imageData?: GalleryImageItem;
   } | null>(null);
+
   const [deleteTarget, setDeleteTarget] = useState<GalleryImageItem | null>(
     null
   );
 
-  const fetchData = async (params?: {
-    page: number;
-    search?: string;
-  }): Promise<{ data: GalleryImageItem[]; total: number }> => {
-    const page = params?.page ?? 1;
-    const search = (params?.search ?? "").toLowerCase();
-    const limit = 10;
+  // Fetch gallery images
+  const {
+    data: queryData,
+    isLoading,
+    refetch,
+  } = useGetGalleryImagesQuery({
+    limit: 10,
+    offset: (page - 1) * 10,
+    search,
+  });
 
-    const sorted = [...images].sort((a, b) => a.id - b.id);
-    const filtered = search
-      ? sorted.filter(
-          (img) =>
-            img.ref_id.toString().includes(search) ||
-            img.image.toLowerCase().includes(search) ||
-            img.category.toLowerCase().includes(search) // filter by category too
-        )
-      : sorted;
+  const [addImage, { isLoading: isAdding }] = useAddGalleryImageMutation();
+  const [updateImage, { isLoading: isUpdating }] =
+    useUpdateGalleryImageMutation();
+  const [deleteImage, { isLoading: isDeleting }] =
+    useDeleteGalleryImageMutation();
 
-    const startIndex = (page - 1) * limit;
-    const paginated = filtered.slice(startIndex, startIndex + limit);
+  const images = queryData?.data ?? [];
+  const total = queryData?.total ?? 0;
 
-    // Truncate the image string for display only (don't modify original)
-    const truncatedData = paginated.map((img) => ({
-      ...img,
-      image: truncateText(img.image, 30),
-    }));
-
-    return { data: truncatedData, total: filtered.length };
-  };
-
-  const handleSave = (data: Omit<GalleryImageItem, "id"> & { id?: number }) => {
-    if (data.id != null) {
-      setImages((prev) =>
-        prev.map((img) =>
-          img.id === data.id
-            ? {
-                ...img,
-                ref_id: data.ref_id,
-                image: data.image,
-                category: data.category ?? img.category,
-              }
-            : img
-        )
-      );
-    } else {
-      const nextId = images.length
-        ? Math.max(...images.map((i) => i.id)) + 1
-        : 1;
-      setImages((prev) => [
-        ...prev,
-        {
-          id: nextId,
-          ref_id: data.ref_id,
-          image: data.image,
-          category: data.category ?? "",
-        },
-      ]);
+  const handleSave = async (formData: {
+    id?: number;
+    ref_id: number;
+    image: string;
+  }) => {
+    try {
+      if (formData.id != null) {
+        await updateImage({ id: formData.id, body: formData }).unwrap();
+      } else {
+        await addImage(formData).unwrap();
+      }
+      setModalData(null);
+      refetch();
+    } catch (error) {
+      console.error("Failed to save image:", error);
     }
-    setModalData(null);
   };
 
-  const handleDeleteConfirm = () => {
-    if (deleteTarget) {
-      setImages((prev) => prev.filter((img) => img.id !== deleteTarget.id));
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return;
+    try {
+      await deleteImage(deleteTarget.id).unwrap();
       setDeleteTarget(null);
+      refetch();
+    } catch (error) {
+      console.error("Failed to delete image:", error);
     }
   };
 
-  const handleDeleteCancel = () => {
-    setDeleteTarget(null);
-  };
-
-  const actions = [
-    {
-      label: "Edit",
-      onClick: (row: GalleryImageItem) => {
-        setModalData({ mode: "edit", imageData: row });
-      },
-    },
-    {
-      label: "Delete",
-      onClick: (row: GalleryImageItem) => {
-        setDeleteTarget(row);
-      },
-    },
-  ];
+  const onPageChange = (newPage: number) => setPage(newPage);
+  const onSearchChange = useCallback((searchValue: string) => {
+    setSearch(searchValue);
+    setPage(1);
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -136,25 +94,40 @@ const GalleryImageManagement: React.FC = () => {
           title="+ Add Image"
           buttonType="primary"
           onClick={() => setModalData({ mode: "add" })}
+          disabled={isAdding || isUpdating || isDeleting}
         />
       </div>
 
       <div className={styles.tableWrapper}>
         <DataTable
-          fetchData={fetchData}
+          fetchData={async () => ({ data: images, total })}
           columns={[
             { label: "ID", accessor: "id" },
             { label: "Reference ID", accessor: "ref_id" },
-            { label: "Category", accessor: "category" }, // new category column
             { label: "Image URL", accessor: "image" },
           ]}
-          actions={actions}
-          loading={false}
+          actions={[
+            {
+              label: "Edit",
+              onClick: (row: GalleryImageItem) =>
+                setModalData({ mode: "edit", imageData: row }),
+            },
+            {
+              label: "Delete",
+              onClick: (row: GalleryImageItem) => setDeleteTarget(row),
+            },
+          ]}
+          loading={isLoading || isAdding || isUpdating || isDeleting}
           isNavigate
           isSearch
           isExport
           hasCheckbox
           onSelectedRows={(rows) => console.log("Selected Rows:", rows)}
+          page={page}
+          onPageChange={onPageChange}
+          onSearchChange={onSearchChange}
+          totalRecords={total}
+          pageSize={10}
         />
       </div>
 
@@ -172,7 +145,7 @@ const GalleryImageManagement: React.FC = () => {
           title="Confirm Delete"
           message={`Are you sure you want to delete image #${deleteTarget.id}?`}
           onConfirm={handleDeleteConfirm}
-          onCancel={handleDeleteCancel}
+          onCancel={() => setDeleteTarget(null)}
         />
       )}
     </div>

@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { DataTable } from "../../../components/DataTable";
 import Manipulate from "./Manipulate";
 import Button from "../../../components/Button";
 import styles from "./GalleryCategory.module.css";
 import ConfirmDelete from "./ConfirmDelete";
+
+import {
+  useGetGalleryCategoriesQuery,
+  useAddGalleryCategoryMutation,
+  useUpdateGalleryCategoryMutation,
+  useDeleteGalleryCategoryMutation,
+} from "../../../store/services/galleryCategory.api"; // adjust path as needed
 
 export interface GalleryCategoryItem {
   id: number;
@@ -11,45 +18,82 @@ export interface GalleryCategoryItem {
   description: string;
 }
 
-const initialData: GalleryCategoryItem[] = [
-  { id: 1, title: "Nature", description: "Beautiful nature images" },
-  { id: 2, title: "Architecture", description: "Buildings and structures" },
-  { id: 3, title: "Wildlife", description: "Animals in the wild" },
-];
-
 const GalleryCategory: React.FC = () => {
-  const [categories, setCategories] =
-    useState<GalleryCategoryItem[]>(initialData);
-  const [loading] = useState(false);
+  // Modal state for add/edit
   const [modalData, setModalData] = useState<{
     mode: "add" | "edit";
     category?: GalleryCategoryItem;
   } | null>(null);
 
+  // Delete confirmation state
   const [deleteTarget, setDeleteTarget] = useState<GalleryCategoryItem | null>(
     null
   );
 
-  // DataTable fetch
-  const fetchData = async (params?: {
-    page: number;
-    search?: string;
-  }): Promise<{ data: GalleryCategoryItem[]; total: number }> => {
-    const page = params?.page ?? 1;
-    const search = (params?.search ?? "").toLowerCase();
-    const limit = 10;
+  // Pagination and search state
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
-    const sorted = [...categories].sort((a, b) => a.id - b.id);
-    const filtered = search
-      ? sorted.filter((c) => c.title.toLowerCase().includes(search))
-      : sorted;
+  // API hooks
+  const {
+    data: queryData,
+    isLoading,
+    refetch,
+  } = useGetGalleryCategoriesQuery({
+    limit: 10,
+    offset: (page - 1) * 10,
+    search,
+  });
 
-    const startIndex = (page - 1) * limit;
-    const paginated = filtered.slice(startIndex, startIndex + limit);
+  const [addCategory, { isLoading: isAdding }] =
+    useAddGalleryCategoryMutation();
+  const [updateCategory, { isLoading: isUpdating }] =
+    useUpdateGalleryCategoryMutation();
+  const [deleteCategory, { isLoading: isDeleting }] =
+    useDeleteGalleryCategoryMutation();
 
-    return { data: paginated, total: filtered.length };
+  // Data for DataTable
+  const categories = queryData?.data ?? [];
+  const total = queryData?.total ?? 0;
+
+  // Handle save from modal (add or edit)
+  const handleSave = async (
+    data: Omit<GalleryCategoryItem, "id"> & { id?: number }
+  ) => {
+    try {
+      if (data.id != null) {
+        await updateCategory({
+          id: data.id,
+          body: { title: data.title, description: data.description },
+        }).unwrap();
+      } else {
+        await addCategory({
+          title: data.title,
+          description: data.description,
+        }).unwrap();
+      }
+      setModalData(null);
+      refetch(); // Refresh data after mutation
+    } catch (error) {
+      console.error("Failed to save category:", error);
+      // Handle error UI here if needed
+    }
   };
 
+  // Handle delete confirm
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return;
+    try {
+      await deleteCategory(deleteTarget.id).unwrap();
+      setDeleteTarget(null);
+      refetch(); // Refresh after deletion
+    } catch (error) {
+      console.error("Failed to delete category:", error);
+      // Handle error UI here if needed
+    }
+  };
+
+  // Actions for each row in the DataTable
   const actions = [
     {
       label: "Edit",
@@ -65,39 +109,16 @@ const GalleryCategory: React.FC = () => {
     },
   ];
 
-  const handleSave = (
-    data: Omit<GalleryCategoryItem, "id"> & { id?: number }
-  ) => {
-    if (data.id != null) {
-      setCategories((prev) =>
-        prev.map((c) =>
-          c.id === data.id
-            ? { ...c, title: data.title, description: data.description }
-            : c
-        )
-      );
-    } else {
-      const nextId = categories.length
-        ? Math.max(...categories.map((c) => c.id)) + 1
-        : 1;
-      setCategories((prev) => [
-        ...prev,
-        { id: nextId, title: data.title, description: data.description },
-      ]);
-    }
-    setModalData(null);
+  // Handle page change
+  const onPageChange = (newPage: number) => {
+    setPage(newPage);
   };
 
-  const handleDeleteConfirm = () => {
-    if (deleteTarget) {
-      setCategories((prev) => prev.filter((c) => c.id !== deleteTarget.id));
-      setDeleteTarget(null);
-    }
-  };
-
-  const handleDeleteCancel = () => {
-    setDeleteTarget(null);
-  };
+  // Handle search input from DataTable
+  const onSearchChange = useCallback((searchValue: string) => {
+    setSearch(searchValue);
+    setPage(1); // reset to first page on new search
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -107,24 +128,33 @@ const GalleryCategory: React.FC = () => {
           title="+ Add Category"
           buttonType="primary"
           onClick={() => setModalData({ mode: "add" })}
+          disabled={isAdding || isUpdating || isDeleting}
         />
       </div>
 
       <div className={styles.tableWrapper}>
         <DataTable
-          fetchData={fetchData}
+          fetchData={async ({ page: p, search: s }) => {
+            // We rely on RTK Query, so just return current data and total here
+            return { data: categories, total };
+          }}
           columns={[
             { label: "ID", accessor: "id" },
             { label: "Title", accessor: "title" },
             { label: "Description", accessor: "description" },
           ]}
           actions={actions}
-          loading={loading}
+          loading={isLoading || isAdding || isUpdating || isDeleting}
           isNavigate
           isSearch
           isExport
           hasCheckbox
           onSelectedRows={(rows) => console.log("Selected Rows:", rows)}
+          page={page}
+          onPageChange={onPageChange}
+          onSearchChange={onSearchChange}
+          totalRecords={total}
+          pageSize={10}
         />
       </div>
 
@@ -134,6 +164,7 @@ const GalleryCategory: React.FC = () => {
           category={modalData.category}
           onSave={handleSave}
           onClose={() => setModalData(null)}
+          // isSaving={isAdding || isUpdating}
         />
       )}
 
@@ -142,7 +173,8 @@ const GalleryCategory: React.FC = () => {
           title="Confirm Delete"
           message={`Are you sure you want to delete "${deleteTarget.title}"?`}
           onConfirm={handleDeleteConfirm}
-          onCancel={handleDeleteCancel}
+          onCancel={() => setDeleteTarget(null)}
+          // isLoading={isDeleting}
         />
       )}
     </div>

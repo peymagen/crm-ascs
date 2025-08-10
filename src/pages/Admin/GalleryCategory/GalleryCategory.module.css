@@ -1,13 +1,11 @@
 /* Container */
 .container {
-  padding-top: 24px;
-  padding-left: 120px;
-  padding-right: 120px;
-  background: #fafafa;
-  min-height: 100%;
-  box-sizing: border-box;
-}
+  max-width: 1000px; /* Match Menu Management */
+  margin: 0 auto; /* Center horizontally */
+  padding: 20px; /* Keep some spacing inside */
 
+  /* min-height: 100vh; */
+}
 /* Header */
 .header {
   display: flex;
@@ -26,7 +24,7 @@
 /* Table wrapper */
 .tableWrapper {
   background: #fff;
-  border: 1px solid #e6e9ee;
+  /* border: 1px solid #e6e9ee; */
   border-radius: 8px;
   padding: 12px;
 }

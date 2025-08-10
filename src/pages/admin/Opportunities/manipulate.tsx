@@ -177,7 +177,7 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
               <Button
                 type="submit"
                 buttonType="primary"
-                title={mode === "ADD" ? "Add Telephone" : "Update Telephone"}
+                title={mode === "ADD" ? "Add Opportunity" : "Update Opportunity"}
                 isLoading={isLoading}
               />
             </div>

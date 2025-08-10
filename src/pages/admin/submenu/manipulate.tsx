@@ -1,9 +1,4 @@
 
-
-
-
-
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -101,6 +96,7 @@ const AddBottomMenu: React.FC<AddBottomMenuProps> = ({
   }, [isOpen, defaultValues, reset]);
 
   const onSubmit = (data: FormData) => {
+    console.log('Form data being submitted:', data);
     onSubmitHandler(data);
   };
 

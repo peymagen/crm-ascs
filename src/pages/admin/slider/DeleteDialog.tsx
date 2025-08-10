@@ -1,7 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import styles from "./submenu.module.css";
+import styles from "./slider.module.css";
 import Button from "../../../components/Button";
 
 interface DeleteDialogProps {

@@ -13,6 +13,7 @@ import Home from "./pages/home";
 import Dashboard from "./pages/admin/dashboard";
 import ListBottomData from "./pages/admin/submenu";
 import TelephonicData from "./pages/admin/telephonic";
+import ListSlider from "./pages/admin/slider";
 
 
 
@@ -54,6 +55,7 @@ function App() {
         </Route>
  <Route path="/admin/submenu" element={<ListBottomData/>}/>
  <Route path="/admin/telephonic" element={<TelephonicData/>}/>
+ <Route path="/admin/slider" element={<ListSlider/>}/>
       </Routes>
     </Suspense>
   );

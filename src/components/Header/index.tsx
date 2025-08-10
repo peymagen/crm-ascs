@@ -1,154 +1,1775 @@
-import React, { useState, useRef, useEffect } from 'react';
+// import React, { useState, useEffect } from 'react';
+// import styles from './Header.module.css';
 
-interface DraggableIconProps {
-  src: string;
-  alt: string;
-  initialPosition: { x: number; y: number };
+// // Dropdown Menu Component
+// interface DropdownMenuProps {
+
+//   isOpen: boolean;
+//   onClose: () => void;
+//   children: React.ReactNode;
+//   className?: string;
+// }
+
+// const DropdownMenu: React.FC<DropdownMenuProps> = ({ isOpen, onClose, children, className }) => {
+//   const [menuRef, setMenuRef] = useState<HTMLDivElement | null>(null);
+
+//   useEffect(() => {
+//     const handleClickOutside = (event: MouseEvent) => {
+//       if (menuRef && !menuRef.contains(event.target as Node)) {
+//         onClose();
+//       }
+//     };
+
+//     if (isOpen) {
+//       document.addEventListener('mousedown', handleClickOutside);
+//     }
+
+//     return () => {
+//       document.removeEventListener('mousedown', handleClickOutside);
+//     };
+//   }, [isOpen, onClose, menuRef]);
+
+//   return (
+//     <div
+//       ref={setMenuRef}
+//       className={`${styles.dropdownMenu} ${isOpen ? styles.dropdownMenuOpen : styles.dropdownMenuClosed} ${className || ''}`}
+//     >
+//       {children}
+//     </div>
+//   );
+// };
+
+// // Navigation Item with Dropdown
+// interface NavItemProps {
+//   label: string;
+//   href?: string;
+//   dropdownItems?: Array<{
+//     label: string;
+//     href: string;
+//     description?: string;
+//   }>;
+//   onClick?: () => void;
+// }
+
+// const NavItem: React.FC<NavItemProps> = ({ label, href, dropdownItems, onClick }) => {
+//   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+//   const [isHovered, setIsHovered] = useState(false);
+//   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+
+//   const handleMouseEnter = () => {
+//     if (timeoutId) {
+//       clearTimeout(timeoutId);
+//       setTimeoutId(null);
+//     }
+//     setIsHovered(true);
+//     if (dropdownItems) {
+//       setIsDropdownOpen(true);
+//     }
+//   };
+
+//   const handleMouseLeave = () => {
+//     setIsHovered(false);
+//     const newTimeoutId = setTimeout(() => {
+//       setIsDropdownOpen(false);
+//     }, 150);
+//     setTimeoutId(newTimeoutId);
+//   };
+
+//   const handleClick = () => {
+//     if (onClick) {
+//       onClick();
+//     }
+//     if (!dropdownItems) {
+//       setIsDropdownOpen(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     return () => {
+//       if (timeoutId) {
+//         clearTimeout(timeoutId);
+//       }
+//     };
+//   }, [timeoutId]);
+
+//   return (
+//     <div
+//       className={styles.navItemContainer}
+//       onMouseEnter={handleMouseEnter}
+//       onMouseLeave={handleMouseLeave}
+//     >
+//       <a
+//         href={href}
+//         onClick={handleClick}
+//         className={`${styles.navItemLink} ${isHovered ? styles.navItemLinkHovered : ''}`}
+//       >
+//         {label}
+//         {dropdownItems && (
+//           <span
+//             className={`${styles.navItemArrow} ${isDropdownOpen ? styles.navItemArrowOpen : styles.navItemArrowClosed}`}
+//           >
+//             ▼
+//           </span>
+//         )}
+//       </a>
+      
+//       {dropdownItems && (
+//         <DropdownMenu
+//           isOpen={isDropdownOpen}
+//           onClose={() => setIsDropdownOpen(false)}
+//         >
+//           {dropdownItems.map((item, index) => (
+//             <a
+//               key={index}
+//               href={item.href}
+//               className={`${styles.dropdownItem} ${index < dropdownItems.length - 1 ? styles.dropdownItemWithBorder : ''}`}
+//             >
+//               <div className={styles.dropdownItemLabel}>
+//                 {item.label}
+//               </div>
+//               {item.description && (
+//                 <div className={styles.dropdownItemDescription}>
+//                   {item.description}
+//                 </div>
+//               )}
+//             </a>
+//           ))}
+//         </DropdownMenu>
+//       )}
+//     </div>
+//   );
+// };
+
+// const AccessibilityNavbar: React.FC = () => {
+//   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+//   useEffect(() => {
+//     const handleResize = () => {
+//       setIsMobile(window.innerWidth <= 768);
+//     };
+
+//     window.addEventListener('resize', handleResize);
+//     return () => window.removeEventListener('resize', handleResize);
+//   }, []);
+
+//   const handleScreenReader = () => {
+//     document.body.setAttribute('aria-live', 'polite');
+//     alert('Screen reader mode activated');
+//   };
+
+//   const handleSkipToMain = () => {
+//     const mainContent = document.querySelector('main');
+//     if (mainContent) {
+//       mainContent.focus();
+//       mainContent.scrollIntoView({ behavior: 'smooth' });
+//     }
+//   };
+
+//   const handleSkipToNavigation = () => {
+//     const navigation = document.querySelector('nav[id="navigation"]') || document.querySelector('.main-navigation');
+//     if (navigation) {
+//       navigation.scrollIntoView({ behavior: 'smooth' });
+//     }
+//   };
+
+//   const handleTextSizeIncrease = () => {
+//     const currentSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+//     document.documentElement.style.fontSize = `${Math.min(currentSize + 2, 24)}px`;
+//   };
+
+//   const handleTextSizeDecrease = () => {
+//     const currentSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+//     document.documentElement.style.fontSize = `${Math.max(currentSize - 2, 12)}px`;
+//   };
+
+//   const handleLanguageChange = (language: 'hindi' | 'english') => {
+//     console.log(`Language changed to: ${language}`);
+//   };
+
+//   if (isMobile) {
+//     return (
+//       <nav className={styles.accessibilityNavbarMobile}>
+//         <div className={styles.accessibilityContentMobile}>
+//           <div className={styles.languageContainer}>
+//             <button 
+//               onClick={handleTextSizeIncrease}
+//               className={styles.accessibilityButtonMobile}
+//               aria-label="Increase Text Size"
+//             >
+//               A+
+//             </button>
+//             <button 
+//               onClick={handleTextSizeDecrease}
+//               className={styles.accessibilityButtonMobileSmall}
+//               aria-label="Decrease Text Size"
+//             >
+//               A-
+//             </button>
+//           </div>
+          
+//           <span className={styles.accessibilitySeparator}>|</span>
+          
+//           <div className={styles.languageContainer}>
+//             <button 
+//               onClick={() => handleLanguageChange('hindi')}
+//               className={styles.accessibilityButtonMobile}
+//             >
+//               हिंदी
+//             </button>
+//             <span className={styles.accessibilitySeparator}>|</span>
+//             <button 
+//               onClick={() => handleLanguageChange('english')}
+//               className={styles.accessibilityButtonMobile}
+//             >
+//               EN
+//             </button>
+//           </div>
+//         </div>
+//       </nav>
+//     );
+//   }
+
+//   return (
+//     <nav className={styles.accessibilityNavbar}>
+//       <div className={styles.accessibilityContent}>
+//         <button 
+//           onClick={handleScreenReader}
+//           className={styles.accessibilityButton}
+//           aria-label="Screen Reader"
+//         >
+//           Screen Reader
+//         </button>
+        
+//         <span className={styles.accessibilitySeparator}>|</span>
+        
+//         <button 
+//           onClick={handleSkipToMain}
+//           className={styles.accessibilityButton}
+//           aria-label="Skip to Main"
+//         >
+//           Skip to Main
+//         </button>
+        
+//         <span className={styles.accessibilitySeparator}>|</span>
+        
+//         <button 
+//           onClick={handleSkipToNavigation}
+//           className={styles.accessibilityButton}
+//           aria-label="Skip to Navigation"
+//         >
+//           Skip to Navigation
+//         </button>
+        
+//         <span className={styles.accessibilitySeparator}>|</span>
+        
+//         <div className={styles.textSizeContainer}>
+//           <span className={styles.textSizeLabel}>Text Size</span>
+//           <button 
+//             onClick={handleTextSizeIncrease}
+//             className={styles.textSizeButton}
+//             aria-label="Increase Text Size"
+//           >
+//             A+
+//           </button>
+//           <button 
+//             onClick={handleTextSizeDecrease}
+//             className={styles.textSizeButtonSmall}
+//             aria-label="Decrease Text Size"
+//           >
+//             A-
+//           </button>
+//         </div>
+        
+//         <span className={styles.accessibilitySeparator}>|</span>
+        
+//         <button 
+//           onClick={() => handleLanguageChange('hindi')}
+//           className={styles.accessibilityButton}
+//           aria-label="Switch to Hindi language"
+//         >
+//           हिंदी
+//         </button>
+        
+//         <span className={styles.accessibilitySeparator}>|</span>
+        
+//         <button 
+//           onClick={() => handleLanguageChange('english')}
+//           className={styles.accessibilityButton}
+//           aria-label="Switch to English language"
+//         >
+//           English
+//         </button>
+//       </div>
+//     </nav>
+//   );
+// };
+
+// const MainNavigation: React.FC = () => {
+//   const [isMenuOpen, setIsMenuOpen] = useState(false);
+//   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  
+//   useEffect(() => {
+//     const handleResize = () => {
+//       setIsMobile(window.innerWidth <= 768);
+//       if (window.innerWidth > 768) {
+//         setIsMenuOpen(false);
+//       }
+//     };
+
+//     window.addEventListener('resize', handleResize);
+//     return () => window.removeEventListener('resize', handleResize);
+//   }, []);
+
+//   // Navigation items with dropdown data
+//   const navItems = [
+//     {
+//       key: 'home',
+//       label: 'Home',
+//       href: '/'
+//     },
+//     {
+//       key: 'hivAids',
+//       label: 'HIV/AIDS',
+//       href: '#hiv-aids',
+//       dropdownItems: [
+//         { label: 'What is HIV/AIDS', href: '#what-is-hiv', description: 'Understanding HIV and AIDS' },
+//         { label: 'Prevention', href: '#prevention', description: 'How to prevent HIV transmission' },
+//         { label: 'Testing', href: '#testing', description: 'HIV testing information' },
+//         { label: 'Treatment', href: '#treatment', description: 'Treatment options and care' },
+//         { label: 'Support Groups', href: '#support', description: 'Community support resources' }
+//       ]
+//     },
+//     {
+//       key: 'services',
+//       label: 'Services',
+//       href: '#services',
+//       dropdownItems: [
+//         { label: 'Counseling', href: '#counseling', description: 'Professional counseling services' },
+//         { label: 'Testing Centers', href: '#testing-centers', description: 'Find testing locations' },
+//         { label: 'Treatment Centers', href: '#treatment-centers', description: 'Medical treatment facilities' },
+//         { label: 'Education Programs', href: '#education', description: 'Awareness and education' },
+//         { label: 'Emergency Support', href: '#emergency', description: '24/7 emergency assistance' }
+//       ]
+//     },
+//     {
+//       key: 'programs',
+//       label: 'Programs',
+//       href: '#programs',
+//       dropdownItems: [
+//         { label: 'Youth Programs', href: '#youth', description: 'Programs for young people' },
+//         { label: 'Women\'s Health', href: '#womens-health', description: 'Women-specific programs' },
+//         { label: 'Workplace Programs', href: '#workplace', description: 'Corporate health initiatives' },
+//         { label: 'Community Outreach', href: '#outreach', description: 'Community engagement programs' },
+//         { label: 'Research Initiatives', href: '#research', description: 'Ongoing research projects' }
+//       ]
+//     },
+//     {
+//       key: 'iecMaterial',
+//       label: 'IEC Material',
+//       href: '#iec-material',
+//       dropdownItems: [
+//         { label: 'Brochures', href: '#brochures', description: 'Downloadable brochures' },
+//         { label: 'Posters', href: '#posters', description: 'Awareness posters' },
+//         { label: 'Videos', href: '#videos', description: 'Educational videos' },
+//         { label: 'Publications', href: '#publications', description: 'Research publications' },
+//         { label: 'Social Media', href: '#social-media', description: 'Follow us on social media' }
+//       ]
+//     },
+//     {
+//       key: 'factsAndFigures',
+//       label: 'Facts & Figures',
+//       href: '#facts-figures',
+//       dropdownItems: [
+//         { label: 'Statistics', href: '#statistics', description: 'Current statistics and data' },
+//         { label: 'Reports', href: '#reports', description: 'Annual and quarterly reports' },
+//         { label: 'Research Data', href: '#research-data', description: 'Research findings and data' },
+//         { label: 'Trends', href: '#trends', description: 'Trend analysis and projections' }
+//       ]
+//     },
+//     {
+//       key: 'activities',
+//       label: 'Activities',
+//       href: '#activities',
+//       dropdownItems: [
+//         { label: 'Upcoming Events', href: '#upcoming', description: 'Events and activities' },
+//         { label: 'Past Events', href: '#past-events', description: 'Previous activities archive' },
+//         { label: 'Workshops', href: '#workshops', description: 'Training and workshops' },
+//         { label: 'Campaigns', href: '#campaigns', description: 'Awareness campaigns' },
+//         { label: 'Volunteer Programs', href: '#volunteer', description: 'Volunteer opportunities' }
+//       ]
+//     },
+//     {
+//       key: 'opportunities',
+//       label: 'Opportunities',
+//       href: '#opportunities',
+//       dropdownItems: [
+//         { label: 'Job Openings', href: '#jobs', description: 'Current job opportunities' },
+//         { label: 'Internships', href: '#internships', description: 'Internship programs' },
+//         { label: 'Training Programs', href: '#training', description: 'Professional development' },
+//         { label: 'Partnerships', href: '#partnerships', description: 'Collaboration opportunities' },
+//         { label: 'Funding', href: '#funding', description: 'Grant and funding information' }
+//       ]
+//     },
+//     {
+//       key: 'relatedLinks',
+//       label: 'Related Links',
+//       href: '#related-links',
+//       dropdownItems: [
+//         { label: 'Government Sites', href: '#government', description: 'Official government resources' },
+//         { label: 'Health Organizations', href: '#health-orgs', description: 'Partner organizations' },
+//         { label: 'International Resources', href: '#international', description: 'Global health resources' },
+//         { label: 'Educational Links', href: '#educational', description: 'Educational resources' },
+//         { label: 'Support Networks', href: '#support-networks', description: 'Support and advocacy groups' }
+//       ]
+//     }
+//   ];
+
+//   if (isMobile) {
+//     return (
+//       <nav id="navigation" className={`${styles.mainNavigationMobile} main-navigation`}>
+//         {/* Mobile Menu Button */}
+//         <div className={`${styles.mobileMenuButtonContainer} ${isMenuOpen ? styles.mobileMenuButtonOpen : ''}`}>
+//           <button
+//             onClick={() => setIsMenuOpen(!isMenuOpen)}
+//             className={styles.mobileMenuButton}
+//             aria-label="Toggle navigation menu"
+//           >
+//             <span className={`${styles.mobileMenuIcon} ${isMenuOpen ? styles.mobileMenuIconOpen : styles.mobileMenuIconClosed}`}>
+//               {isMenuOpen ? '✕' : '☰'}
+//             </span>
+//             <span>Menu</span>
+//           </button>
+//         </div>
+
+//         {/* Mobile Navigation Menu */}
+//         <div 
+//           className={`${styles.mobileMenu} ${isMenuOpen ? styles.mobileMenuOpen : styles.mobileMenuClosed} ${isMenuOpen ? styles.mobileMenuVisible : ''}`}
+//         >
+//           {navItems.map((item, index) => (
+//             <div key={item.key}>
+//               <a 
+//                 href={item.href}
+//                 className={`${styles.mobileMenuItem} ${index < navItems.length - 1 ? styles.mobileMenuItemWithBorder : ''}`}
+//                 onClick={() => setIsMenuOpen(false)}
+//               >
+//                 {item.label}
+//               </a>
+//               {/* Mobile dropdown items */}
+//               {item.dropdownItems && (
+//                 <div className={styles.mobileDropdownItems}>
+//                   {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
+//                     <a
+//                       key={dropdownIndex}
+//                       href={dropdownItem.href}
+//                       className={`${styles.mobileDropdownItem} ${dropdownIndex < item.dropdownItems!.length - 1 ? styles.mobileDropdownItemWithBorder : ''}`}
+//                       onClick={() => setIsMenuOpen(false)}
+//                     >
+//                       {dropdownItem.label}
+//                     </a>
+//                   ))}
+//                 </div>
+//               )}
+//             </div>
+//           ))}
+//         </div>
+//       </nav>
+//     );
+//   }
+
+//   return (
+//     <nav id="navigation" className={`${styles.mainNavigation} main-navigation`}>
+//       {/* Desktop Navigation */}
+//       <div className={styles.desktopNavigation}>
+//         <div className={styles.desktopNavigationContent}>
+//           {navItems.map((item, index) => (
+//             <NavItem
+//               key={item.key}
+//               label={item.label}
+//               href={item.href}
+//               dropdownItems={item.dropdownItems}
+//             />
+//           ))}
+//         </div>
+//       </div>
+//     </nav>
+//   );
+// };
+
+// const Header: React.FC = () => {
+//   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+//   useEffect(() => {
+//     const handleResize = () => {
+//       setIsMobile(window.innerWidth <= 768);
+//     };
+
+//     window.addEventListener('resize', handleResize);
+//     return () => window.removeEventListener('resize', handleResize);
+//   }, []);
+
+//   return (
+//     <header className={styles.header}>
+//       {/* Accessibility Navbar */}
+//       <AccessibilityNavbar />
+      
+//       {/* Main Header Content */}
+//       <div className={styles.headerContent}>
+//         {/* Mobile view - Clean and centered */}
+//         {isMobile ? (
+//           <div className={styles.headerMobile}>
+//             {/* Main header image - responsive */}
+//             <div className={styles.headerMobileImageContainer}>
+//               <img 
+//                 src="/image copy copy.png" 
+//                 alt="Chandigarh State AIDS Control Society" 
+//                 className={styles.headerMobileImage}
+//               />
+//             </div>
+//           </div>
+//         ) : (
+//           /* Desktop view - unchanged */
+//           <div className={styles.headerDesktop}>
+//             <div className={styles.headerDesktopContent}>
+//               {/* Left - First image (image copy copy.png) */}
+//               <div className={styles.headerDesktopLeft}>
+//                 <img 
+//                   src="/image copy copy.png" 
+//                   alt="Header Left Image" 
+//                   className={styles.headerDesktopLeftImage}
+//                 />
+//               </div>
+              
+//               {/* Gap */}
+//               <div className={styles.headerDesktopGap}></div>
+              
+//               <div className={styles.headerDesktopCenter}>
+//                 <img 
+//                   src="/image.png" 
+//                   alt="CSACS Logo" 
+//                   className={styles.headerDesktopCenterImage}
+//                 />
+//               </div>
+              
+//               <div className={styles.headerDesktopRight}>
+//                 <img 
+//                   src="/image copy.png" 
+//                   alt="Government Logos" 
+//                   className={styles.headerDesktopRightImage}
+//                 />
+//               </div>
+//             </div>
+//           </div>
+//         )}
+//       </div>
+      
+//       {/* Draggable Floating Icons - Only show on mobile */}
+//       {isMobile && (
+//         <>
+//           <div className={styles.draggableIcon} data-position="right">
+//             <img 
+//               src="/image.png"
+//               alt="CSACS Logo"
+//               className={styles.draggableIconImage}
+//               draggable={false}
+//             />
+//           </div>
+          
+//           <div className={styles.draggableIcon} data-position="left">
+//             <img 
+//               src="/image copy.png"
+//               alt="Government Logos"
+//               className={styles.draggableIconImage}
+//               draggable={false}
+//             />
+//           </div>
+//         </>
+//       )}
+      
+//       {/* Bottom red border */}
+//       <div className={styles.redBorder}></div>
+      
+//       {/* Main Navigation */}
+//       <MainNavigation />
+//     </header>
+//   );
+// };
+
+// export default Header;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState, useEffect } from 'react';
+// import { useGetHeaderQuery } from '../../store/services/header.api';
+// import styles from './Header.module.css';
+
+// // Dropdown Menu Component
+// interface DropdownMenuProps {
+
+//   isOpen: boolean;
+//   onClose: () => void;
+//   children: React.ReactNode;
+//   className?: string;
+// }
+
+// const DropdownMenu: React.FC<DropdownMenuProps> = ({ isOpen, onClose, children, className }) => {
+//   const [menuRef, setMenuRef] = useState<HTMLDivElement | null>(null);
+
+//   useEffect(() => {
+//     const handleClickOutside = (event: MouseEvent) => {
+//       if (menuRef && !menuRef.contains(event.target as Node)) {
+//         onClose();
+//       }
+//     };
+
+//     if (isOpen) {
+//       document.addEventListener('mousedown', handleClickOutside);
+//     }
+
+//     return () => {
+//       document.removeEventListener('mousedown', handleClickOutside);
+//     };
+//   }, [isOpen, onClose, menuRef]);
+
+//   return (
+//     <div
+//       ref={setMenuRef}
+//       className={`${styles.dropdownMenu} ${isOpen ? styles.dropdownMenuOpen : styles.dropdownMenuClosed} ${className || ''}`}
+//     >
+//       {children}
+//     </div>
+//   );
+// };
+
+// // Navigation Item with Dropdown
+// interface NavItemProps {
+//   label: string;
+//   href?: string;
+//   dropdownItems?: Array<{
+//     label: string;
+//     href: string;
+//     description?: string;
+//   }>;
+//   onClick?: () => void;
+// }
+
+// const NavItem: React.FC<NavItemProps> = ({ label, href, dropdownItems, onClick }) => {
+//   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+//   const [isHovered, setIsHovered] = useState(false);
+//   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+
+//   const handleMouseEnter = () => {
+//     if (timeoutId) {
+//       clearTimeout(timeoutId);
+//       setTimeoutId(null);
+//     }
+//     setIsHovered(true);
+//     if (dropdownItems) {
+//       setIsDropdownOpen(true);
+//     }
+//   };
+
+//   const handleMouseLeave = () => {
+//     setIsHovered(false);
+//     const newTimeoutId = setTimeout(() => {
+//       setIsDropdownOpen(false);
+//     }, 150);
+//     setTimeoutId(newTimeoutId);
+//   };
+
+//   const handleClick = () => {
+//     if (onClick) {
+//       onClick();
+//     }
+//     if (!dropdownItems) {
+//       setIsDropdownOpen(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     return () => {
+//       if (timeoutId) {
+//         clearTimeout(timeoutId);
+//       }
+//     };
+//   }, [timeoutId]);
+
+//   return (
+//     <div
+//       className={styles.navItemContainer}
+//       onMouseEnter={handleMouseEnter}
+//       onMouseLeave={handleMouseLeave}
+//     >
+//       <a
+//         href={href}
+//         onClick={handleClick}
+//         className={`${styles.navItemLink} ${isHovered ? styles.navItemLinkHovered : ''}`}
+//       >
+//         {label}
+//         {dropdownItems && (
+//           <span
+//             className={`${styles.navItemArrow} ${isDropdownOpen ? styles.navItemArrowOpen : styles.navItemArrowClosed}`}
+//           >
+//             ▼
+//           </span>
+//         )}
+//       </a>
+      
+//       {dropdownItems && (
+//         <DropdownMenu
+//           isOpen={isDropdownOpen}
+//           onClose={() => setIsDropdownOpen(false)}
+//         >
+//           {dropdownItems.map((item, index) => (
+//             <a
+//               key={index}
+//               href={item.href}
+//               className={`${styles.dropdownItem} ${index < dropdownItems.length - 1 ? styles.dropdownItemWithBorder : ''}`}
+//             >
+//               <div className={styles.dropdownItemLabel}>
+//                 {item.label}
+//               </div>
+//               {item.description && (
+//                 <div className={styles.dropdownItemDescription}>
+//                   {item.description}
+//                 </div>
+//               )}
+//             </a>
+//           ))}
+//         </DropdownMenu>
+//       )}
+//     </div>
+//   );
+// };
+
+// const AccessibilityNavbar: React.FC = () => {
+//   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+//   useEffect(() => {
+//     const handleResize = () => {
+//       setIsMobile(window.innerWidth <= 768);
+//     };
+
+//     window.addEventListener('resize', handleResize);
+//     return () => window.removeEventListener('resize', handleResize);
+//   }, []);
+
+//   const handleScreenReader = () => {
+//     document.body.setAttribute('aria-live', 'polite');
+//     alert('Screen reader mode activated');
+//   };
+
+//   const handleSkipToMain = () => {
+//     const mainContent = document.querySelector('main');
+//     if (mainContent) {
+//       mainContent.focus();
+//       mainContent.scrollIntoView({ behavior: 'smooth' });
+//     }
+//   };
+
+//   const handleSkipToNavigation = () => {
+//     const navigation = document.querySelector('nav[id="navigation"]') || document.querySelector('.main-navigation');
+//     if (navigation) {
+//       navigation.scrollIntoView({ behavior: 'smooth' });
+//     }
+//   };
+
+//   const handleTextSizeIncrease = () => {
+//     const currentSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+//     document.documentElement.style.fontSize = `${Math.min(currentSize + 2, 24)}px`;
+//   };
+
+//   const handleTextSizeDecrease = () => {
+//     const currentSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+//     document.documentElement.style.fontSize = `${Math.max(currentSize - 2, 12)}px`;
+//   };
+
+//   const handleLanguageChange = (language: 'hindi' | 'english') => {
+//     console.log(`Language changed to: ${language}`);
+//   };
+
+//   if (isMobile) {
+//     return (
+//       <nav className={styles.accessibilityNavbarMobile}>
+//         <div className={styles.accessibilityContentMobile}>
+//           <div className={styles.languageContainer}>
+//             <button 
+//               onClick={handleTextSizeIncrease}
+//               className={styles.accessibilityButtonMobile}
+//               aria-label="Increase Text Size"
+//             >
+//               A+
+//             </button>
+//             <button 
+//               onClick={handleTextSizeDecrease}
+//               className={styles.accessibilityButtonMobileSmall}
+//               aria-label="Decrease Text Size"
+//             >
+//               A-
+//             </button>
+//           </div>
+          
+//           <span className={styles.accessibilitySeparator}>|</span>
+          
+//           <div className={styles.languageContainer}>
+//             <button 
+//               onClick={() => handleLanguageChange('hindi')}
+//               className={styles.accessibilityButtonMobile}
+//             >
+//               हिंदी
+//             </button>
+//             <span className={styles.accessibilitySeparator}>|</span>
+//             <button 
+//               onClick={() => handleLanguageChange('english')}
+//               className={styles.accessibilityButtonMobile}
+//             >
+//               EN
+//             </button>
+//           </div>
+//         </div>
+//       </nav>
+//     );
+//   }
+
+//   return (
+//     <nav className={styles.accessibilityNavbar}>
+//       <div className={styles.accessibilityContent}>
+//         <button 
+//           onClick={handleScreenReader}
+//           className={styles.accessibilityButton}
+//           aria-label="Screen Reader"
+//         >
+//           Screen Reader
+//         </button>
+        
+//         <span className={styles.accessibilitySeparator}>|</span>
+        
+//         <button 
+//           onClick={handleSkipToMain}
+//           className={styles.accessibilityButton}
+//           aria-label="Skip to Main"
+//         >
+//           Skip to Main
+//         </button>
+        
+//         <span className={styles.accessibilitySeparator}>|</span>
+        
+//         <button 
+//           onClick={handleSkipToNavigation}
+//           className={styles.accessibilityButton}
+//           aria-label="Skip to Navigation"
+//         >
+//           Skip to Navigation
+//         </button>
+        
+//         <span className={styles.accessibilitySeparator}>|</span>
+        
+//         <div className={styles.textSizeContainer}>
+//           <span className={styles.textSizeLabel}>Text Size</span>
+//           <button 
+//             onClick={handleTextSizeIncrease}
+//             className={styles.textSizeButton}
+//             aria-label="Increase Text Size"
+//           >
+//             A+
+//           </button>
+//           <button 
+//             onClick={handleTextSizeDecrease}
+//             className={styles.textSizeButtonSmall}
+//             aria-label="Decrease Text Size"
+//           >
+//             A-
+//           </button>
+//         </div>
+        
+//         <span className={styles.accessibilitySeparator}>|</span>
+        
+//         <button 
+//           onClick={() => handleLanguageChange('hindi')}
+//           className={styles.accessibilityButton}
+//           aria-label="Switch to Hindi language"
+//         >
+//           हिंदी
+//         </button>
+        
+//         <span className={styles.accessibilitySeparator}>|</span>
+        
+//         <button 
+//           onClick={() => handleLanguageChange('english')}
+//           className={styles.accessibilityButton}
+//           aria-label="Switch to English language"
+//         >
+//           English
+//         </button>
+//       </div>
+//     </nav>
+//   );
+// };
+
+// const MainNavigation: React.FC = () => {
+//   const [isMenuOpen, setIsMenuOpen] = useState(false);
+//   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  
+//   // Fetch header data from API
+//   const { data: headerResponse, isLoading: headerLoading, isError: headerError } = useGetHeaderQuery();
+  
+//   useEffect(() => {
+//     const handleResize = () => {
+//       setIsMobile(window.innerWidth <= 768);
+//       if (window.innerWidth > 768) {
+//         setIsMenuOpen(false);
+//       }
+//     };
+
+//     window.addEventListener('resize', handleResize);
+//     return () => window.removeEventListener('resize', handleResize);
+//   }, []);
+
+//   // Transform API data to navigation items format
+//   const getNavItemsFromAPI = () => {
+//     if (!headerResponse) {
+//       return [];
+//     }
+
+//     // Handle different response structures
+//     let apiItems = [];
+//     if (Array.isArray(headerResponse.data)) {
+//       apiItems = headerResponse.data;
+//     } else if (Array.isArray(headerResponse)) {
+//       apiItems = headerResponse;
+//     } else if (headerResponse.data && typeof headerResponse.data === 'object') {
+//       apiItems = [headerResponse.data];
+//     }
+
+//     // Transform API items to navigation format
+//     return apiItems.map((item: any) => ({
+//       key: item.id ? `item-${item.id}` : item.title?.toLowerCase().replace(/\s+/g, '-') || 'menu-item',
+//       label: item.title || item.name || 'Menu Item',
+//       href: item.url || item.link || '#',
+//       dropdownItems: item.children || item.sub_menu ? 
+//         (item.children || item.sub_menu).map((subItem: any) => ({
+//           label: subItem.title || subItem.name || 'Sub Item',
+//           href: subItem.url || subItem.link || '#',
+//           description: subItem.description || ''
+//         })) : undefined
+//     }));
+//   };
+
+
+//   // Get navigation items (from API or fallback)
+//   const navItems = getNavItemsFromAPI();
+
+//   // Show loading state
+//   if (headerLoading) {
+//     return (
+//       <nav id="navigation" className={`${styles.mainNavigation} main-navigation`}>
+//         <div className={styles.desktopNavigation}>
+//           <div className={styles.desktopNavigationContent}>
+//             <div style={{ 
+//               display: 'flex', 
+//               justifyContent: 'center', 
+//               alignItems: 'center', 
+//               padding: '1rem',
+//               color: 'var(--primary-color)'
+//             }}>
+//               Loading navigation...
+//             </div>
+//           </div>
+//         </div>
+//       </nav>
+//     );
+//   }
+
+//   // Show error state
+//   if (headerError) {
+//     return (
+//       <nav id="navigation" className={`${styles.mainNavigation} main-navigation`}>
+//         <div className={styles.desktopNavigation}>
+//           <div className={styles.desktopNavigationContent}>
+//             <div style={{ 
+//               display: 'flex', 
+//               justifyContent: 'center', 
+//               alignItems: 'center', 
+//               padding: '1rem',
+//               color: '#e74c3c'
+//             }}>
+//               Error loading navigation menu
+//             </div>
+//           </div>
+//         </div>
+//       </nav>
+//     );
+//   }
+
+//   // Show empty state if no navigation items
+//   if (navItems.length === 0) {
+//     return (
+//       <nav id="navigation" className={`${styles.mainNavigation} main-navigation`}>
+//         <div className={styles.desktopNavigation}>
+//           <div className={styles.desktopNavigationContent}>
+//             <div style={{ 
+//               display: 'flex', 
+//               justifyContent: 'center', 
+//               alignItems: 'center', 
+//               padding: '1rem',
+//               color: 'var(--primary-color)'
+//             }}>
+//               No navigation items available
+//             </div>
+//           </div>
+//         </div>
+//       </nav>
+//     );
+//   }
+
+//   if (isMobile) {
+//     return (
+//       <nav id="navigation" className={`${styles.mainNavigationMobile} main-navigation`}>
+//         {/* Mobile Menu Button */}
+//         <div className={`${styles.mobileMenuButtonContainer} ${isMenuOpen ? styles.mobileMenuButtonOpen : ''}`}>
+//           <button
+//             onClick={() => setIsMenuOpen(!isMenuOpen)}
+//             className={styles.mobileMenuButton}
+//             aria-label="Toggle navigation menu"
+//           >
+//             <span className={`${styles.mobileMenuIcon} ${isMenuOpen ? styles.mobileMenuIconOpen : styles.mobileMenuIconClosed}`}>
+//               {isMenuOpen ? '✕' : '☰'}
+//             </span>
+//             <span>Menu</span>
+//           </button>
+//         </div>
+
+//         {/* Mobile Navigation Menu */}
+//         <div 
+//           className={`${styles.mobileMenu} ${isMenuOpen ? styles.mobileMenuOpen : styles.mobileMenuClosed} ${isMenuOpen ? styles.mobileMenuVisible : ''}`}
+//         >
+//           {navItems.map((item, index) => (
+//             <div key={item.key}>
+//               <a 
+//                 href={item.href}
+//                 className={`${styles.mobileMenuItem} ${index < navItems.length - 1 ? styles.mobileMenuItemWithBorder : ''}`}
+//                 onClick={() => setIsMenuOpen(false)}
+//               >
+//                 {item.label}
+//               </a>
+//               {/* Mobile dropdown items */}
+//               {item.dropdownItems && (
+//                 <div className={styles.mobileDropdownItems}>
+//                   {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
+//                     <a
+//                       key={dropdownIndex}
+//                       href={dropdownItem.href}
+//                       className={`${styles.mobileDropdownItem} ${dropdownIndex < item.dropdownItems!.length - 1 ? styles.mobileDropdownItemWithBorder : ''}`}
+//                       onClick={() => setIsMenuOpen(false)}
+//                     >
+//                       {dropdownItem.label}
+//                     </a>
+//                   ))}
+//                 </div>
+//               )}
+//             </div>
+//           ))}
+//         </div>
+//       </nav>
+//     );
+//   }
+
+//   return (
+//     <nav id="navigation" className={`${styles.mainNavigation} main-navigation`}>
+//       {/* Desktop Navigation */}
+//       <div className={styles.desktopNavigation}>
+//         <div className={styles.desktopNavigationContent}>
+//           {navItems.map((item, index) => (
+//             <NavItem
+//               key={item.key}
+//               label={item.label}
+//               href={item.href}
+//               dropdownItems={item.dropdownItems}
+//             />
+//           ))}
+//         </div>
+//       </div>
+//     </nav>
+//   );
+// };
+
+// const Header: React.FC = () => {
+//   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+//   useEffect(() => {
+//     const handleResize = () => {
+//       setIsMobile(window.innerWidth <= 768);
+//     };
+
+//     window.addEventListener('resize', handleResize);
+//     return () => window.removeEventListener('resize', handleResize);
+//   }, []);
+
+//   return (
+//     <header className={styles.header}>
+//       {/* Accessibility Navbar */}
+//       <AccessibilityNavbar />
+      
+//       {/* Main Header Content */}
+//       <div className={styles.headerContent}>
+//         {/* Mobile view - Clean and centered */}
+//         {isMobile ? (
+//           <div className={styles.headerMobile}>
+//             {/* Main header image - responsive */}
+//             <div className={styles.headerMobileImageContainer}>
+//               <img 
+//                 src="/image copy copy.png" 
+//                 alt="Chandigarh State AIDS Control Society" 
+//                 className={styles.headerMobileImage}
+//               />
+//             </div>
+//           </div>
+//         ) : (
+//           /* Desktop view - unchanged */
+//           <div className={styles.headerDesktop}>
+//             <div className={styles.headerDesktopContent}>
+//               {/* Left - First image (image copy copy.png) */}
+//               <div className={styles.headerDesktopLeft}>
+//                 <img 
+//                   src="/image copy copy.png" 
+//                   alt="Header Left Image" 
+//                   className={styles.headerDesktopLeftImage}
+//                 />
+//               </div>
+              
+//               {/* Gap */}
+//               <div className={styles.headerDesktopGap}></div>
+              
+//               <div className={styles.headerDesktopCenter}>
+//                 <img 
+//                   src="/image.png" 
+//                   alt="CSACS Logo" 
+//                   className={styles.headerDesktopCenterImage}
+//                 />
+//               </div>
+              
+//               <div className={styles.headerDesktopRight}>
+//                 <img 
+//                   src="/image copy.png" 
+//                   alt="Government Logos" 
+//                   className={styles.headerDesktopRightImage}
+//                 />
+//               </div>
+//             </div>
+//           </div>
+//         )}
+//       </div>
+      
+//       {/* Draggable Floating Icons - Only show on mobile */}
+//       {isMobile && (
+//         <>
+//           <div className={styles.draggableIcon} data-position="right">
+//             <img 
+//               src="/image.png"
+//               alt="CSACS Logo"
+//               className={styles.draggableIconImage}
+//               draggable={false}
+//             />
+//           </div>
+          
+//           <div className={styles.draggableIcon} data-position="left">
+//             <img 
+//               src="/image copy.png"
+//               alt="Government Logos"
+//               className={styles.draggableIconImage}
+//               draggable={false}
+//             />
+//           </div>
+//         </>
+//       )}
+      
+//       {/* Bottom red border */}
+//       <div className={styles.redBorder}></div>
+      
+//       {/* Main Navigation */}
+//       <MainNavigation />
+//     </header>
+//   );
+// };
+
+// export default Header;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState, useEffect } from 'react';
+// import { useGetHeaderQuery } from '../../store/services/header.api';
+// import styles from './Header.module.css';
+
+// // ---------------- Dropdown Menu Component ----------------
+// interface DropdownMenuProps {
+//   isOpen: boolean;
+//   onClose: () => void;
+//   children: React.ReactNode;
+//   className?: string;
+// }
+
+// const DropdownMenu: React.FC<DropdownMenuProps> = ({ isOpen, onClose, children, className }) => {
+//   const [menuRef, setMenuRef] = useState<HTMLDivElement | null>(null);
+
+//   useEffect(() => {
+//     const handleClickOutside = (event: MouseEvent) => {
+//       if (menuRef && !menuRef.contains(event.target as Node)) {
+//         onClose();
+//       }
+//     };
+
+//     if (isOpen) {
+//       document.addEventListener('mousedown', handleClickOutside);
+//     }
+
+//     return () => {
+//       document.removeEventListener('mousedown', handleClickOutside);
+//     };
+//   }, [isOpen, onClose, menuRef]);
+
+//   return (
+//     <div
+//       ref={setMenuRef}
+//       className={`${styles.dropdownMenu} ${isOpen ? styles.dropdownMenuOpen : styles.dropdownMenuClosed} ${className || ''}`}
+//     >
+//       {children}
+//     </div>
+//   );
+// };
+
+// // ---------------- Navigation Item ----------------
+// interface NavItemProps {
+//   label: string;
+//   href?: string;
+//   dropdownItems?: Array<{
+//     label: string;
+//     href: string;
+//     description?: string;
+//   }>;
+//   onClick?: () => void;
+// }
+
+// const NavItem: React.FC<NavItemProps> = ({ label, href, dropdownItems, onClick }) => {
+//   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+//   const [isHovered, setIsHovered] = useState(false);
+//   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+
+//   const handleMouseEnter = () => {
+//     if (timeoutId) {
+//       clearTimeout(timeoutId);
+//       setTimeoutId(null);
+//     }
+//     setIsHovered(true);
+//     if (dropdownItems) {
+//       setIsDropdownOpen(true);
+//     }
+//   };
+
+//   const handleMouseLeave = () => {
+//     setIsHovered(false);
+//     const newTimeoutId = setTimeout(() => {
+//       setIsDropdownOpen(false);
+//     }, 150);
+//     setTimeoutId(newTimeoutId);
+//   };
+
+//   const handleClick = () => {
+//     if (onClick) onClick();
+//     if (!dropdownItems) setIsDropdownOpen(false);
+//   };
+
+//   useEffect(() => {
+//     return () => {
+//       if (timeoutId) clearTimeout(timeoutId);
+//     };
+//   }, [timeoutId]);
+
+//   return (
+//     <div
+//       className={styles.navItemContainer}
+//       onMouseEnter={handleMouseEnter}
+//       onMouseLeave={handleMouseLeave}
+//     >
+//       <a
+//         href={href}
+//         onClick={handleClick}
+//         className={`${styles.navItemLink} ${isHovered ? styles.navItemLinkHovered : ''}`}
+//       >
+//         {label}
+//         {dropdownItems && (
+//           <span
+//             className={`${styles.navItemArrow} ${isDropdownOpen ? styles.navItemArrowOpen : styles.navItemArrowClosed}`}
+//           >
+//             ▼
+//           </span>
+//         )}
+//       </a>
+
+//       {dropdownItems && (
+//         <DropdownMenu
+//           isOpen={isDropdownOpen}
+//           onClose={() => setIsDropdownOpen(false)}
+//         >
+//           {dropdownItems.map((item, index) => (
+//             <a
+//               key={index}
+//               href={item.href}
+//               className={`${styles.dropdownItem} ${index < dropdownItems.length - 1 ? styles.dropdownItemWithBorder : ''}`}
+//             >
+//               <div className={styles.dropdownItemLabel}>{item.label}</div>
+//               {item.description && (
+//                 <div className={styles.dropdownItemDescription}>{item.description}</div>
+//               )}
+//             </a>
+//           ))}
+//         </DropdownMenu>
+//       )}
+//     </div>
+//   );
+// };
+
+// // ---------------- Accessibility Navbar ----------------
+// const AccessibilityNavbar: React.FC = () => {
+//   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+//   useEffect(() => {
+//     const handleResize = () => setIsMobile(window.innerWidth <= 768);
+//     window.addEventListener('resize', handleResize);
+//     return () => window.removeEventListener('resize', handleResize);
+//   }, []);
+
+//   const handleScreenReader = () => {
+//     document.body.setAttribute('aria-live', 'polite');
+//     alert('Screen reader mode activated');
+//   };
+
+//   const handleSkipToMain = () => {
+//     const mainContent = document.querySelector('main');
+//     if (mainContent) {
+//       (mainContent as HTMLElement).focus();
+//       mainContent.scrollIntoView({ behavior: 'smooth' });
+//     }
+//   };
+
+//   const handleSkipToNavigation = () => {
+//     const navigation = document.querySelector('nav[id="navigation"]') || document.querySelector('.main-navigation');
+//     if (navigation) navigation.scrollIntoView({ behavior: 'smooth' });
+//   };
+
+//   const handleTextSizeIncrease = () => {
+//     const currentSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+//     document.documentElement.style.fontSize = `${Math.min(currentSize + 2, 24)}px`;
+//   };
+
+//   const handleTextSizeDecrease = () => {
+//     const currentSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+//     document.documentElement.style.fontSize = `${Math.max(currentSize - 2, 12)}px`;
+//   };
+
+//   const handleLanguageChange = (language: 'hindi' | 'english') => {
+//     console.log(`Language changed to: ${language}`);
+//   };
+
+//   if (isMobile) {
+//     return (
+//       <nav className={styles.accessibilityNavbarMobile}>
+//         <div className={styles.accessibilityContentMobile}>
+//           <div className={styles.languageContainer}>
+//             <button onClick={handleTextSizeIncrease} className={styles.accessibilityButtonMobile} aria-label="Increase Text Size">A+</button>
+//             <button onClick={handleTextSizeDecrease} className={styles.accessibilityButtonMobileSmall} aria-label="Decrease Text Size">A-</button>
+//           </div>
+//           <span className={styles.accessibilitySeparator}>|</span>
+//           <div className={styles.languageContainer}>
+//             <button onClick={() => handleLanguageChange('hindi')} className={styles.accessibilityButtonMobile}>हिंदी</button>
+//             <span className={styles.accessibilitySeparator}>|</span>
+//             <button onClick={() => handleLanguageChange('english')} className={styles.accessibilityButtonMobile}>EN</button>
+//           </div>
+//         </div>
+//       </nav>
+//     );
+//   }
+
+//   return (
+//     <nav className={styles.accessibilityNavbar}>
+//       <div className={styles.accessibilityContent}>
+//         <button onClick={handleScreenReader} className={styles.accessibilityButton}>Screen Reader</button>
+//         <span className={styles.accessibilitySeparator}>|</span>
+//         <button onClick={handleSkipToMain} className={styles.accessibilityButton}>Skip to Main</button>
+//         <span className={styles.accessibilitySeparator}>|</span>
+//         <button onClick={handleSkipToNavigation} className={styles.accessibilityButton}>Skip to Navigation</button>
+//         <span className={styles.accessibilitySeparator}>|</span>
+//         <div className={styles.textSizeContainer}>
+//           <span className={styles.textSizeLabel}>Text Size</span>
+//           <button onClick={handleTextSizeIncrease} className={styles.textSizeButton}>A+</button>
+//           <button onClick={handleTextSizeDecrease} className={styles.textSizeButtonSmall}>A-</button>
+//         </div>
+//         <span className={styles.accessibilitySeparator}>|</span>
+//         <button onClick={() => handleLanguageChange('hindi')} className={styles.accessibilityButton}>हिंदी</button>
+//         <span className={styles.accessibilitySeparator}>|</span>
+//         <button onClick={() => handleLanguageChange('english')} className={styles.accessibilityButton}>English</button>
+//       </div>
+//     </nav>
+//   );
+// };
+
+// // ---------------- Main Navigation ----------------
+// const MainNavigation: React.FC = () => {
+//   const [isMenuOpen, setIsMenuOpen] = useState(false);
+//   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+//   const { data: headerResponse, isLoading: headerLoading, isError: headerError } = useGetHeaderQuery();
+
+//   useEffect(() => {
+//     const handleResize = () => {
+//       setIsMobile(window.innerWidth <= 768);
+//       if (window.innerWidth > 768) setIsMenuOpen(false);
+//     };
+//     window.addEventListener('resize', handleResize);
+//     return () => window.removeEventListener('resize', handleResize);
+//   }, []);
+
+//   const getNavItemsFromAPI = () => {
+//     if (!headerResponse || !Array.isArray(headerResponse.data)) return [];
+//     return headerResponse.data.map((item: any) => ({
+//       key: `item-${item.id}`,
+//       label: item.name || item.title || 'Menu Item',
+//       href: item.url || item.other_url || '#',
+//       dropdownItems: item.children?.map((sub: any) => ({
+//         label: sub.name || sub.title || 'Sub Item',
+//         href: sub.url || '#',
+//         description: sub.description || ''
+//       })) || undefined
+//     }));
+//   };
+
+//   const navItems = getNavItemsFromAPI();
+
+//   if (headerLoading) {
+//     return (
+//       <nav id="navigation" className={`${styles.mainNavigation} main-navigation`}>
+//         <div className={styles.desktopNavigationContent}>Loading navigation...</div>
+//       </nav>
+//     );
+//   }
+
+//   if (headerError) {
+//     return (
+//       <nav id="navigation" className={`${styles.mainNavigation} main-navigation`}>
+//         <div className={styles.desktopNavigationContent}>Error loading navigation menu</div>
+//       </nav>
+//     );
+//   }
+
+//   if (navItems.length === 0) {
+//     return (
+//       <nav id="navigation" className={`${styles.mainNavigation} main-navigation`}>
+//         <div className={styles.desktopNavigationContent}>No navigation items available</div>
+//       </nav>
+//     );
+//   }
+
+//   if (isMobile) {
+//     return (
+//       <nav id="navigation" className={`${styles.mainNavigationMobile} main-navigation`}>
+//         <div className={styles.mobileMenuButtonContainer}>
+//           <button onClick={() => setIsMenuOpen(!isMenuOpen)} className={styles.mobileMenuButton}>
+//             <span className={styles.mobileMenuIcon}>{isMenuOpen ? '✕' : '☰'}</span> Menu
+//           </button>
+//         </div>
+//         {isMenuOpen && (
+//           <div className={styles.mobileMenu}>
+//             {navItems.map((item, index) => (
+//               <div key={item.key}>
+//                 <a href={item.href} className={styles.mobileMenuItem} onClick={() => setIsMenuOpen(false)}>
+//                   {item.label}
+//                 </a>
+//                 {item.dropdownItems && (
+//                   <div className={styles.mobileDropdownItems}>
+//                     {item.dropdownItems.map((dropdownItem, idx) => (
+//                       <a key={idx} href={dropdownItem.href} className={styles.mobileDropdownItem} onClick={() => setIsMenuOpen(false)}>
+//                         {dropdownItem.label}
+//                       </a>
+//                     ))}
+//                   </div>
+//                 )}
+//               </div>
+//             ))}
+//           </div>
+//         )}
+//       </nav>
+//     );
+//   }
+
+//   return (
+//     <nav id="navigation" className={`${styles.mainNavigation} main-navigation`}>
+//       <div className={styles.desktopNavigationContent}>
+//         {navItems.map((item) => (
+//           <NavItem key={item.key} label={item.label} href={item.href} dropdownItems={item.dropdownItems} />
+//         ))}
+//       </div>
+//     </nav>
+//   );
+// };
+
+// // ---------------- Header ----------------
+// const Header: React.FC = () => {
+//   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+//   useEffect(() => {
+//     const handleResize = () => setIsMobile(window.innerWidth <= 768);
+//     window.addEventListener('resize', handleResize);
+//     return () => window.removeEventListener('resize', handleResize);
+//   }, []);
+
+//   return (
+//     <header className={styles.header}>
+//       <AccessibilityNavbar />
+//       <div className={styles.headerContent}>
+//         {isMobile ? (
+//           <div className={styles.headerMobile}>
+//             <div className={styles.headerMobileImageContainer}>
+//               <img src="/image copy copy.png" alt="Chandigarh State AIDS Control Society" className={styles.headerMobileImage} />
+//             </div>
+//           </div>
+//         ) : (
+//           <div className={styles.headerDesktop}>
+//             <div className={styles.headerDesktopContent}>
+//               <div className={styles.headerDesktopLeft}>
+//                 <img src="/image copy copy.png" alt="Header Left" className={styles.headerDesktopLeftImage} />
+//               </div>
+//               <div className={styles.headerDesktopGap}></div>
+//               <div className={styles.headerDesktopCenter}>
+//                 <img src="/image.png" alt="CSACS Logo" className={styles.headerDesktopCenterImage} />
+//               </div>
+//               <div className={styles.headerDesktopRight}>
+//                 <img src="/image copy.png" alt="Government Logos" className={styles.headerDesktopRightImage} />
+//               </div>
+//             </div>
+//           </div>
+//         )}
+//       </div>
+//       {isMobile && (
+//         <>
+//           <div className={styles.draggableIcon} data-position="right">
+//             <img src="/image.png" alt="CSACS Logo" className={styles.draggableIconImage} draggable={false} />
+//           </div>
+//           <div className={styles.draggableIcon} data-position="left">
+//             <img src="/image copy.png" alt="Government Logos" className={styles.draggableIconImage} draggable={false} />
+//           </div>
+//         </>
+//       )}
+//       <div className={styles.redBorder}></div>
+//       <MainNavigation />
+//     </header>
+//   );
+// };
+
+// export default Header;
+
+
+
+
+
+
+
+
+
+import React, { useState, useEffect } from "react";
+import styles from "./Header.module.css";
+import { useGetHeaderQuery } from "../../store/services/header.api";
+
+// =================== Dropdown Menu Component ===================
+interface DropdownMenuProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
   className?: string;
 }
 
-const DraggableIcon: React.FC<DraggableIconProps> = ({ src, alt, initialPosition, className = "" }) => {
-  const [position, setPosition] = useState(initialPosition);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const iconRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!iconRef.current) return;
-    
-    const rect = iconRef.current.getBoundingClientRect();
-    setDragOffset({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    });
-    setIsDragging(true);
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!iconRef.current) return;
-    
-    const rect = iconRef.current.getBoundingClientRect();
-    const touch = e.touches[0];
-    setDragOffset({
-      x: touch.clientX - rect.left,
-      y: touch.clientY - rect.top
-    });
-    setIsDragging(true);
-  };
+const DropdownMenu: React.FC<DropdownMenuProps> = ({
+  isOpen,
+  onClose,
+  children,
+  className,
+}) => {
+  const [menuRef, setMenuRef] = useState<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging) return;
-      
-      const newX = e.clientX - dragOffset.x;
-      const newY = e.clientY - dragOffset.y;
-      
-      // Keep within viewport bounds
-      const maxX = window.innerWidth - 60; // icon width
-      const maxY = window.innerHeight - 60; // icon height
-      
-      setPosition({
-        x: Math.max(0, Math.min(newX, maxX)),
-        y: Math.max(0, Math.min(newY, maxY))
-      });
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (!isDragging) return;
-      e.preventDefault();
-      
-      const touch = e.touches[0];
-      const newX = touch.clientX - dragOffset.x;
-      const newY = touch.clientY - dragOffset.y;
-      
-      // Keep within viewport bounds
-      const maxX = window.innerWidth - 60; // icon width
-      const maxY = window.innerHeight - 60; // icon height
-      
-      setPosition({
-        x: Math.max(0, Math.min(newX, maxX)),
-        y: Math.max(0, Math.min(newY, maxY))
-      });
-    };
-
-    const handleMouseUp = () => {
-      setIsDragging(false);
-    };
-
-    const handleTouchEnd = () => {
-      setIsDragging(false);
-    };
-
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      document.addEventListener('touchmove', handleTouchMove, { passive: false });
-      document.addEventListener('touchend', handleTouchEnd);
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [isDragging, dragOffset]);
-
-  // Update initial position on window resize for mobile
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 768) {
-        const maxX = window.innerWidth - 60;
-        const maxY = window.innerHeight - 60;
-        setPosition(prev => ({
-          x: Math.min(prev.x, maxX),
-          y: Math.min(prev.y, maxY)
-        }));
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef && !menuRef.contains(event.target as Node)) {
+        onClose();
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, onClose, menuRef]);
 
   return (
     <div
-      ref={iconRef}
-      style={{
-        position: 'fixed',
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-        zIndex: 1000,
-        cursor: 'move',
-        userSelect: 'none',
-        transition: isDragging ? 'none' : 'all 0.2s ease',
-        boxShadow: isDragging ? '0 8px 25px rgba(0, 0, 0, 0.15)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
-        transform: isDragging ? 'scale(1.05)' : 'scale(1)',
-        borderRadius: '8px',
-        backgroundColor: 'white',
-        padding: '4px'
-      }}
-      className={className}
-      onMouseDown={handleMouseDown}
-      onTouchStart={handleTouchStart}
-      draggable={false}
+      ref={setMenuRef}
+      className={`${styles.dropdownMenu} ${
+        isOpen ? styles.dropdownMenuOpen : styles.dropdownMenuClosed
+      } ${className || ""}`}
     >
-      <img 
-        src={src}
-        alt={alt}
-        style={{
-          height: '40px',
-          width: 'auto',
-          objectFit: 'contain',
-          pointerEvents: 'none',
-          borderRadius: '4px'
-        }}
-        draggable={false}
-      />
+      {children}
     </div>
   );
 };
 
+// =================== Nav Item Component ===================
+interface NavItemProps {
+  label: string;
+  href?: string;
+  dropdownItems?: Array<{
+    label: string;
+    href: string;
+    description?: string;
+  }>;
+  onClick?: () => void;
+}
+
+const NavItem: React.FC<NavItemProps> = ({
+  label,
+  href,
+  dropdownItems,
+  onClick,
+}) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      setTimeoutId(null);
+    }
+    setIsHovered(true);
+    if (dropdownItems) {
+      setIsDropdownOpen(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    const newTimeoutId = setTimeout(() => {
+      setIsDropdownOpen(false);
+    }, 150);
+    setTimeoutId(newTimeoutId);
+  };
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    }
+    if (!dropdownItems) {
+      setIsDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [timeoutId]);
+
+  return (
+    <div
+      className={styles.navItemContainer}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <a
+        href={href}
+        onClick={handleClick}
+        className={`${styles.navItemLink} ${
+          isHovered ? styles.navItemLinkHovered : ""
+        }`}
+      >
+        {label}
+        {dropdownItems && (
+          <span
+            className={`${styles.navItemArrow} ${
+              isDropdownOpen
+                ? styles.navItemArrowOpen
+                : styles.navItemArrowClosed
+            }`}
+          >
+            ▼
+          </span>
+        )}
+      </a>
+
+      {dropdownItems && (
+        <DropdownMenu
+          isOpen={isDropdownOpen}
+          onClose={() => setIsDropdownOpen(false)}
+        >
+          {dropdownItems.map((item, index) => (
+            <a
+              key={index}
+              href={item.href}
+              className={`${styles.dropdownItem} ${
+                index < dropdownItems.length - 1
+                  ? styles.dropdownItemWithBorder
+                  : ""
+              }`}
+            >
+              <div className={styles.dropdownItemLabel}>{item.label}</div>
+              {item.description && (
+                <div className={styles.dropdownItemDescription}>
+                  {item.description}
+                </div>
+              )}
+            </a>
+          ))}
+        </DropdownMenu>
+      )}
+    </div>
+  );
+};
+
+// =================== Accessibility Navbar ===================
 const AccessibilityNavbar: React.FC = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -157,120 +1778,90 @@ const AccessibilityNavbar: React.FC = () => {
       setIsMobile(window.innerWidth <= 768);
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleScreenReader = () => {
-    document.body.setAttribute('aria-live', 'polite');
-    alert('Screen reader mode activated');
+    document.body.setAttribute("aria-live", "polite");
+    alert("Screen reader mode activated");
   };
 
   const handleSkipToMain = () => {
-    const mainContent = document.querySelector('main');
+    const mainContent = document.querySelector("main");
     if (mainContent) {
       mainContent.focus();
-      mainContent.scrollIntoView({ behavior: 'smooth' });
+      mainContent.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   const handleSkipToNavigation = () => {
-    const navigation = document.querySelector('nav[id="navigation"]') || document.querySelector('.main-navigation');
+    const navigation =
+      document.querySelector('nav[id="navigation"]') ||
+      document.querySelector(".main-navigation");
     if (navigation) {
-      navigation.scrollIntoView({ behavior: 'smooth' });
+      navigation.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   const handleTextSizeIncrease = () => {
-    const currentSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    document.documentElement.style.fontSize = `${Math.min(currentSize + 2, 24)}px`;
+    const currentSize = parseFloat(
+      getComputedStyle(document.documentElement).fontSize
+    );
+    document.documentElement.style.fontSize = `${Math.min(
+      currentSize + 2,
+      24
+    )}px`;
   };
 
   const handleTextSizeDecrease = () => {
-    const currentSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    document.documentElement.style.fontSize = `${Math.max(currentSize - 2, 12)}px`;
+    const currentSize = parseFloat(
+      getComputedStyle(document.documentElement).fontSize
+    );
+    document.documentElement.style.fontSize = `${Math.max(
+      currentSize - 2,
+      12
+    )}px`;
   };
 
-  const handleLanguageChange = (language: 'hindi' | 'english') => {
+  const handleLanguageChange = (language: "hindi" | "english") => {
     console.log(`Language changed to: ${language}`);
   };
 
   if (isMobile) {
     return (
-      <nav style={{ 
-        width: '100%', 
-        backgroundColor: '#bef264', 
-        padding: '6px 8px',
-        fontSize: '11px',
-        fontWeight: '600'
-      }}>
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          gap: '8px',
-          flexWrap: 'wrap'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <button 
+      <nav className={styles.accessibilityNavbarMobile}>
+        <div className={styles.accessibilityContentMobile}>
+          <div className={styles.languageContainer}>
+            <button
               onClick={handleTextSizeIncrease}
-              style={{
-                color: '#991b1b',
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                fontSize: '11px',
-                padding: '2px 4px'
-              }}
+              className={styles.accessibilityButtonMobile}
               aria-label="Increase Text Size"
             >
               A+
             </button>
-            <button 
+            <button
               onClick={handleTextSizeDecrease}
-              style={{
-                color: '#991b1b',
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                fontSize: '9px',
-                padding: '2px 4px'
-              }}
+              className={styles.accessibilityButtonMobileSmall}
               aria-label="Decrease Text Size"
             >
               A-
             </button>
           </div>
-          
-          <span style={{ color: '#991b1b' }}>|</span>
-          
-          <div style={{ display: 'flex', gap: '4px' }}>
-            <button 
-              onClick={() => handleLanguageChange('hindi')}
-              style={{
-                color: '#991b1b',
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '11px',
-                padding: '2px 4px'
-              }}
+
+          <span className={styles.accessibilitySeparator}>|</span>
+
+          <div className={styles.languageContainer}>
+            <button
+              onClick={() => handleLanguageChange("hindi")}
+              className={styles.accessibilityButtonMobile}
             >
               हिंदी
             </button>
-            <span style={{ color: '#991b1b' }}>|</span>
-            <button 
-              onClick={() => handleLanguageChange('english')}
-              style={{
-                color: '#991b1b',
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '11px',
-                padding: '2px 4px'
-              }}
+            <span className={styles.accessibilitySeparator}>|</span>
+            <button
+              onClick={() => handleLanguageChange("english")}
+              className={styles.accessibilityButtonMobile}
             >
               EN
             </button>
@@ -281,150 +1872,71 @@ const AccessibilityNavbar: React.FC = () => {
   }
 
   return (
-    <nav style={{ width: '100%', backgroundColor: '#bef264', padding: '4px 8px 0 8px' }}>
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        fontSize: '12px', 
-        fontWeight: 700, 
-        overflowX: 'auto',
-        fontFamily: 'Arial, sans-serif',
-        flexWrap: 'wrap',
-        gap: '2px'
-      }}>
-        <button 
+    <nav className={styles.accessibilityNavbar}>
+      <div className={styles.accessibilityContent}>
+        <button
           onClick={handleScreenReader}
-          style={{
-            color: '#991b1b',
-            backgroundColor: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-            padding: '2px 4px',
-            textDecoration: 'none',
-            fontSize: 'inherit'
-          }}
-          onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-          onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+          className={styles.accessibilityButton}
           aria-label="Screen Reader"
         >
           Screen Reader
         </button>
-        
-        <span style={{ color: '#991b1b', margin: '0 2px' }}>|</span>
-        
-        <button 
+
+        <span className={styles.accessibilitySeparator}>|</span>
+
+        <button
           onClick={handleSkipToMain}
-          style={{
-            color: '#991b1b',
-            backgroundColor: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-            padding: '2px 4px',
-            textDecoration: 'none',
-            fontSize: 'inherit'
-          }}
-          onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-          onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+          className={styles.accessibilityButton}
           aria-label="Skip to Main"
         >
           Skip to Main
         </button>
-        
-        <span style={{ color: '#991b1b', margin: '0 2px' }}>|</span>
-        
-        <button 
+
+        <span className={styles.accessibilitySeparator}>|</span>
+
+        <button
           onClick={handleSkipToNavigation}
-          style={{
-            color: '#991b1b',
-            backgroundColor: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-            padding: '2px 4px',
-            textDecoration: 'none',
-            fontSize: 'inherit'
-          }}
-          onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-          onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+          className={styles.accessibilityButton}
           aria-label="Skip to Navigation"
         >
           Skip to Navigation
         </button>
-        
-        <span style={{ color: '#991b1b', margin: '0 2px' }}>|</span>
-        
-        <div style={{ display: 'flex', alignItems: 'center', gap: '2px', padding: '0 2px' }}>
-          <span style={{ color: '#991b1b', whiteSpace: 'nowrap', fontSize: 'inherit' }}>Text Size</span>
-          <button 
+
+        <span className={styles.accessibilitySeparator}>|</span>
+
+        <div className={styles.textSizeContainer}>
+          <span className={styles.textSizeLabel}>Text Size</span>
+          <button
             onClick={handleTextSizeIncrease}
-            style={{
-              color: '#991b1b',
-              backgroundColor: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: '12px'
-            }}
+            className={styles.textSizeButton}
             aria-label="Increase Text Size"
           >
             A+
           </button>
-          <button 
+          <button
             onClick={handleTextSizeDecrease}
-            style={{
-              color: '#991b1b',
-              backgroundColor: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: '10px'
-            }}
+            className={styles.textSizeButtonSmall}
             aria-label="Decrease Text Size"
           >
             A-
           </button>
         </div>
-        
-        <span style={{ color: '#991b1b', margin: '0 2px' }}>|</span>
-        
-        <button 
-          onClick={() => handleLanguageChange('hindi')}
-          style={{
-            color: '#991b1b',
-            backgroundColor: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-            padding: '2px 4px',
-            textDecoration: 'none',
-            fontSize: 'inherit'
-          }}
-          onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-          onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+
+        <span className={styles.accessibilitySeparator}>|</span>
+
+        <button
+          onClick={() => handleLanguageChange("hindi")}
+          className={styles.accessibilityButton}
           aria-label="Switch to Hindi language"
         >
-          Hindi
+          हिंदी
         </button>
-        
-        <span style={{ color: '#991b1b', margin: '0 2px' }}>|</span>
-        
-        <button 
-          onClick={() => handleLanguageChange('english')}
-          style={{
-            color: '#991b1b',
-            backgroundColor: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-            padding: '2px 4px',
-            textDecoration: 'none',
-            fontSize: 'inherit'
-          }}
-          onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-          onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+
+        <span className={styles.accessibilitySeparator}>|</span>
+
+        <button
+          onClick={() => handleLanguageChange("english")}
+          className={styles.accessibilityButton}
           aria-label="Switch to English language"
         >
           English
@@ -434,10 +1946,12 @@ const AccessibilityNavbar: React.FC = () => {
   );
 };
 
+// =================== Main Navigation (Dynamic API) ===================
 const MainNavigation: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  
+  const { data: navItemsData, isLoading, isError } = useGetHeaderQuery();
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -445,106 +1959,94 @@ const MainNavigation: React.FC = () => {
         setIsMenuOpen(false);
       }
     };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const navItems = [
-    { key: 'home', label: 'Home' },
-    { key: 'hivAids', label: 'HIV/AIDS' },
-    { key: 'services', label: 'Services' },
-    { key: 'programs', label: 'Programs' },
-    { key: 'iecMaterial', label: 'IEC Material' },
-    { key: 'factsAndFigures', label: 'Facts & Figures' },
-    { key: 'activities', label: 'Activities' },
-    { key: 'opportunities', label: 'Opportunities' },
-    { key: 'relatedLinks', label: 'Related Links' }
-  ];
+  if (isLoading) return <nav className={styles.mainNavigation}>Loading...</nav>;
+  if (isError || !navItemsData)
+    return <nav className={styles.mainNavigation}>Error loading menu</nav>;
+
+  // Map API data to expected format
+  const navItems = navItemsData.map((item: any) => ({
+    id: item.id,
+    label: item.label || item.title,
+    href: item.href || "#",
+    children: item.children
+      ? item.children.map((child: any) => ({
+          label: child.label || child.title,
+          href: child.href || "#",
+          description: child.description || "",
+        }))
+      : [],
+  }));
 
   if (isMobile) {
     return (
-      <nav id="navigation" style={{ backgroundColor: 'white', borderBottom: '1px solid #dc2626', position: 'relative' }} className="main-navigation">
-        {/* Mobile Menu Button */}
-        <div style={{ 
-          padding: '12px 16px', 
-          borderBottom: isMenuOpen ? '1px solid #dc2626' : 'none',
-          backgroundColor: 'white'
-        }}>
+      <nav
+        id="navigation"
+        className={`${styles.mainNavigationMobile} main-navigation`}
+      >
+        <div
+          className={`${styles.mobileMenuButtonContainer} ${
+            isMenuOpen ? styles.mobileMenuButtonOpen : ""
+          }`}
+        >
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            style={{
-              backgroundColor: 'transparent',
-              border: 'none',
-              color: '#dc2626',
-              fontSize: '16px',
-              cursor: 'pointer',
-              padding: '8px 0',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              width: '100%',
-              fontWeight: '600'
-            }}
+            className={styles.mobileMenuButton}
             aria-label="Toggle navigation menu"
           >
-            <span style={{ 
-              fontSize: '18px',
-              transition: 'transform 0.3s ease',
-              transform: isMenuOpen ? 'rotate(90deg)' : 'rotate(0deg)'
-            }}>
-              {isMenuOpen ? '✕' : '☰'}
+            <span
+              className={`${styles.mobileMenuIcon} ${
+                isMenuOpen
+                  ? styles.mobileMenuIconOpen
+                  : styles.mobileMenuIconClosed
+              }`}
+            >
+              {isMenuOpen ? "✕" : "☰"}
             </span>
             <span>Menu</span>
           </button>
         </div>
 
-        {/* Mobile Navigation Menu */}
-        <div 
-          style={{
-            position: 'absolute',
-            top: '100%',
-            left: 0,
-            right: 0,
-            backgroundColor: 'white',
-            boxShadow: isMenuOpen ? '0 4px 12px rgba(0, 0, 0, 0.15)' : 'none',
-            maxHeight: isMenuOpen ? '400px' : '0',
-            overflowY: 'auto',
-            transition: 'all 0.3s ease',
-            zIndex: 1000,
-            border: isMenuOpen ? '1px solid #dc2626' : 'none',
-            borderTop: 'none'
-          }}
+        <div
+          className={`${styles.mobileMenu} ${
+            isMenuOpen ? styles.mobileMenuOpen : styles.mobileMenuClosed
+          } ${isMenuOpen ? styles.mobileMenuVisible : ""}`}
         >
           {navItems.map((item, index) => (
-            <a 
-              key={item.key}
-              href={`#${item.key.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
-              style={{
-                display: 'block',
-                color: '#dc2626',
-                textDecoration: 'none',
-                padding: '14px 20px',
-                borderBottom: index < navItems.length - 1 ? '1px solid #f0f0f0' : 'none',
-                fontSize: '15px',
-                fontFamily: 'sans-serif',
-                fontWeight: '500',
-                transition: 'all 0.2s ease'
-              }}
-              onClick={() => setIsMenuOpen(false)}
-              onTouchStart={(e) => {
-                e.currentTarget.style.backgroundColor = '#f9f9f9';
-                e.currentTarget.style.color = '#991b1b';
-              }}
-              onTouchEnd={(e) => {
-                setTimeout(() => {
-                  e.currentTarget.style.backgroundColor = 'white';
-                  e.currentTarget.style.color = '#dc2626';
-                }, 150);
-              }}
-            >
-              {item.label}
-            </a>
+            <div key={item.id}>
+              <a
+                href={item.href}
+                className={`${styles.mobileMenuItem} ${
+                  index < navItems.length - 1
+                    ? styles.mobileMenuItemWithBorder
+                    : ""
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {item.label}
+              </a>
+              {item.children.length > 0 && (
+                <div className={styles.mobileDropdownItems}>
+                  {item.children.map((dropdownItem, dropdownIndex) => (
+                    <a
+                      key={dropdownIndex}
+                      href={dropdownItem.href}
+                      className={`${styles.mobileDropdownItem} ${
+                        dropdownIndex < item.children.length - 1
+                          ? styles.mobileDropdownItemWithBorder
+                          : ""
+                      }`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {dropdownItem.label}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </nav>
@@ -552,44 +2054,16 @@ const MainNavigation: React.FC = () => {
   }
 
   return (
-    <nav id="navigation" style={{ backgroundColor: 'white', borderBottom: '1px solid #dc2626' }} className="main-navigation">
-      {/* Desktop Navigation */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px 8px', overflowX: 'auto' }}>
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          gap: '4px', 
-          fontSize: '14px', 
-          fontFamily: 'sans-serif', 
-          whiteSpace: 'nowrap',
-          minWidth: 'max-content'
-        }}>
-          {navItems.map((item, index) => (
-            <React.Fragment key={item.key}>
-              <a 
-                href={`#${item.key.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
-                style={{
-                  color: '#dc2626',
-                  textDecoration: 'none',
-                  padding: '0 8px',
-                  whiteSpace: 'nowrap'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.color = '#991b1b';
-                  e.currentTarget.style.textDecoration = 'underline';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.color = '#dc2626';
-                  e.currentTarget.style.textDecoration = 'none';
-                }}
-              >
-                {item.label}
-              </a>
-              {index < navItems.length - 1 && (
-                <span style={{ color: '#dc2626', margin: '0 4px' }}>|</span>
-              )}
-            </React.Fragment>
+    <nav id="navigation" className={`${styles.mainNavigation} main-navigation`}>
+      <div className={styles.desktopNavigation}>
+        <div className={styles.desktopNavigationContent}>
+          {navItems.map((item) => (
+            <NavItem
+              key={item.id}
+              label={item.label}
+              href={item.href}
+              dropdownItems={item.children}
+            />
           ))}
         </div>
       </div>
@@ -597,6 +2071,7 @@ const MainNavigation: React.FC = () => {
   );
 };
 
+// =================== Main Header ===================
 const Header: React.FC = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -604,135 +2079,93 @@ const Header: React.FC = () => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
-    <header style={{ backgroundColor: 'white', width: '100%', position: 'relative' }}>
-      {/* Accessibility Navbar */}
+    <header className={styles.header}>
       <AccessibilityNavbar />
-      
-      {/* Main Header Content */}
-      <div style={{ width: '100%', backgroundColor: 'white' }}>
-        {/* Mobile view - Clean and centered */}
+
+      <div className={styles.headerContent}>
         {isMobile ? (
-          <div style={{ 
-            padding: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '12px'
-          }}>
-            {/* Main header image - responsive */}
-            <div style={{ 
-              width: '100%',
-              maxWidth: '350px',
-              display: 'flex',
-              justifyContent: 'center'
-            }}>
-              <img 
-                src="/image copy copy.png" 
-                alt="Chandigarh State AIDS Control Society" 
-                style={{ 
-                  width: '100%', 
-                  height: 'auto', 
-                  objectFit: 'contain',
-                  maxHeight: '120px'
-                }}
+          <div className={styles.headerMobile}>
+            <div className={styles.headerMobileImageContainer}>
+              <img
+                src="/image copy copy.png"
+                alt="Chandigarh State AIDS Control Society"
+                className={styles.headerMobileImage}
               />
             </div>
           </div>
         ) : (
-          /* Desktop view - unchanged */
-          <div style={{ padding: '16px' }}>
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'space-between', 
-              width: '100%', 
-              maxWidth: '1280px', 
-              margin: '0 auto' 
-            }}>
-              {/* Left - First image (image copy copy.png) */}
-              <div style={{ flexShrink: 0, paddingLeft: '8px' }}>
-                <img 
-                  src="/image copy copy.png" 
-                  alt="Header Left Image" 
-                  style={{ height: '208px', width: 'auto', objectFit: 'contain', padding: '0 16px' }}
+          <div className={styles.headerDesktop}>
+            <div className={styles.headerDesktopContent}>
+              <div className={styles.headerDesktopLeft}>
+                <img
+                  src="/image copy copy.png"
+                  alt="Header Left Image"
+                  className={styles.headerDesktopLeftImage}
                 />
               </div>
-              
-              {/* Gap */}
-              <div style={{ width: '32px' }}></div>
-              
-              <div style={{ flexShrink: 0 }}>
-                <img 
-                  src="/image.png" 
-                  alt="CSACS Logo" 
-                  style={{ height: '56px', width: 'auto', objectFit: 'contain', padding: '0 12px' }}
+              <div className={styles.headerDesktopGap}></div>
+              <div className={styles.headerDesktopCenter}>
+                <img
+                  src="/image.png"
+                  alt="CSACS Logo"
+                  className={styles.headerDesktopCenterImage}
                 />
               </div>
-              
-              <div style={{ flexShrink: 0 }}>
-                <img 
-                  src="/image copy.png" 
-                  alt="Government Logos" 
-                  style={{ height: '56px', width: 'auto', objectFit: 'contain' }}
+              <div className={styles.headerDesktopRight}>
+                <img
+                  src="/image copy.png"
+                  alt="Government Logos"
+                  className={styles.headerDesktopRightImage}
                 />
               </div>
             </div>
           </div>
         )}
       </div>
-      
-      {/* Draggable Floating Icons - Only show on mobile */}
+
       {isMobile && (
         <>
-          <DraggableIcon
-            src="/image.png"
-            alt="CSACS Logo"
-            initialPosition={{ x: Math.max(0, window.innerWidth - 70), y: 200 }}
-          />
-          
-          <DraggableIcon
-            src="/image copy.png"
-            alt="Government Logos"
-            initialPosition={{ x: 10, y: 200 }}
-          />
+          <div className={styles.draggableIcon} data-position="right">
+            <img
+              src="/image.png"
+              alt="CSACS Logo"
+              className={styles.draggableIconImage}
+              draggable={false}
+            />
+          </div>
+          <div className={styles.draggableIcon} data-position="left">
+            <img
+              src="/image copy.png"
+              alt="Government Logos"
+              className={styles.draggableIconImage}
+              draggable={false}
+            />
+          </div>
         </>
       )}
-      
-      {/* Bottom red border */}
-      <div style={{ width: '100%', height: '4px', backgroundColor: '#dc2626' }}></div>
-      
-      {/* Main Navigation */}
+
+      <div className={styles.redBorder}></div>
+
       <MainNavigation />
-      
-      <style>{`
-        @media (max-width: 768px) {
-          .desktop-only { display: none !important; }
-        }
-        @media (min-width: 769px) {
-          .mobile-only { display: none !important; }
-        }
-        
-        /* Smooth scrolling for anchor links */
-        html {
-          scroll-behavior: smooth;
-        }
-        
-        /* Better touch targets for mobile */
-        @media (max-width: 768px) {
-          button, a {
-            min-height: 44px;
-            min-width: 44px;
-          }
-        }
-      `}</style>
     </header>
   );
 };
 
 export default Header;
+
+
+
+
+
+
+
+
+
+
+
+

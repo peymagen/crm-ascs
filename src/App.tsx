@@ -8,7 +8,9 @@ import ProtectedRoute from "./components/Layout/protectedRoute";
 import Layout from "./components/Layout";
 import PublicLayout from "./components/Layout/publicLayout";
 import PublicRoute from "./components/Layout/publicRoute";
+import GalleryPage from "./pages/gallery";
 import "./i18n";
+
 
 function App() {
   return (
@@ -32,6 +34,7 @@ function App() {
           }
         >
           <Route path="/" element={<Login />} />
+          <Route path="/gallery" element={<GalleryPage />} />
         </Route>
 
         {/* Protected routes - accessible to all authenticated users */}

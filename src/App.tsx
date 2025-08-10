@@ -11,6 +11,8 @@ import PublicRoute from "./components/Layout/publicRoute";
 import "./i18n";
 import Home from "./pages/home";
 import Dashboard from "./pages/admin/dashboard";
+import AddOpportunity from "./pages/admin/Opportunities/manipulate";
+import OpportunityData from "./pages/admin/Opportunities";
 
 function App() {
   return (
@@ -48,6 +50,7 @@ function App() {
         >
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
+        <Route path="/admin/opportunities" element={<OpportunityData/>}/>
       </Routes>
     </Suspense>
   );

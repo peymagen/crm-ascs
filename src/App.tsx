@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/Layout/protectedRoute";
 import Layout from "./components/Layout";
 import PublicLayout from "./components/Layout/publicLayout";
 import PublicRoute from "./components/Layout/publicRoute";
+import GalleryPage from "./pages/gallery";
 import "./i18n";
 import Home from "./pages/home";
 import Dashboard from "./pages/admin/dashboard";
@@ -36,6 +37,7 @@ function App() {
           }
         >
           <Route path="/" element={<Home />} />
+          <Route path="/gallery" element={<GalleryPage />} />
         </Route>
 
         {/* Protected routes - accessible to all authenticated users */}

@@ -110,22 +110,102 @@
 .draggableIcon {
   position: fixed;
   z-index: 1000;
-  cursor: move;
   user-select: none;
-  transition: all 0.2s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   background-color: white;
   padding: 4px;
+  cursor: grab;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  touch-action: none;
+  will-change: transform;
 }
 
-.draggableIcon.dragging {
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+/* Initial positioning */
+.draggableIcon[data-position="right"] {
+  right: 10px;
+  top: 200px;
+}
+
+.draggableIcon[data-position="left"] {
+  left: 10px;
+  top: 200px;
+}
+
+/* Hover and active states */
+.draggableIcon:hover {
   transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.draggableIcon.notDragging {
-  transform: scale(1);
+.draggableIcon:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+}
+
+/* CSS-based dragging simulation using transform */
+.draggableIcon:active {
+  animation: dragFloat 0.1s ease-in-out infinite alternate;
+}
+
+@keyframes dragFloat {
+  0% {
+    transform: scale(1.1) translateY(0px);
+  }
+  100% {
+    transform: scale(1.1) translateY(-2px);
+  }
+}
+
+/* Touch-friendly dragging */
+@media (hover: none) and (pointer: coarse) {
+  .draggableIcon {
+    cursor: grab;
+  }
+  
+  .draggableIcon:active {
+    cursor: grabbing;
+    animation: touchDrag 0.2s ease-in-out;
+  }
+  
+  @keyframes touchDrag {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.15);
+    }
+    100% {
+      transform: scale(1.1);
+    }
+  }
+}
+
+/* Responsive positioning */
+@media (max-width: 480px) {
+  .draggableIcon[data-position="right"] {
+    right: 5px;
+    top: 180px;
+  }
+  
+  .draggableIcon[data-position="left"] {
+    left: 5px;
+    top: 180px;
+  }
+}
+
+@media (max-width: 360px) {
+  .draggableIcon[data-position="right"] {
+    right: 2px;
+    top: 160px;
+  }
+  
+  .draggableIcon[data-position="left"] {
+    left: 2px;
+    top: 160px;
+  }
 }
 
 .draggableIconImage {
@@ -134,6 +214,85 @@
   object-fit: contain;
   pointer-events: none;
   border-radius: 4px;
+  transition: filter 0.2s ease;
+}
+
+/* Image effects during interaction */
+.draggableIcon:active .draggableIconImage {
+  filter: brightness(1.1) contrast(1.05);
+}
+
+/* Pulse animation for better visibility */
+.draggableIcon {
+  animation: subtlePulse 3s ease-in-out infinite;
+}
+
+@keyframes subtlePulse {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Disable pulse on interaction */
+.draggableIcon:hover,
+.draggableIcon:active {
+  animation: none;
+}
+
+/* Enhanced visual feedback */
+.draggableIcon::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+  border-radius: 10px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.draggableIcon:hover::before {
+  opacity: 0.3;
+}
+
+.draggableIcon:active::before {
+  opacity: 0.5;
+}
+
+/* Smooth movement simulation */
+.draggableIcon {
+  transition: 
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.2s ease;
+}
+
+/* Focus states for accessibility */
+.draggableIcon:focus {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .draggableIcon {
+    animation: none;
+    transition: none;
+  }
+  
+  .draggableIcon:hover {
+    transform: none;
+  }
+  
+  .draggableIcon:active {
+    animation: none;
+  }
 }
 
 .dropdownMenu {
@@ -169,7 +328,7 @@
 }
 
 .navItemLink {
-  color: var(--primary-color);
+  color: #dc2626;
   text-decoration: none;
   padding: 12px 16px;
   display: block;
@@ -181,8 +340,9 @@
   position: relative;
 }
 
-.navItemLink:hover {
-  color: var(--dark-text-color);
+.navItemLink:hover,
+.navItemLinkHovered {
+  color: #991b1b;
   text-decoration: underline;
 }
 
@@ -208,6 +368,10 @@
   text-decoration: none;
   transition: all 0.2s ease;
   font-size: 13px;
+}
+
+.dropdownItemWithBorder {
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .dropdownItem:hover {
@@ -240,6 +404,14 @@
   position: relative;
 }
 
+.mobileMenuButtonContainer {
+  background-color: white;
+}
+
+.mobileMenuButtonContainer.mobileMenuButtonOpen {
+  background-color: white;
+}
+
 .mobileMenuButton {
   padding: 12px 16px;
   background-color: var(--secondary-color);
@@ -260,10 +432,10 @@
   color: white;
 }
 
-.mobileMenuButtonOpen {
-  border-bottom: 1px solid var(--primary-color);
+.mobileMenuButtonOpen .mobileMenuButton {
   background-color: var(--primary-color);
   color: white;
+  border-bottom: 1px solid var(--primary-color);
 }
 
 .mobileMenuIcon {
@@ -285,11 +457,15 @@
   left: 0;
   right: 0;
   background-color: var(--secondary-color);
-  max-height: 400px;
+  max-height: 0;
   overflow-y: auto;
   transition: all 0.3s ease;
   z-index: 1000;
   border-top: none;
+}
+
+.mobileMenuVisible {
+  max-height: 400px;
 }
 
 .mobileMenuOpen {
@@ -314,6 +490,10 @@
   transition: all 0.2s ease;
 }
 
+.mobileMenuItemWithBorder {
+  border-bottom: 1px solid #f0f0f0;
+}
+
 .mobileMenuItem:hover {
   background-color: var(--primary-color);
   color: white;
@@ -331,6 +511,10 @@
   padding: 8px 20px;
   font-size: 13px;
   transition: all 0.2s ease;
+}
+
+.mobileDropdownItemWithBorder {
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .mobileDropdownItem:hover {
@@ -471,5 +655,18 @@ html {
   button, a {
     min-height: 44px;
     min-width: 44px;
+  }
+  
+  /* Enhanced touch interaction for draggable icons */
+  .draggableIcon {
+    min-height: 52px;
+    min-width: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .draggableIconImage {
+    height: 36px;
   }
 }

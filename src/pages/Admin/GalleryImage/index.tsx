@@ -12,10 +12,10 @@ import {
   useDeleteGalleryImageMutation,
 } from "../../../store/services/galleryImage.api";
 
-export interface GalleryImageItem {
+export interface GalleryImage {
   id: number;
   ref_id: number;
-  image: string;
+  image: string; // stored path or URL
 }
 
 const GalleryImageManagement: React.FC = () => {
@@ -24,12 +24,10 @@ const GalleryImageManagement: React.FC = () => {
 
   const [modalData, setModalData] = useState<{
     mode: "add" | "edit";
-    imageData?: GalleryImageItem;
+    imageData?: GalleryImage;
   } | null>(null);
 
-  const [deleteTarget, setDeleteTarget] = useState<GalleryImageItem | null>(
-    null
-  );
+  const [deleteTarget, setDeleteTarget] = useState<GalleryImage | null>(null);
 
   // Fetch gallery images
   const {
@@ -49,16 +47,16 @@ const GalleryImageManagement: React.FC = () => {
     useDeleteGalleryImageMutation();
 
   const images = queryData?.data ?? [];
+
+  console.log(images);
   const total = queryData?.total ?? 0;
 
-  const handleSave = async (formData: {
-    id?: number;
-    ref_id: number;
-    image: string;
-  }) => {
+  const handleSave = async (formData: FormData & { id?: number }) => {
     try {
       if (formData.id != null) {
-        await updateImage({ id: formData.id, body: formData }).unwrap();
+        // id comes from formData appended as string, convert to number
+        const id = Number(formData.get("id"));
+        await updateImage({ id, body: formData }).unwrap();
       } else {
         await addImage(formData).unwrap();
       }
@@ -103,18 +101,18 @@ const GalleryImageManagement: React.FC = () => {
           fetchData={async () => ({ data: images, total })}
           columns={[
             { label: "ID", accessor: "id" },
-            { label: "Reference ID", accessor: "ref_id" },
             { label: "Image URL", accessor: "image" },
+            { label: "Reference ID", accessor: "ref_id" },
           ]}
           actions={[
             {
               label: "Edit",
-              onClick: (row: GalleryImageItem) =>
+              onClick: (row: GalleryImage) =>
                 setModalData({ mode: "edit", imageData: row }),
             },
             {
               label: "Delete",
-              onClick: (row: GalleryImageItem) => setDeleteTarget(row),
+              onClick: (row: GalleryImage) => setDeleteTarget(row),
             },
           ]}
           loading={isLoading || isAdding || isUpdating || isDeleting}

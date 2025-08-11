@@ -1,36 +1,205 @@
-import React, { useEffect } from "react";
+// import React, { useEffect, useState } from "react";
+// import { useForm } from "react-hook-form";
+// import { yupResolver } from "@hookform/resolvers/yup";
+// import * as yup from "yup";
+// import { useDropzone } from "react-dropzone";
+// import Input from "../../../components/Input";
+// import Button from "../../../components/Button";
+// import styles from "./GalleryImageManagement.module.css";
+
+// interface GalleryImageItem {
+//   id?: number;
+//   ref_id: number;
+//   image: File | string; // File for new upload, string (URL) for existing
+// }
+
+// interface Props {
+//   mode: "add" | "edit";
+//   imageData?: GalleryImageItem;
+//   onSave: (data: FormData) => void; // Pass FormData to parent for API call
+//   onClose: () => void;
+// }
+
+// const schema = yup.object({
+//   ref_id: yup
+//     .number()
+//     .typeError("Reference ID must be a number")
+//     .required("Reference ID is required")
+//     .integer("Reference ID must be an integer")
+//     .positive("Reference ID must be positive"),
+//   image: yup.mixed().test("required", "Image is required", (value) => {
+//     // Accept file or non-empty string (URL)
+//     if (!value) return false;
+//     if (typeof value === "string") return value.length > 0;
+//     if (value instanceof File) return true;
+//     return false;
+//   }),
+// });
+
+// const Manipulate: React.FC<Props> = ({ mode, imageData, onSave, onClose }) => {
+//   const [filePreview, setFilePreview] = useState<string>("");
+
+//   const {
+//     register,
+//     handleSubmit,
+//     reset,
+//     setValue,
+
+//     formState: { errors, isSubmitting },
+//   } = useForm<GalleryImageItem>({
+//     resolver: yupResolver(schema),
+//     defaultValues: {
+//       ref_id: 0,
+//       image: "",
+//     },
+//   });
+
+//   useEffect(() => {
+//     if (mode === "edit" && imageData) {
+//       reset({
+//         ref_id: imageData.ref_id,
+//         image: imageData.image,
+//       });
+//       if (typeof imageData.image === "string") {
+//         // Assume imageData.image is URL relative or absolute
+//         setFilePreview(imageData.image);
+//       }
+//     } else {
+//       reset({ ref_id: 0, image: "" });
+//       setFilePreview("");
+//     }
+//   }, [mode, imageData, reset]);
+
+//   const { getRootProps, getInputProps, isDragActive } = useDropzone({
+//     accept: { "image/*": [] },
+//     multiple: false,
+//     onDrop: (acceptedFiles) => {
+//       const file = acceptedFiles[0];
+//       if (!file) return;
+//       setValue("image", file, { shouldValidate: true });
+//       setFilePreview(URL.createObjectURL(file));
+//     },
+//   });
+
+//   const submit = (data: GalleryImageItem) => {
+//     const formData = new FormData();
+//     if (imageData?.id) {
+//       formData.append("id", imageData.id.toString());
+//     }
+//     formData.append("ref_id", data.ref_id.toString());
+//     if (data.image instanceof File) {
+//       formData.append("image", data.image);
+//     } else if (typeof data.image === "string" && data.image.length > 0) {
+//       // Optionally handle existing URL string if backend supports it
+//       formData.append("image_url", data.image);
+//     }
+
+//     onSave(formData);
+//   };
+
+//   return (
+//     <div className={styles.modalBackdrop}>
+//       <div className={styles.modalContent}>
+//         <h2 className={styles.modalTitle}>
+//           {mode === "edit" ? "Edit Gallery Image" : "Add Gallery Image"}
+//         </h2>
+
+//         <form onSubmit={handleSubmit(submit)} className={styles.modalForm}>
+//           <Input
+//             label="Reference ID"
+//             name="ref_id"
+//             type="number"
+//             register={register}
+//             errors={errors}
+//             required
+//             placeholder="Enter reference ID"
+//           />
+//           {errors.ref_id && (
+//             <p className={styles.errorText}>{errors.ref_id.message}</p>
+//           )}
+
+//           <div
+//             {...getRootProps()}
+//             className={`${styles.dropzone} ${
+//               isDragActive ? styles.dropzoneActive : ""
+//             }`}
+//             style={{
+//               border: "2px dashed #666",
+//               padding: 20,
+//               textAlign: "center",
+//               cursor: "pointer",
+//               marginBottom: 12,
+//             }}
+//           >
+//             <input {...getInputProps()} />
+//             {isDragActive ? (
+//               <p>Drop the image here...</p>
+//             ) : (
+//               <p>Drag & drop an image here, or click to select one</p>
+//             )}
+//           </div>
+
+//           {errors.image && (
+//             <p className={styles.errorText}>{errors.image.message as string}</p>
+//           )}
+
+//           {filePreview && (
+//             <img
+//               src={filePreview}
+//               alt="Preview"
+//               style={{
+//                 maxWidth: "100%",
+//                 maxHeight: 200,
+//                 objectFit: "contain",
+//               }}
+//             />
+//           )}
+
+//           <div className={styles.modalActions}>
+//             <Button
+//               title="Cancel"
+//               type="button"
+//               onClick={onClose}
+//               buttonType="secondary"
+//               disabled={isSubmitting}
+//             />
+//             <Button
+//               title={mode === "edit" ? "Save Changes" : "Add Image"}
+//               type="submit"
+//               isLoading={isSubmitting}
+//               buttonType="primary"
+//             />
+//           </div>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Manipulate;
+
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDropzone } from "react-dropzone";
 import Input from "../../../components/Input";
 import Button from "../../../components/Button";
-// import Select from "../../../components/Select";
 import styles from "./GalleryImageManagement.module.css";
 
 interface GalleryImageItem {
   id?: number;
   ref_id: number;
-  image: string;
-  // Use consistent name: category (string)
+  image: File | string; // File for new upload, string (URL) for existing
 }
 
-// Props interface
 interface Props {
   mode: "add" | "edit";
   imageData?: GalleryImageItem;
-  onSave: (data: GalleryImageItem) => void;
+  onSave: (data: FormData) => void; // FormData to parent for API call
   onClose: () => void;
 }
 
-// Example category options
-// const categoryOptions = [
-//   { label: "Nature", value: "nature" },
-//   { label: "People", value: "people" },
-//   { label: "Architecture", value: "architecture" },
-// ];
-
-// Yup validation schema
 const schema = yup.object({
   ref_id: yup
     .number()
@@ -38,28 +207,22 @@ const schema = yup.object({
     .required("Reference ID is required")
     .integer("Reference ID must be an integer")
     .positive("Reference ID must be positive"),
-  image: yup
-    .string()
-    .required("Image is required")
-    .test(
-      "is-url-or-base64",
-      "Image must be a valid URL or base64 string",
-      (value) => {
-        if (!value) return false;
-        const isUrl = /^(https?:\/\/)/i.test(value);
-        const isBase64 = /^data:image\/[a-zA-Z]+;base64,/.test(value);
-        return isUrl || isBase64;
-      }
-    ),
+  image: yup.mixed().test("required", "Image is required", (value) => {
+    if (!value) return false;
+    if (typeof value === "string") return value.length > 0;
+    if (value instanceof File) return true;
+    return false;
+  }),
 });
 
 const Manipulate: React.FC<Props> = ({ mode, imageData, onSave, onClose }) => {
+  const [filePreview, setFilePreview] = useState<string>("");
+
   const {
     register,
     handleSubmit,
     reset,
     setValue,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<GalleryImageItem>({
     resolver: yupResolver(schema),
@@ -69,38 +232,45 @@ const Manipulate: React.FC<Props> = ({ mode, imageData, onSave, onClose }) => {
     },
   });
 
-  // Reset form on mode or data change
   useEffect(() => {
     if (mode === "edit" && imageData) {
-      reset(imageData);
+      reset({
+        ref_id: imageData.ref_id,
+        image: imageData.image,
+      });
+      if (typeof imageData.image === "string") {
+        setFilePreview(imageData.image);
+      }
     } else {
       reset({ ref_id: 0, image: "" });
+      setFilePreview("");
     }
   }, [mode, imageData, reset]);
 
-  // Dropzone setup for image upload
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { "image/*": [] },
     multiple: false,
     onDrop: (acceptedFiles) => {
       const file = acceptedFiles[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        setValue("image", reader.result as string, { shouldValidate: true });
-      };
-      reader.readAsDataURL(file);
+      setValue("image", file, { shouldValidate: true });
+      setFilePreview(URL.createObjectURL(file));
     },
   });
 
-  const imagePreview = watch("image");
-
   const submit = (data: GalleryImageItem) => {
-    onSave({
-      id: imageData?.id,
-      ref_id: data.ref_id,
-      image: data.image.trim(),
-    });
+    const formData = new FormData();
+    if (imageData?.id) {
+      formData.append("id", imageData.id.toString());
+    }
+    formData.append("ref_id", data.ref_id.toString());
+    if (data.image instanceof File) {
+      formData.append("image", data.image);
+    } else if (typeof data.image === "string" && data.image.length > 0) {
+      formData.append("image_url", data.image);
+    }
+
+    onSave(formData);
   };
 
   return (
@@ -120,23 +290,9 @@ const Manipulate: React.FC<Props> = ({ mode, imageData, onSave, onClose }) => {
             required
             placeholder="Enter reference ID"
           />
-          {/* Show error below Reference ID */}
           {errors.ref_id && (
             <p className={styles.errorText}>{errors.ref_id.message}</p>
           )}
-
-          {/* <Select
-            label="Category"
-           
-            register={register}
-            errors={errors}
-            options={categoryOptions}
-            required
-            placeholder="Select a category"
-          /> */}
-          {/* Show error below Category */}
-          {/* {errors.category && (
-            <p className={styles.errorText}>{errors.category.message}</p> */}
 
           <div
             {...getRootProps()}
@@ -159,14 +315,13 @@ const Manipulate: React.FC<Props> = ({ mode, imageData, onSave, onClose }) => {
             )}
           </div>
 
-          {/* Show error below Image upload */}
           {errors.image && (
-            <p className={styles.errorText}>{errors.image.message}</p>
+            <p className={styles.errorText}>{errors.image.message as string}</p>
           )}
 
-          {imagePreview && (
+          {filePreview && (
             <img
-              src={imagePreview}
+              src={filePreview}
               alt="Preview"
               style={{ maxWidth: "100%", maxHeight: 200, objectFit: "contain" }}
             />
@@ -178,6 +333,7 @@ const Manipulate: React.FC<Props> = ({ mode, imageData, onSave, onClose }) => {
               type="button"
               onClick={onClose}
               buttonType="secondary"
+              disabled={isSubmitting}
             />
             <Button
               title={mode === "edit" ? "Save Changes" : "Add Image"}

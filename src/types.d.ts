@@ -12,15 +12,57 @@ declare module "*.module.css" {
 
 interface Base {
   id?: number;
-  status: number;
+  status?: number;
   created_at?: string;
   updated_at?: string;
 }
 
-interface IUser {
+interface IUser extends Base {
   email: string;
   password?: string;
-  role: string;
+}
+
+interface ILoginFormInputs {
+  email: string;
+  password: string;
+}
+
+interface IResponse {
+  total?: number;
+  data?: {
+    accessToken: string;
+    refreshToken: string;
+    user?: object;
+  };
+  message: string;
+  success: boolean;
+}
+
+interface IGalleryItem {
+  id: number;
+  ref_id: string;
+  image: string;
+  title?: string;
+  description?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+interface IGalleryResponse {
+  data: IGalleryItem[];
+  success: boolean;
+  message?: string;
+}
+
+interface IResponse {
+  success: boolean;
+  message: string;
+  data?: any;
+}
+interface ISliders extends Base {
+  title: string;
+  description: string;
+  image: File | string;
 }
 
 interface Menu {

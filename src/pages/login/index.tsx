@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { setTokens } from "../../store/reducers/authReducer";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import FAQ from "../../components/FAQ";
 
 // Validation schema
 const schema = yup.object().shape({
@@ -50,7 +51,7 @@ const Login: React.FC = () => {
       if (response.success && response.data) {
         const { accessToken, refreshToken, user } = response.data;
 
-        if (!accessToken || !refreshToken) {
+        if (!accessToken) {
           toast.error("Missing tokens in response");
           setIsLoading(false);
           return;
@@ -98,6 +99,7 @@ const Login: React.FC = () => {
     localStorage.setItem("i18nextLng", lng); // optional if you want to persist
   };
   return (
+    <>
     <div className={styles.loginPage}>
       <div className={styles.leftSection}>
         <div className={styles.logoContainer}>
@@ -145,9 +147,9 @@ const Login: React.FC = () => {
                 />
 
                 <Button
-                  type="button"
+                  type="submit"
                   isLoading={isLoading}
-                  onClick={() => changeLanguage("hi")}
+                  // onClick={() => changeLanguage("hi")}
                   buttonType="primary"
                   title="Sign In"
                 />
@@ -212,6 +214,8 @@ const Login: React.FC = () => {
         </AnimatePresence>
       </div>
     </div>
+    <FAQ />
+    </>
   );
 };
 

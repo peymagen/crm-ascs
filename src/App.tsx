@@ -8,8 +8,11 @@ import ProtectedRoute from "./components/Layout/protectedRoute";
 import Layout from "./components/Layout";
 import PublicLayout from "./components/Layout/publicLayout";
 import PublicRoute from "./components/Layout/publicRoute";
+import GalleryPage from "./pages/gallery";
 import "./i18n";
 import MenuManagement from "./pages/Admin/MenuManagement";
+import Dashboard from "./pages/Admin/dashboard";
+import Home from "./pages/home";
 
 function App() {
   return (
@@ -22,7 +25,9 @@ function App() {
               <Basic />
             </PublicRoute>
           }
-        ></Route>
+        >
+          <Route path="/admin/login" element={<Login />} />
+        </Route>
 
         {/* Public routes - accessible to all users with Header and Footer */}
         <Route
@@ -32,7 +37,8 @@ function App() {
             </PublicRoute>
           }
         >
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/gallery" element={<GalleryPage />} />
         </Route>
 
         {/* Protected routes - accessible to all authenticated users */}
@@ -42,9 +48,10 @@ function App() {
               <Layout />
             </ProtectedRoute>
           }
-        ></Route>
-
-        <Route path="/admin/test" element={<MenuManagement />}></Route>
+        >
+          <Route path="/admin/main-menu" element={<MenuManagement />} />
+          <Route path="/admin" element={<Dashboard />} />
+        </Route>
       </Routes>
     </Suspense>
   );

@@ -6,6 +6,8 @@ import { apiGallery } from "./services/gallery.api";
 import { apiFaq } from "./services/faq.api";
 import { apiHeader } from "./services/header.api";
 import { apiSliders } from "./services/sliders.api";
+import { apiSetting } from "./services/setting.api";
+import { apiMainMenu } from "./services/mainMenu.api";
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +17,8 @@ export const store = configureStore({
     [apiFaq.reducerPath]: apiFaq.reducer,
     [apiHeader.reducerPath]: apiHeader.reducer,
     [apiSliders.reducerPath]: apiSliders.reducer,
+    [apiSetting.reducerPath]: apiSetting.reducer,
+    [apiMainMenu.reducerPath]: apiMainMenu.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -22,7 +26,9 @@ export const store = configureStore({
       apiGallery.middleware,
       apiFaq.middleware,
       apiHeader.middleware,
-      apiSliders.middleware
+      apiSliders.middleware,
+      apiSetting.middleware,
+      apiMainMenu.middleware
     ),
 });
 

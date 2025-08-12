@@ -1,15 +1,7 @@
 .accessibilityNavbar {
   width: 100%;
-  background-color: #bef264;
-  padding: 4px 8px 0 8px;
-}
-
-.accessibilityNavbarMobile {
-  width: 100%;
-  background-color: #bef264;
-  padding: 6px 8px;
-  font-size: 11px;
-  font-weight: 600;
+  background-color: var(--secondary-color);
+  padding: 0.5rem;
 }
 
 .accessibilityContent {
@@ -33,7 +25,7 @@
 }
 
 .accessibilityButton {
-  color: #991b1b;
+  color: var(--primary-color);
   background-color: transparent;
   border: none;
   cursor: pointer;
@@ -48,26 +40,6 @@
   text-decoration: underline;
 }
 
-.accessibilityButtonMobile {
-  color: #991b1b;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 11px;
-  padding: 2px 4px;
-}
-
-.accessibilityButtonMobileSmall {
-  color: #991b1b;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 9px;
-  padding: 2px 4px;
-}
-
 .accessibilitySeparator {
   color: var(--primary-color);
   margin: 0 2px;
@@ -78,28 +50,6 @@
   align-items: center;
   gap: 2px;
   padding: 0 2px;
-}
-
-.textSizeLabel {
-  color: #991b1b;
-  white-space: nowrap;
-  font-size: inherit;
-}
-
-.textSizeButton {
-  color: #991b1b;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.textSizeButtonSmall {
-  color: #991b1b;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 10px;
 }
 
 .languageContainer {
@@ -164,12 +114,12 @@
   .draggableIcon {
     cursor: grab;
   }
-  
+
   .draggableIcon:active {
     cursor: grabbing;
     animation: touchDrag 0.2s ease-in-out;
   }
-  
+
   @keyframes touchDrag {
     0% {
       transform: scale(1);
@@ -189,7 +139,7 @@
     right: 5px;
     top: 180px;
   }
-  
+
   .draggableIcon[data-position="left"] {
     left: 5px;
     top: 180px;
@@ -201,7 +151,7 @@
     right: 2px;
     top: 160px;
   }
-  
+
   .draggableIcon[data-position="left"] {
     left: 2px;
     top: 160px;
@@ -228,7 +178,8 @@
 }
 
 @keyframes subtlePulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   50% {
@@ -244,13 +195,17 @@
 
 /* Enhanced visual feedback */
 .draggableIcon::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -2px;
   left: -2px;
   right: -2px;
   bottom: -2px;
-  background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(
+    45deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
   border-radius: 10px;
   z-index: -1;
   opacity: 0;
@@ -267,10 +222,8 @@
 
 /* Smooth movement simulation */
 .draggableIcon {
-  transition: 
-    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s ease;
 }
 
 /* Focus states for accessibility */
@@ -285,11 +238,11 @@
     animation: none;
     transition: none;
   }
-  
+
   .draggableIcon:hover {
     transform: none;
   }
-  
+
   .draggableIcon:active {
     animation: none;
   }
@@ -338,6 +291,8 @@
   font-weight: 500;
   font-size: 14px;
   position: relative;
+  border: 0;
+  background: transparent;
 }
 
 .navItemLink:hover,
@@ -392,7 +347,7 @@
 }
 
 .mainNavigation {
-  background-color: white;
+  background-color: var(--secondary-color);
   border-bottom: 2px solid var(--primary-color);
   position: relative;
   overflow: visible;
@@ -490,6 +445,10 @@
   transition: all 0.2s ease;
 }
 
+.mobileMenuItem span {
+  padding: 8px;
+}
+
 .mobileMenuItemWithBorder {
   border-bottom: 1px solid #f0f0f0;
 }
@@ -525,10 +484,11 @@
 .desktopNavigation {
   display: flex;
   align-items: center;
-  justify-content: center;
+  max-width: 1480px;
   padding: 0;
   overflow-x: visible;
   position: relative;
+  margin: 0 auto;
   background-color: var(--secondary-color);
 }
 
@@ -578,51 +538,22 @@
 
 .headerDesktop {
   padding: 16px;
+  max-width: 1480px;
+  margin: 0 auto;
 }
 
 .headerDesktopContent {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
+  place-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.5rem;
+  justify-content: flex-start;
 }
 
-.headerDesktopLeft {
-  flex-shrink: 0;
-  padding-left: 8px;
-}
-
-.headerDesktopLeftImage {
-  height: 208px;
-  width: auto;
-  object-fit: contain;
-  padding: 0 16px;
-}
-
-.headerDesktopGap {
-  width: 32px;
-}
-
-.headerDesktopCenter {
-  flex-shrink: 0;
-}
-
-.headerDesktopCenterImage {
-  height: 56px;
-  width: auto;
-  object-fit: contain;
-  padding: 0 12px;
-}
-
-.headerDesktopRight {
-  flex-shrink: 0;
-}
-
-.headerDesktopRightImage {
-  height: 56px;
-  width: auto;
+.headerImg {
+  max-height: 150px;
   object-fit: contain;
 }
 
@@ -652,11 +583,10 @@ html {
 
 /* Better touch targets for mobile */
 @media (max-width: 768px) {
-  button, a {
-    min-height: 44px;
-    min-width: 44px;
+  .headerImg {
+    width: -webkit-fill-available;
   }
-  
+
   /* Enhanced touch interaction for draggable icons */
   .draggableIcon {
     min-height: 52px;
@@ -665,8 +595,31 @@ html {
     align-items: center;
     justify-content: center;
   }
-  
+
   .draggableIconImage {
     height: 36px;
+  }
+}
+/* Mobile styles */
+@media (max-width: 768px) {
+  .navItemContainer {
+    position: relative;
+    width: 100%;
+  }
+
+  .dropdownMenu {
+    position: static;
+    width: 100%;
+    box-shadow: none;
+  }
+
+  .dropdownItem {
+    padding: 12px 20px;
+  }
+
+  .navItemLink {
+    padding: 15px 20px;
+    width: 100%;
+    text-align: left;
   }
 }

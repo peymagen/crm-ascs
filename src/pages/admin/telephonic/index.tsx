@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import AddTelephonic from "./manipulate";
 import { DataTable } from "../../../components/DataTable";
@@ -6,11 +5,11 @@ import Button from "../../../components/Button";
 import styles from "./submenu.module.css";
 import { motion } from "framer-motion";
 import DeleteDialog from "./DeleteDialog";
-import { 
-  useGetTelephonicQuery, 
-  useCreateTelephonicMutation, 
-  useUpdateTelephonicMutation, 
-  useDeleteTelephonicMutation 
+import {
+  useGetTelephonicQuery,
+  useCreateTelephonicMutation,
+  useUpdateTelephonicMutation,
+  useDeleteTelephonicMutation,
 } from "../../../store/services/telephonic.api";
 import { toast } from "react-toastify";
 
@@ -30,7 +29,11 @@ const TelephonicData: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   // API hooks
-  const { data: telephonicData, isLoading: isDataLoading, refetch } = useGetTelephonicQuery({});
+  const {
+    data: telephonicData,
+    isLoading: isDataLoading,
+    refetch,
+  } = useGetTelephonicQuery({});
   const [createTelephonic] = useCreateTelephonicMutation();
   const [updateTelephonic] = useUpdateTelephonicMutation();
   const [deleteTelephonic] = useDeleteTelephonicMutation();
@@ -115,7 +118,7 @@ const TelephonicData: React.FC = () => {
             type="button"
             isLoading={isLoading}
             buttonType="primary"
-            title="+ Add New"
+            title="+ Add New Telephonic"
             onClick={() => {
               setDefaultValues({});
               setIsOpen(true);
@@ -154,7 +157,7 @@ const TelephonicData: React.FC = () => {
         />
       </motion.div>
 
-      <AddTelephonic 
+      <AddTelephonic
         isOpen={isOpen && ["ADD", "EDIT"].includes(mode)}
         onClose={() => {
           setIsOpen(false);

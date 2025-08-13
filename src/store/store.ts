@@ -13,6 +13,7 @@ import galleryCategoryApi from "./services/galleryCategory.api";
 import galleryImageApi from "./services/galleryImage.api";
 import { apiSubmenu } from "./services/submenu.api";
 import { apiTelephonic } from "./services/telephonic.api";
+import { apiFooterMenu } from "./services/footerMenu.api";
 
 export const store = configureStore({
   reducer: {
@@ -29,7 +30,7 @@ export const store = configureStore({
     [galleryImageApi.reducerPath]: galleryImageApi.reducer,
     [apiSubmenu.reducerPath]: apiSubmenu.reducer,
     [apiTelephonic.reducerPath]: apiTelephonic.reducer,
-    [apiSlider.reducerPath]: apiSlider.reducer,
+    [apiFooterMenu.reducerPath]: apiFooterMenu.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -44,7 +45,8 @@ export const store = configureStore({
       galleryCategoryApi.middleware,
       galleryImageApi.middleware,
       apiSubmenu.middleware,
-      apiTelephonic.middleware
+      apiTelephonic.middleware,
+      apiFooterMenu.middleware
     ),
 });
 

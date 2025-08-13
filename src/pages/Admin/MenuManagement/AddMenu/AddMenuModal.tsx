@@ -5,7 +5,6 @@ import * as yup from "yup";
 
 import Input from "../../../../components/Input";
 import Select from "../../../../components/Select";
-import Textarea from "../../../../components/Textarea";
 import Button from "../../../../components/Button";
 
 import styles from "./AddMenu.module.css";
@@ -16,24 +15,13 @@ interface Props {
   editMenu?: IMainMenu | null;
 }
 
-interface MenuFormInputs {
-  name: string;
-  url: string;
-  other_url?: string;
-  sorting_order: string;
-  target: string;
-  lang: string;
-  description?: string;
-}
-
-const defaultValues: MenuFormInputs = {
+const defaultValues: IMainMenu = {
   name: "",
   url: "",
   other_url: "",
-  sorting_order: "1",
+  sorting_order: 1,
   target: "_self",
   lang: "en",
-  description: "",
 };
 
 const schema = yup
@@ -66,7 +54,7 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onSave, editMenu }) => {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<MenuFormInputs>({
+  } = useForm<IMainMenu>({
     resolver: yupResolver(schema),
     defaultValues,
   });
@@ -78,8 +66,8 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onSave, editMenu }) => {
         url: editMenu.url ? editMenu.url.replace(/^\//, "") : "",
         other_url: editMenu.other_url || "",
         sorting_order: editMenu.sorting_order
-          ? String(editMenu.sorting_order)
-          : "1",
+          ? Number(editMenu.sorting_order)
+          : 1,
         target: editMenu.target || defaultValues.target,
         lang: editMenu.lang || defaultValues.lang,
       });
@@ -88,7 +76,7 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onSave, editMenu }) => {
     }
   }, [editMenu, reset]);
 
-  const submit = async (data: MenuFormInputs) => {
+  const submit = async (data: IMainMenu) => {
     const payload: Partial<IMainMenu> = {
       name: data.name.trim(),
       target: data.target,

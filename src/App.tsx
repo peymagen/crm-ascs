@@ -13,7 +13,7 @@ import "./i18n";
 import MenuManagement from "./pages/Admin/MenuManagement";
 import Dashboard from "./pages/Admin/dashboard";
 import Home from "./pages/home";
-import ListBottomData from "./pages/Admin/SubMenu";
+import ListBottomData from "./pages/Admin/BottomMenu";
 import TelephonicData from "./pages/Admin/Telephonic";
 import ListSlider from "./pages/Admin/Slider";
 
@@ -57,7 +57,7 @@ function App() {
         >
           <Route path="/admin" element={<Dashboard />} />
           <Route path="/admin/main-menu" element={<MenuManagement />} />
-          <Route path="/admin/sub-menu" element={<ListBottomData />} />
+          <Route path="/admin/bottom-menu" element={<ListBottomData />} />
           <Route path="/admin/telephonic" element={<TelephonicData />} />
           <Route path="/admin/slider" element={<ListSlider />} />
           <Route path="/admin/gallery" element={<GalleryCategory />} />

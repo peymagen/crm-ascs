@@ -68,3 +68,11 @@ interface IMainMenu extends Base {
   sorting_order?: number;
   lang?: string;
 }
+interface IFooterMenu extends Base {
+  name: string;
+  url?: string;
+  other_url?: string;
+  target?: string;
+  sorting_order?: number;
+  lang?: string;
+}

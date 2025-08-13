@@ -1,45 +1,40 @@
-
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import AddBottomMenu from "./manipulate";
 import { DataTable } from "../../../components/DataTable";
 import Button from "../../../components/Button";
 import styles from "./submenu.module.css";
 import { motion } from "framer-motion";
 import DeleteDialog from "./DeleteDialog";
-import { 
-  useGetSubmenuQuery, 
-  useCreateSubmenuMutation, 
-  useUpdateSubmenuMutation, 
-  useDeleteSubmenuMutation 
-} from "../../../store/services/submenu.api";
-import { toast } from "react-toastify";
 
-interface RowData {
-  id: number;
-  website: string;
-  displayOnMenu: string;
-  displayArea: string;
-  menuName: string;
-  menuSubHeading?: string;
-  menuDescription?: string;
-  menuPosition: number;
-  seoUrl?: string;
-  otherUrl?: string;
-  target: string;
-}
+import { toast } from "react-toastify";
+import {
+  useCreateFooterMenuMutation,
+  useDeleteFooterMenuMutation,
+  useGetFooterMenuQuery,
+  useUpdateFooterMenuMutation,
+} from "../../../store/services/footerMenu.api";
 
 const ListBottomData: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"ADD" | "EDIT" | "DELETE">("ADD");
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [defaultValues, setDefaultValues] = useState<Partial<RowData>>({});
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+
+  const limit = 10;
+  const offset = (page - 1) * limit;
+  const [defaultValues, setDefaultValues] = useState<Partial<IFooterMenu>>({});
   const [isLoading, setIsLoading] = useState(false);
 
   // API hooks
-  const { data: submenuData, isLoading: isDataLoading, refetch } = useGetSubmenuQuery({});
-  const [createSubmenu] = useCreateSubmenuMutation();
-  const [updateSubmenu] = useUpdateSubmenuMutation();
-  const [deleteSubmenu] = useDeleteSubmenuMutation();
+  const {
+    data: submenuData,
+    isLoading: isDataLoading,
+    refetch,
+  } = useGetFooterMenuQuery({ limit, offset, search });
+  const [createFooter] = useCreateFooterMenuMutation();
+  const [updateFooter] = useUpdateFooterMenuMutation();
+  const [deleteFooter] = useDeleteFooterMenuMutation();
 
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
@@ -50,30 +45,35 @@ const ListBottomData: React.FC = () => {
     },
   };
 
-  const columns = [
-    { label: "ID", accessor: "id" },
-    { label: "Website", accessor: "website" },
-    { label: "Menu Name", accessor: "menuName" },
-    { label: "Display Area", accessor: "displayArea" },
-    { label: "Position", accessor: "menuPosition" },
-    { label: "Target", accessor: "target" },
-  ];
+  const columns = useMemo(
+    () => [
+      { label: "Menu Name", accessor: "name" },
+      { label: "Path / URL", accessor: "url" },
+      { label: "Target", accessor: "target" },
+      { label: "Order", accessor: "sorting_order" },
+    ],
+    []
+  );
 
-  const fetchData = () => {
-    return new Promise<{ data: RowData[]; total: number }>((resolve) => {
-      const data = submenuData?.data || [];
-      resolve({
-        data: data,
-        total: data.length,
-      });
-    });
-  };
+  const fetchData = useCallback(
+    async (params?: { page: number; search?: string }) => {
+      const page = params?.page || 1;
+      const search = params?.search || "";
+      setPage(page);
+      setSearch(search);
+      return {
+        data: submenuData?.data || [],
+        total: submenuData?.total || 0,
+      };
+    },
+    [submenuData]
+  );
 
   const handleDelete = async () => {
     setIsLoading(true);
     try {
       if (selectedId) {
-        await deleteSubmenu({ id: selectedId }).unwrap();
+        await deleteFooter({ id: selectedId }).unwrap();
         toast.success("Menu item deleted successfully");
         refetch();
       }
@@ -91,16 +91,18 @@ const ListBottomData: React.FC = () => {
     setIsLoading(true);
     try {
       if (mode === "ADD") {
-        await createSubmenu(formData).unwrap();
+        await createFooter(formData).unwrap();
         toast.success("Menu item created successfully");
       } else if (mode === "EDIT") {
-        await updateSubmenu({ ...formData, id: defaultValues.id }).unwrap();
+        await updateFooter({ ...formData, id: defaultValues.id }).unwrap();
         toast.success("Menu item updated successfully");
       }
       refetch();
     } catch (error) {
       console.error("Submit failed:", error);
-      toast.error(`Failed to ${mode === "ADD" ? "create" : "update"} menu item`);
+      toast.error(
+        `Failed to ${mode === "ADD" ? "create" : "update"} menu item`
+      );
     } finally {
       setIsLoading(false);
       setIsOpen(false);
@@ -136,19 +138,19 @@ const ListBottomData: React.FC = () => {
           columns={columns}
           actions={[
             {
-              label: "✏️",
+              label: "Edit",
               onClick: (row) => {
-                setDefaultValues(row as RowData);
+                setDefaultValues(row as IFooterMenu);
                 setIsOpen(true);
                 setMode("EDIT");
                 console.log("Edit clicked:", row);
               },
             },
             {
-              label: "🗑️",
+              label: "Delete",
               onClick: (row) => {
                 setMode("DELETE");
-                setSelectedId((row as RowData).id);
+                setSelectedId((row as IFooterMenu).id);
                 setIsOpen(true);
                 console.log("Delete clicked:", row);
               },
@@ -161,7 +163,7 @@ const ListBottomData: React.FC = () => {
         />
       </motion.div>
 
-      <AddBottomMenu 
+      <AddBottomMenu
         isOpen={isOpen && ["ADD", "EDIT"].includes(mode)}
         onClose={() => {
           setIsOpen(false);

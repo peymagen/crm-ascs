@@ -79,3 +79,12 @@ export const baseQueryWithReauth = async (
 
   return result;
 };
+
+// import { createApi } from "@reduxjs/toolkit/query/react";
+// // import { baseQueryWithReauth } from "./baseQuery"; // or api.ts file
+
+// export const api = createApi({
+//   baseQuery: baseQueryWithReauth,
+//   tagTypes: ["Menu"],
+//   endpoints: () => ({}),
+// });

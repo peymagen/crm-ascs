@@ -397,7 +397,6 @@
 @media screen and (min-width: 769px) {
   .mainContent {
     margin-left: 240px;
-    width: calc(100% - 240px);
   }
 }
 

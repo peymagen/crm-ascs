@@ -22,9 +22,9 @@ const navItems: NavItem[] = [
   },
   {
     icon: "calendar_today",
-    label: "Services",
+    label: "Menus",
     dropdown: [
-      { label: "IT Consulting", link: "#" },
+      { label: "Main Menu", link: "/admin/main-menu" },
       { label: "Cloud Solution", link: "#" },
       { label: "Mobile Apps", link: "#" },
     ],

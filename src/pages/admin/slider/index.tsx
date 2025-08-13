@@ -1,23 +1,22 @@
-
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import AddSlider from "./manipulate";
 import { DataTable } from "../../../components/DataTable";
 import Button from "../../../components/Button";
 import styles from "./slider.module.css";
 import { motion } from "framer-motion";
 import DeleteDialog from "./DeleteDialog";
-import { 
-    useGetSliderQuery, 
-    useCreateSliderMutation,
-    useUpdateSliderMutation, 
-  useDeleteSliderMutation 
+import {
+  useGetSlidersQuery,
+  useCreateSlidersMutation,
+  useUpdateSlidersMutation,
+  useDeleteSlidersMutation,
 } from "../../../store/services/sliders.api";
 import { toast } from "react-toastify";
 
 interface RowData {
   id: number;
   title: string;
- description: string;
+  description: string;
   image: File;
 }
 
@@ -27,12 +26,20 @@ const ListSlider: React.FC = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [defaultValues, setDefaultValues] = useState<Partial<RowData>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
+  const limit = 10;
+  const offset = (page - 1) * limit;
   // API hooks
-  const { data: submenuData, isLoading: isDataLoading, refetch } = useGetSliderQuery({});
-  const [createSlider] = useCreateSliderMutation();
-  const [updateSlider] = useUpdateSliderMutation();
-  const [deleteSlider] = useDeleteSliderMutation ();
+  const {
+    data: submenuData,
+    isLoading: isDataLoading,
+    refetch,
+  } = useGetSlidersQuery({ limit, offset, search });
+  const [createSlider] = useCreateSlidersMutation();
+  const [updateSlider] = useUpdateSlidersMutation();
+  const [deleteSlider] = useDeleteSlidersMutation();
 
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
@@ -48,18 +55,21 @@ const ListSlider: React.FC = () => {
     { label: "Title", accessor: "title" },
     { label: "Description", accessor: "description" },
     { label: "Image", accessor: "image" },
-   
   ];
 
-  const fetchData = () => {
-    return new Promise<{ data: RowData[]; total: number }>((resolve) => {
-      const data = submenuData?.data || [];
-      resolve({
-        data: data,
-        total: data.length,
-      });
-    });
-  };
+  const fetchData = useCallback(
+    async (params?: { page: number; search?: string }) => {
+      const page = params?.page || 1;
+      const search = params?.search || "";
+      setPage(page);
+      setSearch(search);
+      return {
+        data: submenuData?.data || [],
+        total: submenuData?.total || 0,
+      };
+    },
+    [submenuData]
+  );
 
   const handleDelete = async () => {
     setIsLoading(true);
@@ -89,7 +99,7 @@ const ListSlider: React.FC = () => {
         // Handle FormData vs regular object differently
         if (formData instanceof FormData) {
           // If it's FormData (with new image), append the ID
-          formData.append('id', defaultValues.id?.toString() || '');
+          formData.append("id", defaultValues.id?.toString() || "");
           await updateSlider(formData).unwrap();
         } else {
           // If it's regular object (no new image), add ID to object
@@ -109,7 +119,7 @@ const ListSlider: React.FC = () => {
   };
 
   return (
-    <div className={styles.menu} >
+    <div className={styles.menu}>
       <motion.div
         initial="hidden"
         animate="visible"
@@ -122,7 +132,7 @@ const ListSlider: React.FC = () => {
             type="button"
             isLoading={isLoading}
             buttonType="primary"
-            title="+ Add New"
+            title="+ Add New Slider"
             onClick={() => {
               setDefaultValues({});
               setIsOpen(true);
@@ -164,7 +174,7 @@ const ListSlider: React.FC = () => {
         />
       </motion.div>
 
-      <AddSlider 
+      <AddSlider
         isOpen={isOpen && ["ADD", "EDIT"].includes(mode)}
         onClose={() => {
           setIsOpen(false);

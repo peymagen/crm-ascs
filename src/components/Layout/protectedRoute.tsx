@@ -7,16 +7,16 @@ interface ProtectedRouteProps {
   children: ReactElement;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
-  console.log('ProtectedRoute:', { isAuthenticated, user, allowedRoles });
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const { isAuthenticated } = useAppSelector((state) => state.auth) as {
+    isAuthenticated: boolean;
+    user: IUser;
+  };
 
   if (!isAuthenticated) {
-    console.log('Not authenticated, redirecting to login');
-    return <Navigate to="/admin/login" />;
+    return <Navigate to="/" />;
   }
 
-  // For development, temporarily allow all authenticated users
   return children;
 };
 

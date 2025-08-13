@@ -18,7 +18,6 @@ const menuItems = {
     { name: "Job", path: "/job-list" },
     { name: "Placed Student", path: "/job-list" },
     { name: "Admins", path: "/register-admin" },
-    { name: "Page Management", path: "/admin/pages" },
   ],
   STUDENT: [
     { name: "Dashboard", path: "/dashboard" },

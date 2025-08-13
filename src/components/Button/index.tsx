@@ -5,11 +5,9 @@ import BlockLoader from "./loader";
 interface ButtonProps {
   type?: "button" | "submit" | "reset";
   onClick?: () => void;
-  variant?: string;
   isLoading?: boolean;
   disabled?: boolean;
-  children?: React.ReactNode;
-  buttonType?: "primary" | string;
+  buttonType?: "primary" | "secondary" | "link";
   title: string;
 }
 

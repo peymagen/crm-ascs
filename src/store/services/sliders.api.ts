@@ -1,55 +1,40 @@
-
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "./api";
 
-export const apiSlider = createApi({
-  reducerPath: "apiSlider",
+export const apiSliders = createApi({
+  reducerPath: "apiSliders",
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
-    getSliderById: builder.query({
-      query: (id) => `/sliders/${id}`,
+    getSlidersById: builder.query({
+      query: (id) => `sliders/${id}`,
     }),
-    getSlider: builder.query({
+    getSliders: builder.query({
       query: () => "sliders",
     }),
-    createSlider: builder.mutation({
-      query: (newSlider) => ({
+    createSliders: builder.mutation({
+      query: (newSliders) => ({
         url: "sliders",
         method: "POST",
-        body: newSlider,
+        body: newSliders,
       }),
     }),
-    updateSlider: builder.mutation({
-      query: (updatedSlider) => {
-        if (updatedSlider instanceof FormData) {
-          // Handle FormData (with file upload)
-          const id = updatedSlider.get('id');
-          updatedSlider.delete('id'); // Remove ID from FormData body
-          return {
-            url: `sliders/${id}`,
-            method: "PUT",
-            body: updatedSlider,
-          };
-        } else {
-          // Handle regular JSON object
-          return {
-            url: `sliders/${updatedSlider.id}`,
-            method: "PUT",
-            body: updatedSlider,
-          };
-        }
-      },
+    updateSliders: builder.mutation({
+      query: (data) => ({
+        url: `sliders/${data.id}`,
+        method: "PUT",
+        body: data,
+      }),
     }),
-    patchSlider: builder.mutation<IUser, Partial<IUser>>({
-      query: (updatedSlider) => ({
-        url: `sliders/${updatedSlider.id}`,
+    patchSliders: builder.mutation({
+      query: (data) => ({
+        url: `sliders/${data.id}`,
         method: "PATCH",
-        body: updatedSlider,
+        body: data,
       }),
     }),
-    deleteSlider: builder.mutation({
-      query: (updatedSlider) => ({
-        url: `sliders/${updatedSlider.id}`,
+    deleteSliders: builder.mutation({
+      query: (data) => ({
+        url: `sliders/${data.id}`,
         method: "DELETE",
       }),
     }),
@@ -57,11 +42,10 @@ export const apiSlider = createApi({
 });
 
 export const {
-    useCreateSliderMutation,
-    useGetSliderByIdQuery,
-    useGetSliderQuery,
-    usePatchSliderMutation,
-    useUpdateSliderMutation,
-    useDeleteSliderMutation
-
-} = apiSlider;
+  useGetSlidersByIdQuery,
+  useGetSlidersQuery,
+  useCreateSlidersMutation,
+  useUpdateSlidersMutation,
+  usePatchSlidersMutation,
+  useDeleteSlidersMutation,
+} = apiSliders;

@@ -60,10 +60,11 @@ interface ISliders extends Base {
   image: File | string;
 }
 
-interface Menu {
-  id: number;
+interface IMainMenu extends Base {
   name: string;
-  path: string;
-  description: string;
-  position: number;
+  url?: string;
+  other_url?: string;
+  target?: string;
+  sorting_order?: number;
+  lang?: string;
 }

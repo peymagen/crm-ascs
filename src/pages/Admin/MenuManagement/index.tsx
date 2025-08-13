@@ -5,61 +5,47 @@ import ConfirmDeleteModal from "./ConfirmDelete/ConfirmDeleteModal";
 import Button from "../../../components/Button";
 
 import {
-  useLazyGetMenusQuery,
   useAddMenuMutation,
   useUpdateMenuMutation,
   useDeleteMenuMutation,
+  useGetMenusQuery,
 } from "../../../store/services/menu.api";
 
 import styles from "./MenuManagement.module.css";
 
-export interface MenuItem {
-  id: number;
-  name: string;
-  url?: string | null;
-  other_url?: string | null;
-  target?: string;
-  description?: string | null;
-  position?: number;
-  sorting_order?: number;
-  lang?: string;
-  [key: string]: any;
-}
-
 const MenuManagement: React.FC = () => {
-  const [triggerGetMenus, { isFetching }] = useLazyGetMenusQuery();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+
+  const limit = 10;
+  const offset = (page - 1) * limit;
+
+  const { data, isLoading, refetch } = useGetMenusQuery({
+    limit,
+    offset,
+    search,
+  });
+
   const [addMenu] = useAddMenuMutation();
   const [updateMenu] = useUpdateMenuMutation();
   const [deleteMenu] = useDeleteMenuMutation();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingMenu, setEditingMenu] = useState<MenuItem | null>(null);
-  const [deletingMenu, setDeletingMenu] = useState<MenuItem | null>(null);
+  const [editingMenu, setEditingMenu] = useState<IMainMenu | null>(null);
+  const [deletingMenu, setDeletingMenu] = useState<IMainMenu | null>(null);
 
   const fetchData = useCallback(
     async (params?: { page: number; search?: string }) => {
-      const page = params?.page ?? 1;
-      const search = params?.search ?? "";
-      const limit = 10;
-      const offset = (page - 1) * limit;
-
-      try {
-        const result = await triggerGetMenus({
-          limit,
-          offset,
-          search,
-        }).unwrap();
-
-        return {
-          data: result.data,
-          total: result.total,
-        };
-      } catch (error) {
-        console.error("fetchData error:", error);
-        return { data: [], total: 0 };
-      }
+      const page = params?.page || 1;
+      const search = params?.search || "";
+      setPage(page);
+      setSearch(search);
+      return {
+        data: data?.data || [],
+        total: data?.total || 0,
+      };
     },
-    [triggerGetMenus]
+    [data]
   );
 
   const handleOpenAdd = () => {
@@ -67,18 +53,19 @@ const MenuManagement: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleEdit = (menu: MenuItem) => {
+  const handleEdit = (menu: IMainMenu) => {
     setEditingMenu(menu);
     setIsModalOpen(true);
   };
 
-  const handleSave = async (payload: Partial<MenuItem>) => {
+  const handleSave = async (payload: Partial<IMainMenu>) => {
     try {
       if (editingMenu?.id) {
         await updateMenu({ id: editingMenu.id, body: payload }).unwrap();
       } else {
         await addMenu(payload).unwrap();
       }
+      refetch();
       setIsModalOpen(false);
       setEditingMenu(null);
     } catch (error) {
@@ -92,6 +79,7 @@ const MenuManagement: React.FC = () => {
 
     try {
       await deleteMenu(deletingMenu.id).unwrap();
+      refetch();
       setDeletingMenu(null);
     } catch (error) {
       console.error("Delete failed:", error);
@@ -100,18 +88,18 @@ const MenuManagement: React.FC = () => {
 
   const columns = useMemo(
     () => [
-      { label: "ID", accessor: "id" },
       { label: "Menu Name", accessor: "name" },
       { label: "Path / URL", accessor: "url" },
-      { label: "Description", accessor: "description" },
+      { label: "Target", accessor: "target" },
+      { label: "Order", accessor: "sorting_order" },
     ],
     []
   );
 
   const actions = useMemo(
     () => [
-      { label: "Edit", onClick: (row: MenuItem) => handleEdit(row) },
-      { label: "Delete", onClick: (row: MenuItem) => setDeletingMenu(row) },
+      { label: "Edit", onClick: (row) => handleEdit(row) },
+      { label: "Delete", onClick: (row) => setDeletingMenu(row) },
     ],
     []
   );
@@ -119,7 +107,7 @@ const MenuManagement: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Menu Management</h1>
+        <h1 className={styles.title}>Main Menu Management</h1>
         <Button
           title="Add Menu"
           type="button"
@@ -132,12 +120,10 @@ const MenuManagement: React.FC = () => {
         fetchData={fetchData}
         columns={columns}
         actions={actions}
-        loading={isFetching}
+        loading={isLoading}
         isNavigate
         isSearch
         isExport
-        hasCheckbox
-        onSelectedRows={(rows) => console.log("Selected Rows:", rows)}
       />
 
       {isModalOpen && (

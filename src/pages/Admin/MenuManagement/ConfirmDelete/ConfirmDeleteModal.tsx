@@ -1,5 +1,6 @@
 import React from "react";
 import "./ConfirmDelete.css";
+import Button from "../../../../components/Button";
 
 interface ConfirmDeleteModalProps {
   onClose: () => void;
@@ -18,12 +19,18 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
         <h2>Confirm Deletion</h2>
         <p>Are you sure you want to delete the menu "{menuName}"?</p>
         <div className="modal-buttons">
-          <button className="cancel-button" onClick={onClose}>
-            Cancel
-          </button>
-          <button className="confirm-button" onClick={onConfirm}>
-            Delete
-          </button>
+          <Button
+            title="Cancel"
+            type="button"
+            onClick={onClose}
+            buttonType="secondary"
+          />
+          <Button
+            title={"Delete"}
+            type="button"
+            onClick={onConfirm}
+            buttonType="primary"
+          />
         </div>
       </div>
     </div>

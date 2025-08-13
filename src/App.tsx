@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import Login from "./pages/login";
 import Loader from "./components/Loader";
@@ -8,9 +7,18 @@ import ProtectedRoute from "./components/Layout/protectedRoute";
 import Layout from "./components/Layout";
 import PublicLayout from "./components/Layout/publicLayout";
 import PublicRoute from "./components/Layout/publicRoute";
+import GalleryPage from "./pages/gallery";
 import "./i18n";
+
+import MenuManagement from "./pages/Admin/MenuManagement";
+import Dashboard from "./pages/Admin/dashboard";
 import Home from "./pages/home";
-import Dashboard from "./pages/admin/dashboard/dashboard"; 
+import ListBottomData from "./pages/Admin/BottomMenu";
+import TelephonicData from "./pages/Admin/Telephonic";
+import ListSlider from "./pages/Admin/Slider";
+
+import GalleryCategory from "./pages/Admin/GalleryCategory";
+import GalleryImageManagement from "./pages/Admin/GalleryImage";
 
 function App() {
   return (
@@ -26,7 +34,6 @@ function App() {
           <Route path="/admin/login" element={<Login />} />
         </Route>
 
-      
         <Route
           element={
             <PublicRoute>
@@ -35,9 +42,9 @@ function App() {
           }
         >
           <Route path="/" element={<Home />} />
+          <Route path="/gallery" element={<GalleryPage />} />
         </Route>
 
-  
         <Route
           element={
             <ProtectedRoute allowedRoles={["ADMIN"]}>
@@ -45,8 +52,16 @@ function App() {
             </ProtectedRoute>
           }
         >
-          
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/admin" element={<Dashboard />} />
+          <Route path="/admin/main-menu" element={<MenuManagement />} />
+          <Route path="/admin/bottom-menu" element={<ListBottomData />} />
+          <Route path="/admin/telephonic" element={<TelephonicData />} />
+          <Route path="/admin/slider" element={<ListSlider />} />
+          <Route path="/admin/gallery" element={<GalleryCategory />} />
+          <Route
+            path="/admin/gallery-image"
+            element={<GalleryImageManagement />}
+          />
         </Route>
       </Routes>
     </Suspense>

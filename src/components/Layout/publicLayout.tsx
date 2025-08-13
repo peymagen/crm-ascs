@@ -5,9 +5,11 @@ import Footer from "../Footer";
 const PublicRoute = () => {
   return (
     <>
-      <Header />
-      <Outlet />
-      <Footer />
+      <>
+        <Header />
+        <Outlet />
+        <Footer />
+      </>
     </>
   );
 };

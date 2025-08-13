@@ -4,27 +4,35 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { motion } from 'framer-motion';
-import styles from './submenu.module.css';
+import styles from './slider.module.css';
 import Button from '../../../components/Button';
 import Input from '../../../components/Input';
-import Textarea from '../../../components/Textarea';
+
 
 // Validation schema
 const schema = yup.object().shape({
-  name: yup.string().required('Name is required'),
-  email: yup.string().required('Email is required'),
-  phone: yup.string().required('Phone No. is required'),
-  description: yup.string(),
+  title: yup.string().required('Title is required'),
+  description: yup.string().required('Description is required'),
+  image: yup
+    .mixed<File>()
+    .test("fileExists", "Image is required for new entries", function(value) {
+      const { parent } = this;
+      // If it's an edit mode and no new file is selected, it's okay
+      if (parent.mode === "EDIT" && !value) {
+        return true;
+      }
+      // For ADD mode or when a file is provided, it should be a File
+      return value instanceof File;
+    }),
 });
 
 interface FormData {
-   name: string;
-  email: string;
-  phone: string;
+  title: string;
   description: string;
+  image: File;
 }
 
-interface AddBottomMenuProps {
+interface AddSliderMenuProps {
   isOpen: boolean;
   onClose: () => void;
   defaultValues?: Partial<FormData>;
@@ -33,7 +41,7 @@ interface AddBottomMenuProps {
   isLoading?: boolean;
 }
 
-const AddTelephonic: React.FC<AddBottomMenuProps> = ({ 
+const AddSlider: React.FC<AddSliderMenuProps> = ({ 
   isOpen, 
   onClose, 
   defaultValues = {}, 
@@ -50,10 +58,9 @@ const AddTelephonic: React.FC<AddBottomMenuProps> = ({
   } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
-        name: '',
-        email: '',
-        phone: '',
-        description: '',
+      title: '',
+      description: '',
+      image: undefined as unknown as File,
       ...defaultValues,
     },
   });
@@ -61,10 +68,9 @@ const AddTelephonic: React.FC<AddBottomMenuProps> = ({
   useEffect(() => {
     if (isOpen) {
       reset({
-        name: '',
-        email: '',
-        phone: '',
+        title: '',
         description: '',
+        image: undefined as unknown as File,
         ...defaultValues,
       });
     }
@@ -72,11 +78,37 @@ const AddTelephonic: React.FC<AddBottomMenuProps> = ({
 
   const onSubmit = (data: FormData) => {
     console.log('Form data being submitted:', data);
-    onSubmitHandler(data);
+    
+    if (mode === "ADD") {
+      // For ADD mode, create FormData for file upload
+      const formData = new FormData();
+      formData.append('title', data.title);
+      formData.append('description', data.description);
+      if (data.image) {
+        formData.append('image', data.image);
+      }
+      onSubmitHandler(formData as any);
+    } else {
+      // For EDIT mode, handle differently based on whether image is updated
+      if (data.image && data.image instanceof File) {
+        // If new image is provided, use FormData
+        const formData = new FormData();
+        formData.append('title', data.title);
+        formData.append('description', data.description);
+        formData.append('image', data.image);
+        onSubmitHandler(formData as any);
+      } else {
+        // If no new image, send JSON data
+        const updateData = {
+          title: data.title,
+          description: data.description,
+        };
+        onSubmitHandler(updateData as any);
+      }
+    }
   };
 
- 
-
+  
   if (!isOpen) return null;
 
   return (
@@ -89,7 +121,7 @@ const AddTelephonic: React.FC<AddBottomMenuProps> = ({
       >
         <div className={styles.modalHeader}>
           <h2 className={styles.modalTitle}>
-            {mode === "ADD" ? "Add Telephone" : "Edit Telephone"}
+            {mode === "ADD" ? "Add Slider" : "Edit Slider"}
           </h2>
           <button 
             onClick={onClose} 
@@ -101,64 +133,55 @@ const AddTelephonic: React.FC<AddBottomMenuProps> = ({
         </div>
 
         <div className={styles.breadcrumb}>
-          <span className={styles.breadcrumbLink}>Dashboard</span>
+          <span className={styles.breadcrumbLink}>Admin</span>
           <span> / </span>
-          <span className={styles.breadcrumbLink}>telephone</span>
+          <span className={styles.breadcrumbLink}>slider</span>
           <span> / </span>
           <span className={styles.breadcrumbCurrent}>
-            {mode === "ADD" ? "Add Telephone" : "Edit Telephone"}
+            {mode === "ADD" ? "Add slider" : "Edit slider"}
           </span>
         </div>
 
         <form className={styles.formGrid} onSubmit={handleSubmit(onSubmit)}>
           
-         <div>
+
+          <div>
             <Input
-              label="Name"
-              name="name"
+              label="Title"
+              name="title"
               type="text"
               register={register}
               errors={errors}
               required
-              placeholder="Enter Name"
+              placeholder="Enter title"
             />
           </div>
 
           <div>
             <Input
-              label="Email"
-              name="email"
-              type="email"
-              register={register}
-              errors={errors}
-              required
-              placeholder="Enter email"
-            />
-          </div>
-
-          <div>
-            <Input
-              label="Phone"
-              name="phone"
-              type="number"
-              register={register}
-              errors={errors}
-              required
-              placeholder="Enter Phone"
-            
-            />
-          </div>
-
-          <div className={styles.fullSpan}>
-            <Textarea
               label="Description"
               name="description"
+              type="text"
               register={register}
               errors={errors}
-              placeholder="Enter Description"
-              rows={3}
+              placeholder="Enter description"
             />
           </div>
+
+
+
+          <div>
+            <Input
+              label="Image"
+              name="image"
+              type="file"
+              register={register}
+              errors={errors}
+              setValue={setValue}
+              required
+            />
+          </div>
+
 
 
           <div className={styles.fullSpan}>
@@ -173,7 +196,7 @@ const AddTelephonic: React.FC<AddBottomMenuProps> = ({
               <Button
                 type="submit"
                 buttonType="primary"
-                title={mode === "ADD" ? "Add Telephone" : "Update Telephone"}
+                title={mode === "ADD" ? "Add Slider" : "Update Slider"}
                 isLoading={isLoading}
               />
             </div>
@@ -184,4 +207,4 @@ const AddTelephonic: React.FC<AddBottomMenuProps> = ({
   );
 };
 
-export default AddTelephonic;
+export default AddSlider;

@@ -1,34 +1,27 @@
 
 import React, { useState } from "react";
-import AddBottomMenu from "./manipulate";
+import AddSlider from "./manipulate";
 import { DataTable } from "../../../components/DataTable";
 import Button from "../../../components/Button";
-import styles from "./submenu.module.css";
+import styles from "./slider.module.css";
 import { motion } from "framer-motion";
 import DeleteDialog from "./DeleteDialog";
 import { 
-  useGetSubmenuQuery, 
-  useCreateSubmenuMutation, 
-  useUpdateSubmenuMutation, 
-  useDeleteSubmenuMutation 
-} from "../../../store/services/submenu.api";
+    useGetSliderQuery, 
+    useCreateSliderMutation,
+    useUpdateSliderMutation, 
+  useDeleteSliderMutation 
+} from "../../../store/services/sliders.api";
 import { toast } from "react-toastify";
 
 interface RowData {
   id: number;
-  website: string;
-  displayOnMenu: string;
-  displayArea: string;
-  menuName: string;
-  menuSubHeading?: string;
-  menuDescription?: string;
-  menuPosition: number;
-  seoUrl?: string;
-  otherUrl?: string;
-  target: string;
+  title: string;
+ description: string;
+  image: File;
 }
 
-const ListBottomData: React.FC = () => {
+const ListSlider: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"ADD" | "EDIT" | "DELETE">("ADD");
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -36,10 +29,10 @@ const ListBottomData: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   // API hooks
-  const { data: submenuData, isLoading: isDataLoading, refetch } = useGetSubmenuQuery({});
-  const [createSubmenu] = useCreateSubmenuMutation();
-  const [updateSubmenu] = useUpdateSubmenuMutation();
-  const [deleteSubmenu] = useDeleteSubmenuMutation();
+  const { data: submenuData, isLoading: isDataLoading, refetch } = useGetSliderQuery({});
+  const [createSlider] = useCreateSliderMutation();
+  const [updateSlider] = useUpdateSliderMutation();
+  const [deleteSlider] = useDeleteSliderMutation ();
 
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
@@ -52,11 +45,10 @@ const ListBottomData: React.FC = () => {
 
   const columns = [
     { label: "ID", accessor: "id" },
-    { label: "Website", accessor: "website" },
-    { label: "Menu Name", accessor: "menuName" },
-    { label: "Display Area", accessor: "displayArea" },
-    { label: "Position", accessor: "menuPosition" },
-    { label: "Target", accessor: "target" },
+    { label: "Title", accessor: "title" },
+    { label: "Description", accessor: "description" },
+    { label: "Image", accessor: "image" },
+   
   ];
 
   const fetchData = () => {
@@ -73,13 +65,13 @@ const ListBottomData: React.FC = () => {
     setIsLoading(true);
     try {
       if (selectedId) {
-        await deleteSubmenu({ id: selectedId }).unwrap();
-        toast.success("Menu item deleted successfully");
+        await deleteSlider({ id: selectedId }).unwrap();
+        toast.success("Slider deleted successfully");
         refetch();
       }
     } catch (error) {
       console.error("Delete failed:", error);
-      toast.error("Failed to delete menu item");
+      toast.error("Failed to delete Slider");
     } finally {
       setIsLoading(false);
       setIsOpen(false);
@@ -91,16 +83,24 @@ const ListBottomData: React.FC = () => {
     setIsLoading(true);
     try {
       if (mode === "ADD") {
-        await createSubmenu(formData).unwrap();
-        toast.success("Menu item created successfully");
+        await createSlider(formData).unwrap();
+        toast.success("Slider created successfully");
       } else if (mode === "EDIT") {
-        await updateSubmenu({ ...formData, id: defaultValues.id }).unwrap();
-        toast.success("Menu item updated successfully");
+        // Handle FormData vs regular object differently
+        if (formData instanceof FormData) {
+          // If it's FormData (with new image), append the ID
+          formData.append('id', defaultValues.id?.toString() || '');
+          await updateSlider(formData).unwrap();
+        } else {
+          // If it's regular object (no new image), add ID to object
+          await updateSlider({ ...formData, id: defaultValues.id }).unwrap();
+        }
+        toast.success("Slider updated successfully");
       }
       refetch();
     } catch (error) {
       console.error("Submit failed:", error);
-      toast.error(`Failed to ${mode === "ADD" ? "create" : "update"} menu item`);
+      toast.error(`Failed to ${mode === "ADD" ? "create" : "update"} slider`);
     } finally {
       setIsLoading(false);
       setIsOpen(false);
@@ -109,7 +109,7 @@ const ListBottomData: React.FC = () => {
   };
 
   return (
-    <div className={styles.main}>
+    <div className={styles.menu} >
       <motion.div
         initial="hidden"
         animate="visible"
@@ -117,7 +117,7 @@ const ListBottomData: React.FC = () => {
         className={styles.formContainer}
       >
         <div className={styles.header}>
-          <h1 className={styles.title}>Bottom Menu Management</h1>
+          <h1 className={styles.title}>Slider Management</h1>
           <Button
             type="button"
             isLoading={isLoading}
@@ -138,7 +138,10 @@ const ListBottomData: React.FC = () => {
             {
               label: "✏️",
               onClick: (row) => {
-                setDefaultValues(row as RowData);
+                // For edit mode, we need to exclude the image from defaultValues
+                // since we can't pre-populate file inputs
+                const { image, ...editValues } = row as RowData;
+                setDefaultValues(editValues);
                 setIsOpen(true);
                 setMode("EDIT");
                 console.log("Edit clicked:", row);
@@ -161,7 +164,7 @@ const ListBottomData: React.FC = () => {
         />
       </motion.div>
 
-      <AddBottomMenu 
+      <AddSlider 
         isOpen={isOpen && ["ADD", "EDIT"].includes(mode)}
         onClose={() => {
           setIsOpen(false);
@@ -188,4 +191,4 @@ const ListBottomData: React.FC = () => {
   );
 };
 
-export default ListBottomData;
+export default ListSlider;

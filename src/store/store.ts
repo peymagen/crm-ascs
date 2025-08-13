@@ -9,9 +9,10 @@ import { apiSliders } from "./services/sliders.api";
 import { apiSetting } from "./services/setting.api";
 import { apiMainMenu } from "./services/mainMenu.api";
 import { menuApi } from "./services/menu.api";
-// import GalleryCategory from "../pages/Admin/GalleryCategory";
 import galleryCategoryApi from "./services/galleryCategory.api";
 import galleryImageApi from "./services/galleryImage.api";
+import { apiSubmenu } from "./services/submenu.api";
+import { apiTelephonic } from "./services/telephonic.api";
 
 export const store = configureStore({
   reducer: {
@@ -26,6 +27,9 @@ export const store = configureStore({
     [menuApi.reducerPath]: menuApi.reducer,
     [galleryCategoryApi.reducerPath]: galleryCategoryApi.reducer,
     [galleryImageApi.reducerPath]: galleryImageApi.reducer,
+    [apiSubmenu.reducerPath]: apiSubmenu.reducer,
+    [apiTelephonic.reducerPath]: apiTelephonic.reducer,
+    [apiSlider.reducerPath]: apiSlider.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -38,7 +42,9 @@ export const store = configureStore({
       apiMainMenu.middleware,
       menuApi.middleware,
       galleryCategoryApi.middleware,
-      galleryImageApi.middleware
+      galleryImageApi.middleware,
+      apiSubmenu.middleware,
+      apiTelephonic.middleware
     ),
 });
 

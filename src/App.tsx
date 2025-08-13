@@ -15,6 +15,7 @@ import Dashboard from "./pages/Admin/dashboard";
 import Home from "./pages/home";
 import ListBottomData from "./pages/Admin/SubMenu";
 import TelephonicData from "./pages/Admin/Telephonic";
+import ListSlider from "./pages/Admin/Slider";
 
 import GalleryCategory from "./pages/Admin/GalleryCategory";
 import GalleryImageManagement from "./pages/Admin/GalleryImage";
@@ -57,8 +58,9 @@ function App() {
           <Route path="/admin" element={<Dashboard />} />
           <Route path="/admin/main-menu" element={<MenuManagement />} />
           <Route path="/admin/sub-menu" element={<ListBottomData />} />
-          <Route path="/admin/gallery" element={<GalleryCategory />} />
           <Route path="/admin/telephonic" element={<TelephonicData />} />
+          <Route path="/admin/slider" element={<ListSlider />} />
+          <Route path="/admin/gallery" element={<GalleryCategory />} />
           <Route
             path="/admin/gallery-image"
             element={<GalleryImageManagement />}

@@ -1,6 +1,4 @@
 
-
-
 import React, { useState } from "react";
 import AddTelephonic from "./manipulate";
 import { DataTable } from "../../../components/DataTable";
@@ -8,6 +6,13 @@ import Button from "../../../components/Button";
 import styles from "./submenu.module.css";
 import { motion } from "framer-motion";
 import DeleteDialog from "./DeleteDialog";
+import { 
+  useGetTelephonicQuery, 
+  useCreateTelephonicMutation, 
+  useUpdateTelephonicMutation, 
+  useDeleteTelephonicMutation 
+} from "../../../store/services/telephonic.api";
+import { toast } from "react-toastify";
 
 interface RowData {
   id: number;
@@ -24,6 +29,12 @@ const TelephonicData: React.FC = () => {
   const [defaultValues, setDefaultValues] = useState<Partial<RowData>>({});
   const [isLoading, setIsLoading] = useState(false);
 
+  // API hooks
+  const { data: telephonicData, isLoading: isDataLoading, refetch } = useGetTelephonicQuery({});
+  const [createTelephonic] = useCreateTelephonicMutation();
+  const [updateTelephonic] = useUpdateTelephonicMutation();
+  const [deleteTelephonic] = useDeleteTelephonicMutation();
+
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
     visible: {
@@ -32,13 +43,6 @@ const TelephonicData: React.FC = () => {
       transition: { duration: 0.3 },
     },
   };
-
-  const dummyData: RowData[] = [
-    { id: 1, name: "Anand", email: "anand@.com", phone: "7890546787",  description: "i am anand " },
-    { id: 2, name: "Saurav", email: "saurav@.com", phone: "7890546787",  description: "i am saurav " },
-    { id: 3, name: "OM", email: "om@.com", phone: "7890546787",  description: "i am om " },
-    { id: 4, name: "Satwik", email: "satwik@.com", phone: "7890546787",  description: "i am satwik " },
-  ];
 
   const columns = [
     { label: "ID", accessor: "id" },
@@ -50,43 +54,55 @@ const TelephonicData: React.FC = () => {
 
   const fetchData = () => {
     return new Promise<{ data: RowData[]; total: number }>((resolve) => {
-      setTimeout(() => {
-        resolve({
-          data: dummyData,
-          total: dummyData.length,
-        });
-      }, 500);
+      const data = telephonicData?.data || [];
+      resolve({
+        data: data,
+        total: data.length,
+      });
     });
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     setIsLoading(true);
-    console.log("Delete confirmed for ID:", selectedId);
-    
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      if (selectedId) {
+        await deleteTelephonic({ id: selectedId }).unwrap();
+        toast.success("Record deleted successfully");
+        refetch();
+      }
+    } catch (error) {
+      console.error("Delete failed:", error);
+      toast.error("Failed to delete record");
+    } finally {
       setIsLoading(false);
       setIsOpen(false);
       setSelectedId(null);
-      // Here you would typically refresh the data
-    }, 1000);
+    }
   };
 
-  const handleSubmit = (formData: any) => {
+  const handleSubmit = async (formData: any) => {
     setIsLoading(true);
-    console.log("Form submitted:", formData);
-    
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      if (mode === "ADD") {
+        await createTelephonic(formData).unwrap();
+        toast.success("Record created successfully");
+      } else if (mode === "EDIT") {
+        await updateTelephonic({ ...formData, id: defaultValues.id }).unwrap();
+        toast.success("Record updated successfully");
+      }
+      refetch();
+    } catch (error) {
+      console.error("Submit failed:", error);
+      toast.error(`Failed to ${mode === "ADD" ? "create" : "update"} record`);
+    } finally {
       setIsLoading(false);
       setIsOpen(false);
       setDefaultValues({});
-      // Here you would typically refresh the data
-    }, 1000);
+    }
   };
 
   return (
-    <div style={{ padding: '20px', minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
+    <div className={styles.main}>
       <motion.div
         initial="hidden"
         animate="visible"
@@ -134,7 +150,7 @@ const TelephonicData: React.FC = () => {
           isSearch={true}
           isExport={true}
           isNavigate={true}
-          loading={isLoading}
+          loading={isDataLoading}
         />
       </motion.div>
 

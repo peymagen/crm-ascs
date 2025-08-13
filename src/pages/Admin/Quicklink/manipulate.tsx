@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { motion } from "framer-motion";
-import styles from "./submenu.module.css";
+import styles from "./quickmenu.module.css";
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 import Select from "../../../components/Select";
@@ -37,7 +37,7 @@ interface AddBottomMenuProps {
   isLoading?: boolean;
 }
 
-const AddBottomMenu: React.FC<AddBottomMenuProps> = ({
+const AddQuickMenu: React.FC<AddBottomMenuProps> = ({
   isOpen,
   onClose,
   defaultValues = {},
@@ -203,4 +203,4 @@ const AddBottomMenu: React.FC<AddBottomMenuProps> = ({
   );
 };
 
-export default AddBottomMenu;
+export default AddQuickMenu;

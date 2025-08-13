@@ -8,9 +8,15 @@ import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 import Select from "../../../components/Select";
 
+import { useGetMainMenuQuery } from "../../../store/services/mainMenu.api"; // <-- Your API hook
+
 // Validation schema
 const schema = yup
   .object({
+    parent_id: yup
+      .number()
+      .typeError("Parent menu is required")
+      .required("Parent menu is required"),
     name: yup.string().required("Name is required"),
     url: yup.string(),
     other_url: yup.string().url("Must be a valid URL"),
@@ -37,7 +43,7 @@ interface AddBottomMenuProps {
   isLoading?: boolean;
 }
 
-const AddBottomMenu: React.FC<AddBottomMenuProps> = ({
+const AddSubMenu: React.FC<AddBottomMenuProps> = ({
   isOpen,
   onClose,
   defaultValues = {},
@@ -46,6 +52,7 @@ const AddBottomMenu: React.FC<AddBottomMenuProps> = ({
   isLoading = false,
 }) => {
   const defaultPropValues: IFooterMenu = {
+    parent_id: undefined,
     name: "",
     url: "",
     other_url: "",
@@ -66,6 +73,16 @@ const AddBottomMenu: React.FC<AddBottomMenuProps> = ({
     },
   });
 
+  // main menu data come like parent_id
+    const { data: mainMenuData, isLoading: isMenuLoading } = useGetMainMenuQuery({});
+
+    const parentMenuOptions =
+    mainMenuData?.data?.map((menu: any) => ({
+      label: menu.id,
+      value: menu.id,
+    })) || [];
+
+
   useEffect(() => {
     if (isOpen) {
       reset({
@@ -73,7 +90,7 @@ const AddBottomMenu: React.FC<AddBottomMenuProps> = ({
         ...defaultValues,
       });
     }
-  }, [isOpen, reset]); // Only depend on isOpen and reset
+  }, [isOpen, reset]); 
 
   const onSubmit = (data: IFooterMenu) => {
     console.log("Form data being submitted:", data);
@@ -99,7 +116,7 @@ const AddBottomMenu: React.FC<AddBottomMenuProps> = ({
       >
         <div className={styles.modalHeader}>
           <h2 className={styles.modalTitle}>
-            {mode === "ADD" ? "Add Quick Menu" : "Edit Quick Menu"}
+            {mode === "ADD" ? "Add Sub Menu" : "Edit Sub Menu"}
           </h2>
           <button
             onClick={onClose}
@@ -111,6 +128,18 @@ const AddBottomMenu: React.FC<AddBottomMenuProps> = ({
         </div>
 
         <form className={styles.formGrid} onSubmit={handleSubmit(onSubmit)}>
+          
+          <div>
+            <Select
+              label="Parent Id"
+              name="parent_id"
+              register={register}
+              options={parentMenuOptions}
+              errors={errors}
+              required
+            />
+          </div>
+          
           <div>
             <Select
               label="Website"
@@ -192,7 +221,7 @@ const AddBottomMenu: React.FC<AddBottomMenuProps> = ({
               <Button
                 type="submit"
                 buttonType="primary"
-                title={mode === "ADD" ? "Add Menu" : "Update Menu"}
+                title={mode === "ADD" ? "Add SubMenu" : "Update SubMenu"}
                 isLoading={isLoading}
               />
             </div>
@@ -203,4 +232,4 @@ const AddBottomMenu: React.FC<AddBottomMenuProps> = ({
   );
 };
 
-export default AddBottomMenu;
+export default AddSubMenu;

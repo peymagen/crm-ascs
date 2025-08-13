@@ -14,6 +14,7 @@ import galleryImageApi from "./services/galleryImage.api";
 import { apiSubmenu } from "./services/submenu.api";
 import { apiTelephonic } from "./services/telephonic.api";
 import { apiFooterMenu } from "./services/footerMenu.api";
+import { apiQuickMenu } from "./services/quickMenu.api";
 
 export const store = configureStore({
   reducer: {
@@ -31,6 +32,7 @@ export const store = configureStore({
     [apiSubmenu.reducerPath]: apiSubmenu.reducer,
     [apiTelephonic.reducerPath]: apiTelephonic.reducer,
     [apiFooterMenu.reducerPath]: apiFooterMenu.reducer,
+    [apiQuickMenu.reducerPath]: apiQuickMenu.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -46,7 +48,8 @@ export const store = configureStore({
       galleryImageApi.middleware,
       apiSubmenu.middleware,
       apiTelephonic.middleware,
-      apiFooterMenu.middleware
+      apiFooterMenu.middleware,
+      apiQuickMenu.middleware
     ),
 });
 

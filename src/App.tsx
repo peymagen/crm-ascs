@@ -22,6 +22,9 @@ import GalleryCategory from "./pages/admin/GalleryCategory";
 import GalleryImageManagement from "./pages/admin/GalleryImage";
 
 import ListSetting from "./pages/admin/Settings";
+import FaqData from "./pages/Admin/faq/index";
+import QuickMenuData from "./pages/Admin/Quicklink";
+import SubMenuData from "./pages/Admin/SubMenu";
 
 function App() {
   return (
@@ -56,6 +59,9 @@ function App() {
           }
         >
           <Route path="/admin" element={<Dashboard />} />
+          <Route path="/admin/faq" element={<FaqData />} />
+          <Route path="/admin/quick-menu" element={<QuickMenuData />} />
+          <Route path="/admin/sub-menu" element={<SubMenuData />} />
           <Route path="/admin/main-menu" element={<MenuManagement />} />
           <Route path="/admin/bottom-menu" element={<ListBottomData />} />
           <Route path="/admin/telephonic" element={<TelephonicData />} />

@@ -8,6 +8,10 @@ import { apiHeader } from "./services/header.api";
 import { apiSliders } from "./services/sliders.api";
 import { apiSetting } from "./services/setting.api";
 import { apiMainMenu } from "./services/mainMenu.api";
+import { menuApi } from "./services/menu.api";
+// import GalleryCategory from "../pages/Admin/GalleryCategory";
+import galleryCategoryApi from "./services/galleryCategory.api";
+import galleryImageApi from "./services/galleryImage.api";
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +23,9 @@ export const store = configureStore({
     [apiSliders.reducerPath]: apiSliders.reducer,
     [apiSetting.reducerPath]: apiSetting.reducer,
     [apiMainMenu.reducerPath]: apiMainMenu.reducer,
+    [menuApi.reducerPath]: menuApi.reducer,
+    [galleryCategoryApi.reducerPath]: galleryCategoryApi.reducer,
+    [galleryImageApi.reducerPath]: galleryImageApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -28,7 +35,10 @@ export const store = configureStore({
       apiHeader.middleware,
       apiSliders.middleware,
       apiSetting.middleware,
-      apiMainMenu.middleware
+      apiMainMenu.middleware,
+      menuApi.middleware,
+      galleryCategoryApi.middleware,
+      galleryImageApi.middleware
     ),
 });
 

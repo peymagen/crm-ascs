@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import Login from "./pages/login";
 import Loader from "./components/Loader";
@@ -10,9 +9,12 @@ import PublicLayout from "./components/Layout/publicLayout";
 import PublicRoute from "./components/Layout/publicRoute";
 import GalleryPage from "./pages/gallery";
 import "./i18n";
+
 import MenuManagement from "./pages/Admin/MenuManagement";
 import Dashboard from "./pages/Admin/dashboard";
 import Home from "./pages/home";
+import GalleryCategory from "./pages/Admin/GalleryCategory";
+import GalleryImageManagement from "./pages/Admin/GalleryImage";
 
 function App() {
   return (
@@ -51,6 +53,11 @@ function App() {
         >
           <Route path="/admin/main-menu" element={<MenuManagement />} />
           <Route path="/admin" element={<Dashboard />} />
+          <Route path="/admin/Gallery" element={<GalleryCategory />} />
+          <Route
+            path="/admin/Gallery/Image"
+            element={<GalleryImageManagement />}
+          />
         </Route>
       </Routes>
     </Suspense>

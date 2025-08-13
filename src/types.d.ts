@@ -54,11 +54,6 @@ interface IGalleryResponse {
   message?: string;
 }
 
-interface IResponse {
-  success: boolean;
-  message: string;
-  data?: any;
-}
 interface ISliders extends Base {
   title: string;
   description: string;

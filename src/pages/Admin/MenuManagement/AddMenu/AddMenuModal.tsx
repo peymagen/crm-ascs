@@ -1,101 +1,149 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
 import Input from "../../../../components/Input";
-import Button from "../../../../components/Button";
-import Textarea from "../../../../components/Textarea";
 import Select from "../../../../components/Select";
+import Textarea from "../../../../components/Textarea";
+import Button from "../../../../components/Button";
 
-import "./AddMenuModal.css";
+import styles from "./AddMenu.module.css";
 
+// import { MenuItem } from "../../../../store/services/menu.api";
+
+export interface MenuItem {
+  id: number;
+  name: string;
+  url?: string | null;
+  other_url?: string | null;
+  target?: string;
+  description?: string | null;
+  position?: number;
+  sorting_order?: number;
+  lang?: string;
+  [key: string]: any;
+}
 interface Props {
   onClose: () => void;
-  onAdd: (menu: Omit<Menu, "id">) => void;
-  editMenu?: Menu | null;
+  onSave: (menu: Partial<MenuItem>) => Promise<any>;
+  editMenu?: MenuItem | null;
 }
 
 interface MenuFormInputs {
+  website: string;
+  displayArea: string;
+  displayOnMenu: string;
   menuName: string;
   menuSubHeading?: string;
   menuPosition: string;
   menuDescription?: string;
   seoUrl: string;
   otherUrl?: string;
-  website: string;
-  displayArea: string;
-  displayOnMenu: string;
   target: string;
 }
 
-const urlRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/; // Matches "my-seo-url"
-const numberRegex = /^[1-9]\d*$/; // Matches positive integers
+const defaultValues: MenuFormInputs = {
+  website: "English",
+  displayArea: "Main Navigation",
+  displayOnMenu: "Yes",
+  menuName: "",
+  menuSubHeading: "",
+  menuPosition: "1",
+  menuDescription: "",
+  seoUrl: "my-page",
+  otherUrl: "",
+  target: "_self",
+};
 
-const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
+const schema = yup
+  .object({
+    website: yup.string().required("Website is required"),
+    displayArea: yup.string().required("Display area is required"),
+    displayOnMenu: yup.string().required("Display on menu is required"),
+    menuName: yup.string().required("Menu name is required"),
+    menuSubHeading: yup.string().notRequired(),
+    menuPosition: yup
+      .string()
+      .matches(/^[1-9]\d*$/, "Menu position must be a positive number")
+      .required("Menu position is required"),
+    menuDescription: yup.string().notRequired(),
+    seoUrl: yup
+      .string()
+      .matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Invalid SEO URL format")
+      .required("SEO URL is required"),
+    otherUrl: yup.string().notRequired(),
+    target: yup.string().required("Target is required"),
+  })
+  .required();
+
+const AddMenuModal: React.FC<Props> = ({ onClose, onSave, editMenu }) => {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<MenuFormInputs>({
-    defaultValues: {
-      website: "English",
-      displayArea: "Main Navigation",
-      displayOnMenu: "Yes",
-      target: "Same Window",
-    },
+    resolver: yupResolver(schema),
+    defaultValues,
   });
 
   useEffect(() => {
     if (editMenu) {
       reset({
-        menuName: editMenu.name,
-        menuPosition: String(editMenu.position),
+        website: defaultValues.website,
+        displayArea: defaultValues.displayArea,
+        displayOnMenu: defaultValues.displayOnMenu,
+        menuName: editMenu.name || "",
+        menuSubHeading: editMenu.menuSubHeading || "",
+        menuPosition: editMenu.position ? String(editMenu.position) : "1",
         menuDescription: editMenu.description || "",
-        seoUrl: editMenu.path || "",
-        otherUrl: "",
-        website: "English",
-        displayArea: "Main Navigation",
-        displayOnMenu: "Yes",
-        target: "Same Window",
+        seoUrl: editMenu.url ? editMenu.url.replace(/^\//, "") : "",
+        otherUrl: editMenu.other_url || "",
+        target: editMenu.target || defaultValues.target,
       });
+    } else {
+      reset(defaultValues);
     }
   }, [editMenu, reset]);
 
-  const onSubmit = (data: MenuFormInputs) => {
-    if (!urlRegex.test(data.seoUrl)) {
-      alert("SEO URL must be in a valid format (e.g., 'my-seo-url').");
-      return;
+  const submit = async (data: MenuFormInputs) => {
+    const payload: Partial<MenuItem> = {
+      name: data.menuName.trim(),
+      target: data.target,
+      lang: "en", // fixed for now
+      sorting_order: Number(data.menuPosition),
+      description: data.menuDescription ? data.menuDescription.trim() : null,
+      url: data.seoUrl
+        ? data.seoUrl.trim().startsWith("/")
+          ? data.seoUrl.trim()
+          : "/" + data.seoUrl.trim()
+        : null,
+      other_url: data.otherUrl ? data.otherUrl.trim() : null,
+    };
+
+    try {
+      await onSave(payload);
+      onClose();
+    } catch (error) {
+      console.error("Failed to save menu:", error);
+      // optionally show error to user here
     }
-
-    if (!numberRegex.test(data.menuPosition)) {
-      alert("Menu Position must be a positive number.");
-      return;
-    }
-
-    onAdd({
-      name: data.menuName,
-      path: data.seoUrl || data.otherUrl || "",
-      description: data.menuDescription || "",
-      position: parseInt(data.menuPosition, 10),
-    });
-
-    onClose();
   };
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content">
-        <h2 className="modal-title">
+    <div className={styles.modalBackdrop}>
+      <div className={styles.modalContent}>
+        <h2 className={styles.modalTitle}>
           {editMenu ? "Edit Menu" : "Add New Menu"}
         </h2>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="modal-form">
-          <div className="modal-form-grid">
-            <div className="modal-section-header">
+        <form onSubmit={handleSubmit(submit)} className={styles.modalForm}>
+          <div className={styles.modalFormGrid}>
+            <div className={styles.modalSectionHeader}>
               <h3>General Information</h3>
             </div>
 
-            {/* Select Website */}
             <Select
               label="Select Website"
               name="website"
@@ -104,7 +152,6 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               errors={errors}
             />
 
-            {/* Display Area */}
             <Select
               label="Display Area/Region"
               name="displayArea"
@@ -116,7 +163,6 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               errors={errors}
             />
 
-            {/* Display on Menu */}
             <Select
               label="Display on Menu"
               name="displayOnMenu"
@@ -128,7 +174,6 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               errors={errors}
             />
 
-            {/* Menu Name */}
             <Input
               label="Enter Menu Name"
               name="menuName"
@@ -137,7 +182,6 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               required
             />
 
-            {/* Sub Heading */}
             <Input
               label="Enter Menu Sub Heading"
               name="menuSubHeading"
@@ -145,7 +189,6 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               errors={errors}
             />
 
-            {/* Menu Position */}
             <Input
               label="Enter Menu Position"
               name="menuPosition"
@@ -153,11 +196,9 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               errors={errors}
               required
               placeholder="Enter numeric position"
-              type="text"
             />
 
-            {/* Description */}
-            <div className="col-span-full">
+            <div className={styles.colSpanFull}>
               <Textarea
                 label="Description"
                 name="menuDescription"
@@ -167,13 +208,11 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
             </div>
           </div>
 
-          {/* Hyperlink Info */}
-          <div className="modal-form-grid">
-            <div className="modal-section-header">
+          <div className={styles.modalFormGrid}>
+            <div className={styles.modalSectionHeader}>
               <h3>Hyperlink Information</h3>
             </div>
 
-            {/* SEO URL */}
             <Input
               label="Enter SEO URL"
               name="seoUrl"
@@ -183,7 +222,6 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               placeholder="SEO-friendly URL (e.g., my-page)"
             />
 
-            {/* Other URL */}
             <Input
               label="Enter Other URL"
               name="otherUrl"
@@ -192,21 +230,19 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               placeholder="Other URL (if any)"
             />
 
-            {/* Target */}
             <Select
               label="Select Target"
               name="target"
               options={[
-                { label: "Same Window", value: "Same Window" },
-                { label: "New Window", value: "New Window" },
+                { label: "Same Window", value: "_self" },
+                { label: "New Window", value: "_blank" },
               ]}
               register={register}
               errors={errors}
             />
           </div>
 
-          {/* Action Buttons */}
-          <div className="modal-actions">
+          <div className={styles.modalActions}>
             <Button
               title="Cancel"
               type="button"
@@ -214,7 +250,7 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onAdd, editMenu }) => {
               buttonType="secondary"
             />
             <Button
-              title="Add Menu"
+              title={editMenu ? "Update Menu" : "Add Menu"}
               type="submit"
               isLoading={isSubmitting}
               buttonType="primary"

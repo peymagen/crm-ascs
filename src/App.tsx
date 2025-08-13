@@ -20,6 +20,8 @@ import ListSlider from "./pages/Admin/Slider";
 import GalleryCategory from "./pages/Admin/GalleryCategory";
 import GalleryImageManagement from "./pages/Admin/GalleryImage";
 
+import ListSetting from "./pages/admin/settings";
+
 function App() {
   return (
     <Suspense fallback={<Loader />}>
@@ -62,6 +64,7 @@ function App() {
             path="/admin/gallery-image"
             element={<GalleryImageManagement />}
           />
+          <Route path="/admin/setting" element={<ListSetting />} />
         </Route>
       </Routes>
     </Suspense>

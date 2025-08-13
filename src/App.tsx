@@ -51,11 +51,11 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route path="/admin/main-menu" element={<MenuManagement />} />
           <Route path="/admin" element={<Dashboard />} />
-          <Route path="/admin/Gallery" element={<GalleryCategory />} />
+          <Route path="/admin/main-menu" element={<MenuManagement />} />
+          <Route path="/admin/gallery" element={<GalleryCategory />} />
           <Route
-            path="/admin/Gallery/Image"
+            path="/admin/gallery-image"
             element={<GalleryImageManagement />}
           />
         </Route>

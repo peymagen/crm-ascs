@@ -1,8 +1,7 @@
 /* Container */
 .container {
-  max-width: 1000px; /* Match Menu Management */
   margin: 0 auto; /* Center horizontally */
-  padding: 20px; /* Keep some spacing inside */
+  padding: 0 20px; /* Keep some spacing inside */
 
   /* min-height: 100vh; */
 }
@@ -16,11 +15,13 @@
   margin-bottom: 16px;
 }
 
+.header button {
+  width: fit-content;
+}
+
 .title {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  color: #111827;
+  font-size: 2rem;
+  font-weight: bold;
 }
 
 /* Table wrapper */

@@ -78,11 +78,19 @@ const GalleryImageManagement: React.FC = () => {
     }
   };
 
-  const onPageChange = (newPage: number) => setPage(newPage);
-  const onSearchChange = useCallback((searchValue: string) => {
-    setSearch(searchValue);
-    setPage(1);
-  }, []);
+  const fetchData = useCallback(
+    async (params?: { page: number; search?: string }) => {
+      const page = params?.page || 1;
+      const search = params?.search || "";
+      setPage(page);
+      setSearch(search);
+      return {
+        data: queryData?.data || [],
+        total: queryData?.total || 0,
+      };
+    },
+    [queryData]
+  );
 
   return (
     <div className={styles.container}>
@@ -96,38 +104,29 @@ const GalleryImageManagement: React.FC = () => {
         />
       </div>
 
-      <div className={styles.tableWrapper}>
-        <DataTable
-          fetchData={async () => ({ data: images, total })}
-          columns={[
-            { label: "ID", accessor: "id" },
-            { label: "Image URL", accessor: "image" },
-            { label: "Reference ID", accessor: "ref_id" },
-          ]}
-          actions={[
-            {
-              label: "Edit",
-              onClick: (row: GalleryImage) =>
-                setModalData({ mode: "edit", imageData: row }),
-            },
-            {
-              label: "Delete",
-              onClick: (row: GalleryImage) => setDeleteTarget(row),
-            },
-          ]}
-          loading={isLoading || isAdding || isUpdating || isDeleting}
-          isNavigate
-          isSearch
-          isExport
-          hasCheckbox
-          onSelectedRows={(rows) => console.log("Selected Rows:", rows)}
-          page={page}
-          onPageChange={onPageChange}
-          onSearchChange={onSearchChange}
-          totalRecords={total}
-          pageSize={10}
-        />
-      </div>
+      <DataTable
+        fetchData={fetchData}
+        columns={[
+          { label: "ID", accessor: "id" },
+          { label: "Image URL", accessor: "image" },
+          { label: "Reference ID", accessor: "ref_id" },
+        ]}
+        actions={[
+          {
+            label: "Edit",
+            onClick: (row: GalleryImage) =>
+              setModalData({ mode: "edit", imageData: row }),
+          },
+          {
+            label: "Delete",
+            onClick: (row: GalleryImage) => setDeleteTarget(row),
+          },
+        ]}
+        loading={isLoading || isAdding || isUpdating || isDeleting}
+        isNavigate
+        isSearch
+        isExport
+      />
 
       {modalData && (
         <Manipulate

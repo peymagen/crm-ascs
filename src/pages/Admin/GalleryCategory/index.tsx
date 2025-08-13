@@ -52,10 +52,6 @@ const GalleryCategory: React.FC = () => {
   const [deleteCategory, { isLoading: isDeleting }] =
     useDeleteGalleryCategoryMutation();
 
-  // Data for DataTable
-  const categories = queryData?.data ?? [];
-  const total = queryData?.total ?? 0;
-
   // Handle save from modal (add or edit)
   const handleSave = async (
     data: Omit<GalleryCategoryItem, "id"> & { id?: number }
@@ -109,16 +105,19 @@ const GalleryCategory: React.FC = () => {
     },
   ];
 
-  // Handle page change
-  const onPageChange = (newPage: number) => {
-    setPage(newPage);
-  };
-
-  // Handle search input from DataTable
-  const onSearchChange = useCallback((searchValue: string) => {
-    setSearch(searchValue);
-    setPage(1); // reset to first page on new search
-  }, []);
+  const fetchData = useCallback(
+    async (params?: { page: number; search?: string }) => {
+      const page = params?.page || 1;
+      const search = params?.search || "";
+      setPage(page);
+      setSearch(search);
+      return {
+        data: queryData?.data || [],
+        total: queryData?.total || 0,
+      };
+    },
+    [queryData]
+  );
 
   return (
     <div className={styles.container}>
@@ -132,31 +131,19 @@ const GalleryCategory: React.FC = () => {
         />
       </div>
 
-      <div className={styles.tableWrapper}>
-        <DataTable
-          fetchData={async ({ page: p, search: s }) => {
-            // We rely on RTK Query, so just return current data and total here
-            return { data: categories, total };
-          }}
-          columns={[
-            { label: "ID", accessor: "id" },
-            { label: "Title", accessor: "title" },
-            { label: "Description", accessor: "description" },
-          ]}
-          actions={actions}
-          loading={isLoading || isAdding || isUpdating || isDeleting}
-          isNavigate
-          isSearch
-          isExport
-          hasCheckbox
-          onSelectedRows={(rows) => console.log("Selected Rows:", rows)}
-          page={page}
-          onPageChange={onPageChange}
-          onSearchChange={onSearchChange}
-          totalRecords={total}
-          pageSize={10}
-        />
-      </div>
+      <DataTable
+        fetchData={fetchData}
+        columns={[
+          { label: "ID", accessor: "id" },
+          { label: "Title", accessor: "title" },
+          { label: "Description", accessor: "description" },
+        ]}
+        actions={actions}
+        loading={isLoading || isAdding || isUpdating || isDeleting}
+        isNavigate
+        isSearch
+        isExport
+      />
 
       {modalData && (
         <Manipulate

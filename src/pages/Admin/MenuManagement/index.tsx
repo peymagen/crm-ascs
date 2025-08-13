@@ -109,7 +109,7 @@ const MenuManagement: React.FC = () => {
       <div className={styles.header}>
         <h1 className={styles.title}>Main Menu Management</h1>
         <Button
-          title="Add Menu"
+          title="+ Add Main Menu"
           type="button"
           onClick={handleOpenAdd}
           buttonType="primary"

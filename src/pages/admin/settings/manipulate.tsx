@@ -1,61 +1,96 @@
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { motion } from 'framer-motion';
-import styles from './style.module.css';
-import Button from '../../../components/Button';
-import Input from '../../../components/Input';
-import Select from '../../../components/Select';
-
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { motion } from "framer-motion";
+import styles from "./style.module.css";
+import Button from "../../../components/Button";
+import Input from "../../../components/Input";
+import Select from "../../../components/Select";
 
 // Validation schema
 const schema = yup.object().shape({
-  name: yup.string().required('Name is required'),
-  slogan: yup.string().required('slogan on Menu is required'),
- logo: yup
+  name: yup.string().required("Name is required"),
+  slogan: yup.string().required("Slogan on Menu is required"),
+  logo: yup
     .mixed()
-    .required('Display Area is required')
-    .test('fileRequired', 'A file is required', (value) => {
-      return value instanceof File;
+    .test("fileRequired", "A file is required", (value) => {
+      if (typeof document !== "undefined") {
+        const isSubmitting = document.querySelector("form")?.checkValidity();
+        return !isSubmitting || value instanceof File;
+      }
+      return true;
     })
-    .test('fileSize', 'File is too large (max 2MB)', (value) => {
-      return value && value.size <= 2 * 1024 * 1024;
+    .test("fileSize", "File is too large (max 2MB)", (value) => {
+      return !value || (value instanceof File && value.size <= 2 * 1024 * 1024);
     })
-    .test('fileType', 'Unsupported file format', (value) => {
-      return value && ['image/jpeg', 'image/png', 'image/svg+xml'].includes(value.type);
-    }),
+    .test(
+      "fileType",
+      "Unsupported file format (JPEG, PNG, SVG only)",
+      (value) => {
+        return (
+          !value ||
+          (value instanceof File &&
+            ["image/jpeg", "image/png", "image/svg+xml"].includes(value.type))
+        );
+      }
+    ),
   videoUrl: yup
     .mixed()
-    .required('Video file is required')
-    .test('fileType', 'Unsupported file format', (value) => {
-      return value && ['video/mp4', 'video/webm', 'video/ogg'].includes(value.type);
+    .test("fileRequired", "A file is required", (value) => {
+      if (typeof document !== "undefined") {
+        const isSubmitting = document.querySelector("form")?.checkValidity();
+        return !isSubmitting || value instanceof File;
+      }
+      return true;
     })
-    .test('fileSize', 'File too large (max 10MB)', (value) => {
-      return value && value.size <= 10 * 1024 * 1024;
+    .test(
+      "fileType",
+      "Unsupported file format (MP4, WebM, Ogg only)",
+      (value) => {
+        return (
+          !value ||
+          (value instanceof File &&
+            ["video/mp4", "video/webm", "video/ogg"].includes(value.type))
+        );
+      }
+    )
+    .test("fileSize", "File too large (max 10MB)", (value) => {
+      return (
+        !value || (value instanceof File && value.size <= 10 * 1024 * 1024)
+      );
     }),
- audioUrl: yup
+  audioUrl: yup
     .mixed()
-    .required('Audio file is required')
-    .test('fileType', 'Unsupported file format', (value) => {
-      return value && ['audio/mpeg', 'audio/wav', 'audio/mp3'].includes(value.type);
+    .test("fileRequired", "A file is required", (value) => {
+      if (typeof document !== "undefined") {
+        const isSubmitting = document.querySelector("form")?.checkValidity();
+        return !isSubmitting || value instanceof File;
+      }
+      return true;
     })
-    .test('fileSize', 'File is too large (max 5MB)', (value) => {
-      return value && value.size <= 5 * 1024 * 1024;
+    .test("fileType", "Unsupported file format (MP3, WAV only)", (value) => {
+      return (
+        !value ||
+        (value instanceof File &&
+          ["audio/mpeg", "audio/wav", "audio/mp3"].includes(value.type))
+      );
+    })
+    .test("fileSize", "File is too large (max 5MB)", (value) => {
+      return !value || (value instanceof File && value.size <= 5 * 1024 * 1024);
     }),
-  content: yup.string().required('Content is required'),
-  lang: yup.string().required('Language is required'),
-  
+  content: yup.string().required("Content is required"),
+  lang: yup.string().required("Language is required"),
 });
 
 interface FormData {
   name: string;
-  logo: File;
+  logo: File | null;
   slogan: string;
-  videoUrl: File;
+  videoUrl: File | null;
   content: string;
-audioUrl: File;
-lang: string;
+  audioUrl: File | null;
+  lang: string;
 }
 
 interface AddBottomMenuProps {
@@ -67,13 +102,13 @@ interface AddBottomMenuProps {
   isLoading?: boolean;
 }
 
-const AddSetting: React.FC<AddBottomMenuProps> = ({ 
-  isOpen, 
-  onClose, 
-  defaultValues = {}, 
-  mode, 
+const AddSetting: React.FC<AddBottomMenuProps> = ({
+  isOpen,
+  onClose,
+  defaultValues = {},
+  mode,
   onSubmitHandler,
-  isLoading = false 
+  isLoading = false,
 }) => {
   const {
     register,
@@ -81,16 +116,17 @@ const AddSetting: React.FC<AddBottomMenuProps> = ({
     formState: { errors },
     reset,
     setValue,
+    watch,
   } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
-        name: "",
-  slogan: "",
-  content: "",
-  lang: "",
-  logo: undefined,
-  videoUrl: undefined,
-  audioUrl: undefined,
+      name: "",
+      slogan: "",
+      content: "",
+      lang: "",
+      logo: null,
+      videoUrl: null,
+      audioUrl: null,
       ...defaultValues,
     },
   });
@@ -99,14 +135,20 @@ const AddSetting: React.FC<AddBottomMenuProps> = ({
     if (isOpen) {
       reset({
         name: "",
-  slogan: "",
-  content: "",
-  lang: "",
-  logo: undefined,
-  videoUrl: undefined,
-  audioUrl: undefined,
+        slogan: "",
+        content: "",
+        lang: "",
+        logo: null,
+        videoUrl: null,
+        audioUrl: null,
         ...defaultValues,
       });
+
+      // Clear file inputs when modal opens
+      if (typeof document !== "undefined") {
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach((input) => ((input as HTMLInputElement).value = ""));
+      }
     }
   }, [isOpen, defaultValues, reset]);
 
@@ -114,7 +156,11 @@ const AddSetting: React.FC<AddBottomMenuProps> = ({
     onSubmitHandler(data);
   };
 
-  
+  const handleFileChange =
+    (fieldName: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0] || null;
+      setValue(fieldName, file, { shouldValidate: true });
+    };
 
   if (!isOpen) return null;
 
@@ -128,10 +174,10 @@ const AddSetting: React.FC<AddBottomMenuProps> = ({
       >
         <div className={styles.modalHeader}>
           <h2 className={styles.modalTitle}>
-            {mode === "ADD" ? "Add settting" : "Edit setting"}
+            {mode === "ADD" ? "Add setting" : "Edit setting"}
           </h2>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className={styles.closeButton}
             disabled={isLoading}
           >
@@ -150,10 +196,6 @@ const AddSetting: React.FC<AddBottomMenuProps> = ({
         </div>
 
         <form className={styles.formGrid} onSubmit={handleSubmit(onSubmit)}>
-         
-
-          
-
           <div>
             <Input
               label="Name"
@@ -165,7 +207,6 @@ const AddSetting: React.FC<AddBottomMenuProps> = ({
               placeholder="Enter Name"
             />
           </div>
-
 
           <div>
             <Input
@@ -180,41 +221,55 @@ const AddSetting: React.FC<AddBottomMenuProps> = ({
           </div>
 
           <div>
-            <Input
-              label="Logo"
-              name="logo"
+            <label>Logo *</label>
+            <input
               type="file"
-              register={register}
-              errors={errors}
-              placeholder="Enter Logo"
+              accept="image/jpeg, image/png, image/svg+xml"
+              onChange={handleFileChange("logo")}
             />
+            {errors.logo && (
+              <span className={styles.error}>{errors.logo.message}</span>
+            )}
+            {watch("logo") && (
+              <div className={styles.filePreview}>
+                Selected: {watch("logo")?.name}
+              </div>
+            )}
           </div>
 
           <div>
-            <Input
-              label="Video URL"
-              name="videoUrl"
+            <label>Video URL *</label>
+            <input
               type="file"
-              register={register}
-              errors={errors}
-              required
-              placeholder="Upload Video"
+              accept="video/mp4, video/webm, video/ogg"
+              onChange={handleFileChange("videoUrl")}
             />
+            {errors.videoUrl && (
+              <span className={styles.error}>{errors.videoUrl.message}</span>
+            )}
+            {watch("videoUrl") && (
+              <div className={styles.filePreview}>
+                Selected: {watch("videoUrl")?.name}
+              </div>
+            )}
           </div>
-
 
           <div>
-            <Input
-              label="Audio URL"
-              name="audioUrl"
+            <label>Audio URL *</label>
+            <input
               type="file"
-              register={register}
-              errors={errors}
-              required
-              placeholder="Upload Audio"
+              accept="audio/mpeg, audio/wav, audio/mp3"
+              onChange={handleFileChange("audioUrl")}
             />
+            {errors.audioUrl && (
+              <span className={styles.error}>{errors.audioUrl.message}</span>
+            )}
+            {watch("audioUrl") && (
+              <div className={styles.filePreview}>
+                Selected: {watch("audioUrl")?.name}
+              </div>
+            )}
           </div>
-
 
           <div>
             <Input
@@ -225,40 +280,19 @@ const AddSetting: React.FC<AddBottomMenuProps> = ({
               errors={errors}
               required
               placeholder="Enter Content"
-            
             />
           </div>
-
-
-          {/* <div>
-            <Input
-              label="Language"
-              name="lang"
-              type="text"
-              register={register}
-              errors={errors}
-              placeholder="Enter Language"
-            />
-          </div> */}
 
           <div>
             <Select
               label="Language"
               name="lang"
               register={register}
-              options={[
-                { value: "en", label: "English" },
-                { value: "fr", label: "French" },
-                { value: "es", label: "Spanish" },
-                // Add more languages as needed
-              ]}
+              options={[{ value: "en", label: "English" }]}
               errors={errors}
               required
             />
-
           </div>
-
-         
 
           <div className={styles.fullSpan}>
             <div className={styles.formActions}>
@@ -272,7 +306,7 @@ const AddSetting: React.FC<AddBottomMenuProps> = ({
               <Button
                 type="submit"
                 buttonType="primary"
-                title={mode === "ADD" ? "Add Menu" : "Update Menu"}
+                title={mode === "ADD" ? "Add Setting" : "Update Setting"}
                 isLoading={isLoading}
               />
             </div>

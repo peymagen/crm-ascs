@@ -1,10 +1,17 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import AddSetting from "./manipulate";
 import { DataTable } from "../../../components/DataTable";
 import Button from "../../../components/Button";
 import styles from "./style.module.css";
 import { motion } from "framer-motion";
 import DeleteDialog from "./DeleteDialog";
+import {
+  useCreateSettingMutation,
+  useDeleteSettingMutation,
+  useGetSettingQuery,
+  useUpdateSettingMutation,
+} from "../../../store/services/setting.api";
+import { toast } from "react-toastify";
 
 interface RowData {
   id: number;
@@ -13,8 +20,8 @@ interface RowData {
   slogan: string;
   videoUrl: File;
   content: string;
-audioUrl: File;
-lang: string;
+  audioUrl: File;
+  lang: string;
 }
 
 const ListSetting: React.FC = () => {
@@ -23,6 +30,26 @@ const ListSetting: React.FC = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [defaultValues, setDefaultValues] = useState<Partial<RowData>>({});
   const [isLoading, setIsLoading] = useState(false);
+
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+
+  const limit = 10;
+  const offset = (page - 1) * limit;
+
+  const [createSetting] = useCreateSettingMutation();
+  const [updateSetting] = useUpdateSettingMutation();
+  const [deleteSetting] = useDeleteSettingMutation();
+
+  const {
+    data,
+    isLoading: dataLoading,
+    refetch,
+  } = useGetSettingQuery({
+    limit,
+    offset,
+    search,
+  });
 
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
@@ -33,105 +60,78 @@ const ListSetting: React.FC = () => {
     },
   };
 
-  // Create dummy File objects (for demo only)
-  const dummyVideo = new File(["dummy video content"], "video.mp4", { type: "video/mp4" });
-  const dummyAudio = new File(["dummy audio content"], "audio.mp3", { type: "audio/mp3" });
-  const dummyLogo = new File(["dummy logo"], "audio.txt", { type: "audio/txt" });
-
-  const dummyData: RowData[] = [
-  {
-    id: 1,
-    name: "Home",
-    slogan: "hsdfj",
-    videoUrl: dummyVideo,
-    content: "sgsg",
-    audioUrl: dummyAudio,
-    logo: dummyLogo,   // ✅ Added logo
-    lang: "en"
-  },
-  {
-    id: 2,
-    name: "Home",
-    slogan: "hsdfj",
-    videoUrl: dummyVideo,
-    content: "sgsg",
-    audioUrl: dummyAudio,
-    logo: dummyLogo,
-    lang: "en"
-  },
-  {
-    id: 3,
-    name: "Home",
-    slogan: "hsdfj",
-    videoUrl: dummyVideo,
-    content: "sgsg",
-    audioUrl: dummyAudio,
-    logo: dummyLogo,
-    lang: "en"
-  },
-  {
-    id: 4,
-    name: "Home",
-    slogan: "hsdfj",
-    videoUrl: dummyVideo,
-    content: "sgsg",
-    audioUrl: dummyAudio,
-    logo: dummyLogo,
-    lang: "en"
-  }
-];
-
-
-
   const columns = [
-    { label: "ID", accessor: "id" },
     { label: "Name", accessor: "name" },
     { label: "Slogan", accessor: "slogan" },
     { label: "Content", accessor: "content" },
     { label: "AudioUrl", accessor: "audioUrl" },
     { label: "Logo", accessor: "logo" },
-    { label: "Lang", accessor: "lang" },
+    { label: "Video", accessor: "video" },
   ];
 
-  const fetchData = () => {
-    return new Promise<{ data: RowData[]; total: number }>((resolve) => {
-      setTimeout(() => {
-        resolve({
-          data: dummyData,
-          total: dummyData.length,
-        });
-      }, 500);
-    });
-  };
+  const fetchData = useCallback(
+    async (params?: { page: number; search?: string }) => {
+      const page = params?.page || 1;
+      const search = params?.search || "";
+      setPage(page);
+      setSearch(search);
+      return {
+        data: data?.data || [],
+        total: data?.total || 0,
+      };
+    },
+    [data]
+  );
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     setIsLoading(true);
-    console.log("Delete confirmed for ID:", selectedId);
-    
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      if (selectedId) {
+        await deleteSetting({ id: selectedId }).unwrap();
+        toast.success("Slider deleted successfully");
+        refetch();
+      }
+    } catch (error) {
+      console.error("Delete failed:", error);
+      toast.error("Failed to delete Slider");
+    } finally {
       setIsLoading(false);
       setIsOpen(false);
       setSelectedId(null);
-      // Here you would typically refresh the data
-    }, 1000);
+    }
   };
 
-  const handleSubmit = (formData: any) => {
+  const handleSubmit = async (formData: any) => {
     setIsLoading(true);
-    console.log("Form submitted:", formData);
-    
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      if (mode === "ADD") {
+        await createSetting(formData).unwrap();
+        toast.success("Slider created successfully");
+      } else if (mode === "EDIT") {
+        // Handle FormData vs regular object differently
+        if (formData instanceof FormData) {
+          // If it's FormData (with new image), append the ID
+          formData.append("id", defaultValues.id?.toString() || "");
+          await updateSetting(formData).unwrap();
+        } else {
+          // If it's regular object (no new image), add ID to object
+          await updateSetting({ ...formData, id: defaultValues.id }).unwrap();
+        }
+        toast.success("Slider updated successfully");
+      }
+      refetch();
+    } catch (error) {
+      console.error("Submit failed:", error);
+      toast.error(`Failed to ${mode === "ADD" ? "create" : "update"} slider`);
+    } finally {
       setIsLoading(false);
       setIsOpen(false);
       setDefaultValues({});
-      // Here you would typically refresh the data
-    }, 1000);
+    }
   };
 
   return (
-    <div style={{ padding: '20px', minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
+    <div className={styles.container}>
       <motion.div
         initial="hidden"
         animate="visible"
@@ -142,9 +142,9 @@ const ListSetting: React.FC = () => {
           <h1 className={styles.title}>Setting Management</h1>
           <Button
             type="button"
-            isLoading={isLoading}
+            isLoading={dataLoading}
             buttonType="primary"
-            title="+ Add New"
+            title="+ Add New Setting"
             onClick={() => {
               setDefaultValues({});
               setIsOpen(true);
@@ -183,7 +183,7 @@ const ListSetting: React.FC = () => {
         />
       </motion.div>
 
-      <AddSetting 
+      <AddSetting
         isOpen={isOpen && ["ADD", "EDIT"].includes(mode)}
         onClose={() => {
           setIsOpen(false);

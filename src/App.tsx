@@ -11,16 +11,16 @@ import GalleryPage from "./pages/gallery";
 import "./i18n";
 
 import MenuManagement from "./pages/Admin/MenuManagement";
-import Dashboard from "./pages/Admin/dashboard";
+import Dashboard from "./pages/admin/Dashboard";
 import Home from "./pages/home";
 import ListBottomData from "./pages/Admin/BottomMenu";
-import TelephonicData from "./pages/Admin/Telephonic";
-import ListSlider from "./pages/Admin/Slider";
+import TelephonicData from "./pages/admin/Telephonic";
+import ListSlider from "./pages/admin/Slider";
 
 import GalleryCategory from "./pages/Admin/GalleryCategory";
 import GalleryImageManagement from "./pages/Admin/GalleryImage";
 
-import ListSetting from "./pages/admin/settings";
+import ListSetting from "./pages/admin/Settings";
 
 function App() {
   return (

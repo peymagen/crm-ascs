@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import AddTelephonic from "./manipulate";
 import { DataTable } from "../../../components/DataTable";
 import Button from "../../../components/Button";
@@ -27,13 +27,17 @@ const TelephonicData: React.FC = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [defaultValues, setDefaultValues] = useState<Partial<RowData>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
+  const limit = 10;
+  const offset = (page - 1) * limit;
   // API hooks
   const {
     data: telephonicData,
     isLoading: isDataLoading,
     refetch,
-  } = useGetTelephonicQuery({});
+  } = useGetTelephonicQuery({ limit, offset, search });
   const [createTelephonic] = useCreateTelephonicMutation();
   const [updateTelephonic] = useUpdateTelephonicMutation();
   const [deleteTelephonic] = useDeleteTelephonicMutation();
@@ -55,15 +59,19 @@ const TelephonicData: React.FC = () => {
     { label: "Description", accessor: "description" },
   ];
 
-  const fetchData = () => {
-    return new Promise<{ data: RowData[]; total: number }>((resolve) => {
-      const data = telephonicData?.data || [];
-      resolve({
-        data: data,
-        total: data.length,
-      });
-    });
-  };
+  const fetchData = useCallback(
+    async (params?: { page: number; search?: string }) => {
+      const page = params?.page || 1;
+      const search = params?.search || "";
+      setPage(page);
+      setSearch(search);
+      return {
+        data: telephonicData?.data || [],
+        total: telephonicData?.total || 0,
+      };
+    },
+    [telephonicData]
+  );
 
   const handleDelete = async () => {
     setIsLoading(true);

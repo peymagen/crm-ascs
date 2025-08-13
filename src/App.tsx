@@ -13,7 +13,6 @@ import "./i18n";
 import MenuManagement from "./pages/admin/MenuManagement";
 import Dashboard from "./pages/admin/Dashboard";
 import Home from "./pages/home";
-import AddOpportunity from "./pages/admin/Opportunities/manipulate";
 import OpportunityData from "./pages/admin/Opportunities";
 import ListBottomData from "./pages/admin/BottomMenu";
 import TelephonicData from "./pages/admin/Telephonic";

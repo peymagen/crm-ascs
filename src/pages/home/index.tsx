@@ -5,6 +5,7 @@ const Home = () => {
     <div>
       <h1>Home Page</h1>
       <Slider />
+      {/* Other components can be added here */}
     </div>
   );
 };

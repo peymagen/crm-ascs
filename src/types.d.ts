@@ -37,3 +37,34 @@ interface IResponse {
   message: string;
   success: boolean;
 }
+
+interface IGalleryItem {
+  id: number;
+  ref_id: string;
+  image: string;
+  title?: string;
+  description?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+interface IGalleryResponse {
+  data: IGalleryItem[];
+  success: boolean;
+  message?: string;
+}
+
+interface ISliders extends Base {
+  title: string;
+  description: string;
+  image: File | string;
+}
+
+interface IMainMenu extends Base {
+  name: string;
+  url?: string;
+  other_url?: string;
+  target?: string;
+  sorting_order?: number;
+  lang?: string;
+}

@@ -9,9 +9,8 @@ import { apiFaq } from "./services/faq.api";
 import { apiSliders } from "./services/sliders.api";
 import { apiSetting } from "./services/setting.api";
 import { apiMainMenu } from "./services/mainMenu.api";
-import { menuApi } from "./services/menu.api";
-import galleryCategoryApi from "./services/galleryCategory.api";
-import galleryImageApi from "./services/galleryImage.api";
+import { galleryCategoryApi } from "./services/galleryCategory.api";
+import { galleryImageApi } from "./services/galleryImage.api";
 import { apiSubmenu } from "./services/submenu.api";
 import { apiTelephonic } from "./services/telephonic.api";
 import { apiFooterMenu } from "./services/footerMenu.api";
@@ -29,7 +28,6 @@ export const store = configureStore({
     [apiSliders.reducerPath]: apiSliders.reducer,
     [apiSetting.reducerPath]: apiSetting.reducer,
     [apiMainMenu.reducerPath]: apiMainMenu.reducer,
-    [menuApi.reducerPath]: menuApi.reducer,
     [galleryCategoryApi.reducerPath]: galleryCategoryApi.reducer,
     [galleryImageApi.reducerPath]: galleryImageApi.reducer,
     [apiFooterMenu.reducerPath]: apiFooterMenu.reducer,
@@ -42,14 +40,12 @@ export const store = configureStore({
       apiSubmenu.middleware,
       apiTelephonic.middleware,
       apiListpage.middleware,
-      apiUser.middleware,
       apiOpportunities.middleware,
       apiGallery.middleware,
       apiFaq.middleware,
       apiSliders.middleware,
       apiSetting.middleware,
       apiMainMenu.middleware,
-      menuApi.middleware,
       galleryCategoryApi.middleware,
       galleryImageApi.middleware,
       apiFooterMenu.middleware

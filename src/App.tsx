@@ -22,6 +22,7 @@ import GalleryCategory from "./pages/admin/GalleryCategory";
 import GalleryImageManagement from "./pages/admin/GalleryImage";
 
 import ListSetting from "./pages/admin/Settings";
+import ListPage from "./pages/admin/ListPage";
 
 function App() {
   return (
@@ -60,6 +61,8 @@ function App() {
           <Route path="/admin/bottom-menu" element={<ListBottomData />} />
           <Route path="/admin/telephonic" element={<TelephonicData />} />
           <Route path="/admin/slider" element={<ListSlider />} />
+          <Route path="/admin/page" element={<ListPage />} />
+
           <Route path="/admin/gallery" element={<GalleryCategory />} />
           <Route
             path="/admin/gallery-image"

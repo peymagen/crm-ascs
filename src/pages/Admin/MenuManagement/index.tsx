@@ -5,11 +5,11 @@ import ConfirmDeleteModal from "./ConfirmDelete/ConfirmDeleteModal";
 import Button from "../../../components/Button";
 
 import {
-  useAddMenuMutation,
-  useUpdateMenuMutation,
-  useDeleteMenuMutation,
-  useGetMenusQuery,
-} from "../../../store/services/menu.api";
+  useUpdateMainMenuMutation,
+  useDeleteMainMenuMutation,
+  useGetMainMenuQuery,
+  useCreateMainMenuMutation,
+} from "../../../store/services/mainMenu.api";
 
 import styles from "./MenuManagement.module.css";
 
@@ -20,15 +20,15 @@ const MenuManagement: React.FC = () => {
   const limit = 10;
   const offset = (page - 1) * limit;
 
-  const { data, isLoading, refetch } = useGetMenusQuery({
+  const { data, isLoading, refetch } = useGetMainMenuQuery({
     limit,
     offset,
     search,
   });
 
-  const [addMenu] = useAddMenuMutation();
-  const [updateMenu] = useUpdateMenuMutation();
-  const [deleteMenu] = useDeleteMenuMutation();
+  const [addMenu] = useCreateMainMenuMutation();
+  const [updateMenu] = useUpdateMainMenuMutation();
+  const [deleteMenu] = useDeleteMainMenuMutation();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMenu, setEditingMenu] = useState<IMainMenu | null>(null);

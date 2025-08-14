@@ -1,116 +1,215 @@
-import React from "react";
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { motion } from 'framer-motion';
-import Input from "../../../components/Input";
-import Button from "../../../components/Button";
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { motion } from "framer-motion";
 import styles from "./listpage.module.css";
+import Button from "../../../components/Button";
+import Input from "../../../components/Input";
 import Textarea from "../../../components/Textarea";
+import Select from "../../../components/Select";
 
-// Validation schema
 const schema = yup.object().shape({
-  title: yup.string().required('Title is required'),
-  content: yup.string().required('Content is required'),
-  status: yup.string().required('Status is required'),
+  title: yup.string().required("Title is required"),
+  description: yup.string().required("Description is required"),
+  slug: yup.string().required("Slug is required"),
+  metaTitle: yup.string().required("Meta title is required"),
+  metaDescription: yup.string().required("Meta description is required"),
+  image: yup.string().required("Image URL is required"),
+  publishDate: yup.string().required("Publish date is required"),
+  lang: yup.string(),
 });
 
 interface FormData {
   title: string;
-  content: string;
-  status: string;
+  description: string;
+  slug: string;
+  metaTitle: string;
+  metaDescription: string;
+  image: string;
+  publishDate: string;
+  lang?: string;
 }
 
 interface ManipulateListPageProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (values: any) => void;
+  defaultValues?: Partial<FormData>;
   mode: "ADD" | "EDIT";
-  defaultValues: Partial<any>;
-  isLoading: boolean;
+  onSubmit: (data: FormData) => void;
+  isLoading?: boolean;
 }
 
 const ManipulateListPage: React.FC<ManipulateListPageProps> = ({
   isOpen,
   onClose,
-  onSubmit,
+  defaultValues = {},
   mode,
-  defaultValues,
-  isLoading,
+  onSubmit,
+  isLoading = false,
 }) => {
   const {
     register,
     handleSubmit,
+    formState: { errors },
     reset,
-    formState: { errors }
   } = useForm<FormData>({
     resolver: yupResolver(schema),
-    defaultValues
+    defaultValues: {
+      title: "",
+      description: "",
+      slug: "",
+      metaTitle: "",
+      metaDescription: "",
+      image: "",
+      publishDate: "",
+      lang: "",
+      ...defaultValues,
+    },
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
-      reset(defaultValues);
+      reset({
+        ...defaultValues,
+      });
     }
   }, [isOpen, defaultValues, reset]);
 
-  const onSubmitForm = (data: FormData) => {
+  const onSubmitData = (data: FormData) => {
     onSubmit(data);
   };
+
+  const languageOptions = [
+    { label: "English", value: "en" },
+    { label: "Spanish", value: "es" },
+    { label: "French", value: "fr" },
+  ];
 
   if (!isOpen) return null;
 
   return (
-    <div className={styles.dialogOverlay}>
+    <div className={styles.backdrop}>
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 20 }}
-        className={styles.dialogContent}
+        className={styles.modalContainer}
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
       >
-        <h2>{mode === "ADD" ? "Add New Page" : "Edit Page"}</h2>
-        <form onSubmit={handleSubmit(onSubmitForm)} className={styles.formGrid}>
-          <div className={styles.formGroup}>
+        <div className={styles.modalHeader}>
+          <h2 className={styles.modalTitle}>
+            {mode === "ADD" ? "Add Page" : "Edit Page"}
+          </h2>
+          <button
+            onClick={onClose}
+            className={styles.closeButton}
+            disabled={isLoading}
+          >
+            ×
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmitData)} className={styles.formGrid}>
+          <div>
             <Input
               label="Title"
+              type="text"
               name="title"
               register={register}
               errors={errors}
               required
             />
           </div>
-          <div className={styles.formGroup}>
+
+          <div>
             <Textarea
-              label="Content"
-              name="content"
+              label="Description"
+              name="description"
               register={register}
               errors={errors}
               required
               rows={5}
             />
           </div>
-          <div className={styles.formGroup}>
+
+          <div>
             <Input
-              label="Status"
-              name="status"
+              label="Slug"
+              name="slug"
               register={register}
               errors={errors}
               required
             />
           </div>
-          <div className={styles.dialogActions}>
-            <Button 
-              onClick={onClose} 
-              buttonType="secondary" 
-              title="Cancel"
-              disabled={isLoading}
+
+          <div>
+            <Input
+              label="Meta Title"
+              name="metaTitle"
+              register={register}
+              errors={errors}
+              required
             />
-            <Button 
-              type="submit" 
-              buttonType="primary"
-              title={mode === "ADD" ? "Create" : "Update"}
-              isLoading={isLoading}
+          </div>
+
+          <div>
+            <Textarea
+              label="Meta Description"
+              name="metaDescription"
+              register={register}
+              errors={errors}
+              required
+              rows={3}
             />
+          </div>
+
+          <div>
+            <Input
+              label="Image URL"
+              name="image"
+              register={register}
+              errors={errors}
+              required
+            />
+          </div>
+
+          <div>
+            <Input
+              label="Publish Date"
+              name="publishDate"
+              type="date"
+              register={register}
+              errors={errors}
+              required
+            />
+          </div>
+
+          <div>
+            <Select
+              label="Language"
+              name="lang"
+              register={register}
+              options={languageOptions}
+              errors={errors}
+            />
+          </div>
+
+          <div className={styles.fullSpan}>
+            <div className={styles.formActions}>
+              <Button
+                type="button"
+                onClick={onClose}
+                buttonType="secondary"
+                title="Cancel"
+                disabled={isLoading}
+              />
+              <Button
+                type="submit"
+                buttonType="primary"
+                title={mode === "ADD" ? "Create" : "Update"}
+                isLoading={isLoading}
+              />
+            </div>
           </div>
         </form>
       </motion.div>

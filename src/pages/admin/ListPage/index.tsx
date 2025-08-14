@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { DataTable } from "../../../components/DataTable";
 import Button from "../../../components/Button";
 import styles from "./listpage.module.css";
 import { motion } from "framer-motion";
 import DeleteDialog from "./DeleteDialog";
 import ManipulateListPage from "./manipulate";
-import { 
-  useGetListpageQuery, 
-  useCreateListpageMutation, 
-  useUpdateListpageMutation, 
-  useDeleteListpageMutation 
+import {
+  useGetListpageQuery,
+  useCreateListpageMutation,
+  useUpdateListpageMutation,
+  useDeleteListpageMutation,
 } from "../../../store/services/listpage.api";
 import { toast } from "react-toastify";
 
@@ -29,9 +29,17 @@ const ListPage: React.FC = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [defaultValues, setDefaultValues] = useState<Partial<RowData>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
+  const limit = 10;
+  const offset = (page - 1) * limit;
   // API hooks
-  const { data: listpageData, isLoading: isDataLoading, refetch } = useGetListpageQuery();
+  const {
+    data: listpageData,
+    isLoading: isDataLoading,
+    refetch,
+  } = useGetListpageQuery({ limit, offset, search });
   const [createListpage] = useCreateListpageMutation();
   const [updateListpage] = useUpdateListpageMutation();
   const [deleteListpage] = useDeleteListpageMutation();
@@ -44,30 +52,25 @@ const ListPage: React.FC = () => {
       transition: { duration: 0.3 },
     },
   };
-
-  const fetchData = async () => {
-    const data = listpageData?.data || [];
-    const mappedData: { [key: string]: string | number }[] = data.map((item: Record<string, any>) => ({
-      id: item.id || 0,
-      title: item.title || '',
-      status: item.status || '',
-      content: item.content || '',
-      createdAt: item.createdAt || '',
-      updatedAt: item.updatedAt || ''
-    }));
-    return {
-      data: mappedData,
-      total: data.length
-    };
-  };
+  const fetchData = useCallback(
+    async (params?: { page: number; search?: string }) => {
+      const page = params?.page || 1;
+      const search = params?.search || "";
+      setPage(page);
+      setSearch(search);
+      return {
+        data: listpageData?.data || [],
+        total: listpageData?.total || 0,
+      };
+    },
+    [listpageData]
+  );
 
   const handleAdd = () => {
     setMode("ADD");
     setIsOpen(true);
     setDefaultValues({});
   };
-
-
 
   const handleClose = () => {
     setIsOpen(false);
@@ -109,37 +112,10 @@ const ListPage: React.FC = () => {
 
   const columns = [
     { label: "Title", accessor: "title" },
-    { label: "Status", accessor: "status" },
-    { label: "Created At", accessor: "createdAt" },
-    { label: "Updated At", accessor: "updatedAt" },
-    {
-      label: "Actions",
-      accessor: "id",
-      Cell: ({ row }: { row: Record<string, any> }) => (
-        <div className={styles.actions}>
-          <Button 
-            onClick={() => {
-              setMode("EDIT");
-              setSelectedId(row.id);
-              setDefaultValues(row);
-              setIsOpen(true);
-            }}
-            buttonType="secondary"
-            title="Edit"
-          />
-          <Button 
-            onClick={() => {
-              setMode("DELETE");
-              setSelectedId(row.id);
-              setDefaultValues(row);
-              setIsOpen(true);
-            }}
-            buttonType="secondary"
-            title="Delete"
-          />
-        </div>
-      ),
-    }
+    { label: "Slug", accessor: "slug" },
+    { label: "Meta Title", accessor: "MetaTitle" },
+    { label: "Published", accessor: "publishDate" },
+    { label: "Image", accessor: "image" },
   ];
 
   return (

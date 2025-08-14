@@ -1,9 +1,17 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
+import type {
+  BaseQueryFn,
+  FetchArgs,
+  FetchBaseQueryError,
+} from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "./api";
-import type { EndpointBuilder } from '@reduxjs/toolkit/query/react';
+import type { EndpointBuilder } from "@reduxjs/toolkit/query/react";
 
-type Builder = EndpointBuilder<BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>, never, "apiListpage">;
+type Builder = EndpointBuilder<
+  BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>,
+  never,
+  "apiListpage"
+>;
 
 interface IPage {
   id: number;
@@ -19,35 +27,35 @@ export const apiListpage = createApi({
   baseQuery: baseQueryWithReauth,
   endpoints: (builder: Builder) => ({
     getListpageById: builder.query<IPage, number>({
-      query: (id: number) => `/list-page/${id}`,
+      query: (id: number) => `/pages/${id}`,
     }),
     getListpage: builder.query<{ data: IPage[]; total: number }, void>({
-      query: () => "list-page",
+      query: ({}) => "pages",
     }),
     createListpage: builder.mutation<IPage, Partial<IPage>>({
       query: (newListpage: Partial<IPage>) => ({
-        url: "list-page",
+        url: "pages",
         method: "POST",
         body: newListpage,
       }),
     }),
     updateListpage: builder.mutation<IPage, IPage>({
       query: (updatedListpage: IPage) => ({
-        url: `list-page/${updatedListpage.id}`,
+        url: `pages/${updatedListpage.id}`,
         method: "PUT",
         body: updatedListpage,
       }),
     }),
     patchListpage: builder.mutation<IPage, Partial<IPage>>({
       query: (updatedListpage: Partial<IPage>) => ({
-        url: `list-page/${updatedListpage.id}`,
+        url: `pages/${updatedListpage.id}`,
         method: "PATCH",
         body: updatedListpage,
       }),
     }),
     deleteListpage: builder.mutation<void, { id: number }>({
       query: ({ id }: { id: number }) => ({
-        url: `list-page/${id}`,
+        url: `pages/${id}`,
         method: "DELETE",
       }),
     }),
@@ -60,5 +68,5 @@ export const {
   useGetListpageQuery,
   useDeleteListpageMutation,
   usePatchListpageMutation,
-  useUpdateListpageMutation
+  useUpdateListpageMutation,
 } = apiListpage;

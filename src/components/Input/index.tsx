@@ -38,7 +38,7 @@ const Input = <T extends FieldValues = FieldValues>({
   max = "",
 }: InputProps<T>) => {
   const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
+    hidden: { opacity: 1, y: 10 },
     visible: {
       opacity: 1,
       y: 0,

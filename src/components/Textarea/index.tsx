@@ -32,7 +32,7 @@ const Textarea = <T extends FieldValues = FieldValues>({
   maxLength,
 }: TextareaProps<T>) => {
   const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
+    hidden: { opacity: 1, y: 10 },
     visible: {
       opacity: 1,
       y: 0,

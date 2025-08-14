@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { motion } from 'framer-motion';
-import styles from './submenu.module.css';
-import Button from '../../../components/Button';
-import Input from '../../../components/Input';
-import Select from '../../../components/Select';
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { motion } from "framer-motion";
+import styles from "./submenu.module.css";
+import Button from "../../../components/Button";
+import Input from "../../../components/Input";
+import Select from "../../../components/Select";
 
 // Validation schema
 const schema = yup.object().shape({
-  title: yup.string().required('Title is required'),
-  file_url: yup.string().required('URL is required'),
-  type: yup.string().required('Type is required'),
+  title: yup.string().required("Title is required"),
+  file_url: yup.string().required("URL is required"),
+  type: yup.string().required("Type is required"),
   notice: yup.boolean(),
 });
 
 interface FormData {
-   title: string;
+  title: string;
   file_url: string;
   type: string;
   notice: boolean;
@@ -32,13 +32,13 @@ interface AddBottomMenuProps {
   isLoading?: boolean;
 }
 
-const AddOpportunity: React.FC<AddBottomMenuProps> = ({ 
-  isOpen, 
-  onClose, 
-  defaultValues = {}, 
-  mode, 
+const AddOpportunity: React.FC<AddBottomMenuProps> = ({
+  isOpen,
+  onClose,
+  defaultValues = {},
+  mode,
   onSubmitHandler,
-  isLoading = false 
+  isLoading = false,
 }) => {
   const {
     register,
@@ -49,10 +49,10 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
   } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
-        title: '',
-        file_url: '',
-        type: '',
-        notice: true,
+      title: "",
+      file_url: "",
+      type: "",
+      notice: true,
       ...defaultValues,
     },
   });
@@ -60,9 +60,9 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
   useEffect(() => {
     if (isOpen) {
       reset({
-        title: '',
-        file_url: '',
-        type: '',
+        title: "",
+        file_url: "",
+        type: "",
         notice: true,
         ...defaultValues,
       });
@@ -70,16 +70,14 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
   }, [isOpen, defaultValues, reset]);
 
   const onSubmit = (data: FormData) => {
-    console.log('Form data being submitted:', data);
+    console.log("Form data being submitted:", data);
     onSubmitHandler(data);
   };
 
   const displayOnMenuOptions = [
-    { label: 'True', value: 'True' },
-    { label: 'False', value: 'False' },
-  ];
-
- 
+    { label: "True", value: "True" },
+    { label: "False", value: "False" },
+  ];
 
   if (!isOpen) return null;
 
@@ -95,8 +93,8 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
           <h2 className={styles.modalTitle}>
             {mode === "ADD" ? "Add Opportunity" : "Edit Opportunity"}
           </h2>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className={styles.closeButton}
             disabled={isLoading}
           >
@@ -104,19 +102,8 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
           </button>
         </div>
 
-        <div className={styles.breadcrumb}>
-          <span className={styles.breadcrumbLink}>Admin</span>
-          <span> / </span>
-          <span className={styles.breadcrumbLink}>Opportunity</span>
-          <span> / </span>
-          <span className={styles.breadcrumbCurrent}>
-            {mode === "ADD" ? "Add Opportunity" : "Edit Opportunity"}
-          </span>
-        </div>
-
         <form className={styles.formGrid} onSubmit={handleSubmit(onSubmit)}>
-          
-         <div>
+          <div>
             <Input
               label="File_url"
               name="file_url"
@@ -149,7 +136,6 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
               errors={errors}
               required
               placeholder="Enter Type"
-            
             />
           </div>
 
@@ -161,9 +147,8 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
               options={displayOnMenuOptions}
               errors={errors}
               required
-            />
+            />
           </div>
-
 
           <div className={styles.fullSpan}>
             <div className={styles.formActions}>
@@ -177,7 +162,9 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
               <Button
                 type="submit"
                 buttonType="primary"
-                title={mode === "ADD" ? "Add Opportunity" : "Update Opportunity"}
+                title={
+                  mode === "ADD" ? "Add Opportunity" : "Update Opportunity"
+                }
                 isLoading={isLoading}
               />
             </div>
@@ -188,4 +175,4 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
   );
 };
 
-export default AddOpportunity;
+export default AddOpportunity;

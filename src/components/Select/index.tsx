@@ -35,7 +35,7 @@ const Select = <T extends FieldValues = FieldValues>({
   placeholder = `Select your ${label.toLowerCase()}`,
 }: SelectProps<T>) => {
   const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
+    hidden: { opacity: 1, y: 10 },
     visible: {
       opacity: 1,
       y: 0,

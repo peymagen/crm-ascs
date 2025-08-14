@@ -1,7 +1,201 @@
+// import React, { useEffect } from "react";
+// import { useForm } from "react-hook-form";
+// import Input from "../../../../components/Input";
+// import Select from "../../../../components/Select";
+// import Button from "../../../../components/Button";
+
+// import styles from "./AddMenu.module.css";
+// // import styles from "./AddMenuModal.module.css";
+
+// import { motion } from "framer-motion";
+// const itemVariants = {
+//   hidden: { opacity: 0, y: 10 },
+//   visible: {
+//     opacity: 1,
+//     y: 0,
+//     transition: { duration: 0.3 },
+//   },
+// };
+
+// interface MenuFormValues {
+//   name: string;
+//   sorting_order: number;
+//   lang: string;
+//   url?: string;
+//   other_url?: string;
+//   target: string;
+// }
+
+// interface AddMenuModalProps {
+//   onClose: () => void;
+//   onSubmit: (data: MenuFormValues) => void;
+//   editMenu?: Partial<MenuFormValues> | null;
+//   onSave: (menu: Partial<IMainMenu>) => Promise<any>;
+//   mode: "ADD" | "EDIT";
+//   isLoading?: boolean;
+// }
+
+// export default function AddMenuModal({
+//   onClose,
+
+//   editMenu,
+//   onSave,
+//   mode,
+//   isLoading,
+// }: AddMenuModalProps) {
+//   const {
+//     register,
+//     handleSubmit,
+//     setValue,
+//     formState: { errors, isSubmitting },
+//   } = useForm<MenuFormValues>();
+
+//   useEffect(() => {
+//     if (editMenu) {
+//       Object.entries(editMenu).forEach(([key, value]) => {
+//         setValue(key as keyof MenuFormValues, value as any);
+//       });
+//     }
+//   }, [editMenu, setValue]);
+
+//   const submit = async (data: IMainMenu) => {
+//     const payload: Partial<IMainMenu> = {
+//       name: data.name.trim(),
+//       target: data.target,
+//       lang: data.lang,
+//       sorting_order: Number(data.sorting_order),
+//       url: data.url
+//         ? data.url.trim().startsWith("/")
+//           ? data.url.trim()
+//           : "/" + data.url.trim()
+//         : "",
+//       other_url: data.other_url ? data.other_url.trim() : "",
+//     };
+
+//     try {
+//       await onSave(payload);
+//       onClose();
+//     } catch (error) {
+//       console.error("Failed to save menu:", error);
+//     }
+//   };
+
+//   // const submit = (data: MenuFormValues) => {
+//   //   onSubmit(data);
+//   // };
+
+//   return (
+//     <div className={styles.modalBackdrop}>
+//       <div className={styles.modalContent}>
+//         <motion.div
+//           initial="hidden"
+//           animate="visible"
+//           variants={itemVariants}
+//           className={styles.formContainer}
+//         />
+//         <div className={styles.modalTop}>
+//           <h2 className={styles.modalTitle}>
+//             {editMenu ? "Edit Menu" : "Add New Menu"}
+//           </h2>
+//           <button className={styles.closeButton} onClick={onClose}>
+//             x
+//           </button>
+//         </div>
+
+//         <form onSubmit={handleSubmit(submit)} className={styles.modalForm}>
+//           {/* General Information */}
+//           <div className={styles.modalFormGrid}>
+//             <div className={styles.modalSectionHeader}>
+//               <h3>General Information</h3>
+//             </div>
+
+//             <Input
+//               label="Name"
+//               name="name"
+//               register={register}
+//               errors={errors}
+//               required
+//               placeholder="Enter Menu Name"
+//             />
+
+//             <Input
+//               label="Sorting Order"
+//               name="sorting_order"
+//               register={register}
+//               errors={errors}
+//               required
+//               placeholder="Enter numeric position"
+//             />
+
+//             <Select
+//               label="Language"
+//               name="lang"
+//               options={[{ label: "English", value: "en" }]}
+//               register={register}
+//               errors={errors}
+//               required
+//             />
+//           </div>
+
+//           {/* Link Information */}
+//           <div className={styles.modalFormGrid}>
+//             <div className={styles.modalSectionHeader}>
+//               <h3>Link Information</h3>
+//             </div>
+
+//             <Input
+//               label="URL"
+//               name="url"
+//               register={register}
+//               errors={errors}
+//               placeholder="SEO-friendly URL (e.g., my-page)"
+//             />
+
+//             <Input
+//               label="Other URL"
+//               name="other_url"
+//               register={register}
+//               errors={errors}
+//               placeholder="Full URL (e.g., https://example.com)"
+//             />
+
+//             <Select
+//               label="Target"
+//               name="target"
+//               options={[
+//                 { label: "Same Window", value: "_self" },
+//                 { label: "New Window", value: "_blank" },
+//               ]}
+//               register={register}
+//               errors={errors}
+//               required
+//             />
+//           </div>
+
+//           {/* Actions */}
+//           <div className={styles.modalActions}>
+//             <Button
+//               title="Cancel"
+//               type="button"
+//               onClick={onClose}
+//               buttonType="secondary"
+//             />
+//             <Button
+//               title={editMenu ? "Update Menu" : "Add Menu"}
+//               type="submit"
+//               isLoading={isSubmitting}
+//               buttonType="primary"
+//             />
+//           </div>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// }
+
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { motion } from "framer-motion";
 
 import Input from "../../../../components/Input";
 import Select from "../../../../components/Select";
@@ -9,74 +203,53 @@ import Button from "../../../../components/Button";
 
 import styles from "./AddMenu.module.css";
 
-interface Props {
-  onClose: () => void;
-  onSave: (menu: Partial<IMainMenu>) => Promise<any>;
-  editMenu?: IMainMenu | null;
-}
-
-const defaultValues: IMainMenu = {
-  name: "",
-  url: "",
-  other_url: "",
-  sorting_order: 1,
-  target: "_self",
-  lang: "en",
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
 };
 
-const schema = yup
-  .object({
-    name: yup.string().required("Name is required"),
-    url: yup
-      .string()
-      .matches(
-        /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-        "Invalid URL format (use lowercase letters, numbers and hyphens)"
-      ),
-    other_url: yup.string().url("Must be a valid URL"),
-    sorting_order: yup
-      .string()
-      .matches(/^[1-9]\d*$/, "Sorting order must be a positive number")
-      .required("Sorting order is required"),
-    target: yup.string().required("Target is required"),
-    lang: yup.string().required("Language is required"),
-  })
-  .required()
-  .test(
-    "url-or-other_url",
-    "Either URL or Other URL must be provided",
-    (obj) => !!obj.url || !!obj.other_url
-  );
+interface MenuFormValues {
+  name: string;
+  sorting_order: number;
+  lang: string;
+  url?: string;
+  other_url?: string;
+  target: string;
+}
 
-const AddMenuModal: React.FC<Props> = ({ onClose, onSave, editMenu }) => {
+interface AddMenuModalProps {
+  onClose: () => void;
+  editMenu?: Partial<MenuFormValues> | null;
+  onSave: (menu: Partial<IMainMenu>) => Promise<any>;
+  mode: "ADD" | "EDIT";
+  isLoading?: boolean;
+}
+
+export default function AddMenuModal({
+  onClose,
+  editMenu,
+  onSave,
+  mode,
+  isLoading,
+}: AddMenuModalProps) {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
-    reset,
-  } = useForm<IMainMenu>({
-    resolver: yupResolver(schema),
-    defaultValues,
-  });
+  } = useForm<MenuFormValues>();
 
+  /** Pre-fill form when editing */
   useEffect(() => {
     if (editMenu) {
-      reset({
-        name: editMenu.name || "",
-        url: editMenu.url ? editMenu.url.replace(/^\//, "") : "",
-        other_url: editMenu.other_url || "",
-        sorting_order: editMenu.sorting_order
-          ? Number(editMenu.sorting_order)
-          : 1,
-        target: editMenu.target || defaultValues.target,
-        lang: editMenu.lang || defaultValues.lang,
+      Object.entries(editMenu).forEach(([key, value]) => {
+        setValue(key as keyof MenuFormValues, value as any);
       });
-    } else {
-      reset(defaultValues);
     }
-  }, [editMenu, reset]);
+  }, [editMenu, setValue]);
 
-  const submit = async (data: IMainMenu) => {
+  /** Handle form submission */
+  const submit = async (data: MenuFormValues) => {
     const payload: Partial<IMainMenu> = {
       name: data.name.trim(),
       target: data.target,
@@ -87,7 +260,7 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onSave, editMenu }) => {
           ? data.url.trim()
           : "/" + data.url.trim()
         : "",
-      other_url: data.other_url ? data.other_url.trim() : "",
+      other_url: data.other_url?.trim() || "",
     };
 
     try {
@@ -100,12 +273,30 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onSave, editMenu }) => {
 
   return (
     <div className={styles.modalBackdrop}>
-      <div className={styles.modalContent}>
-        <h2 className={styles.modalTitle}>
-          {editMenu ? "Edit Menu" : "Add New Menu"}
-        </h2>
+      <motion.div
+        className={styles.modalContent}
+        initial="hidden"
+        animate="visible"
+        variants={itemVariants}
+      >
+        {/* Header */}
+        <div className={styles.modalTop}>
+          <h2 className={styles.modalTitle}>
+            {mode === "EDIT" ? "Edit Menu" : "Add New Menu"}
+          </h2>
+          <button
+            type="button"
+            className={styles.closeButton}
+            onClick={onClose}
+            aria-label="Close Modal"
+          >
+            ×
+          </button>
+        </div>
 
+        {/* Form */}
         <form onSubmit={handleSubmit(submit)} className={styles.modalForm}>
+          {/* General Information */}
           <div className={styles.modalFormGrid}>
             <div className={styles.modalSectionHeader}>
               <h3>General Information</h3>
@@ -117,6 +308,7 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onSave, editMenu }) => {
               register={register}
               errors={errors}
               required
+              placeholder="Enter Menu Name"
             />
 
             <Input
@@ -131,16 +323,14 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onSave, editMenu }) => {
             <Select
               label="Language"
               name="lang"
-              options={[
-                { label: "English", value: "en" },
-                // Add other language options as needed
-              ]}
+              options={[{ label: "English", value: "en" }]}
               register={register}
               errors={errors}
               required
             />
           </div>
 
+          {/* Link Information */}
           <div className={styles.modalFormGrid}>
             <div className={styles.modalSectionHeader}>
               <h3>Link Information</h3>
@@ -175,6 +365,7 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onSave, editMenu }) => {
             />
           </div>
 
+          {/* Actions */}
           <div className={styles.modalActions}>
             <Button
               title="Cancel"
@@ -183,16 +374,14 @@ const AddMenuModal: React.FC<Props> = ({ onClose, onSave, editMenu }) => {
               buttonType="secondary"
             />
             <Button
-              title={editMenu ? "Update Menu" : "Add Menu"}
+              title={mode === "EDIT" ? "Update Menu" : "Add Menu"}
               type="submit"
-              isLoading={isSubmitting}
+              isLoading={isSubmitting || isLoading}
               buttonType="primary"
             />
           </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
-};
-
-export default AddMenuModal;
+}

@@ -1,4 +1,6 @@
 import React, { useState, useCallback, useMemo } from "react";
+import { toast } from "react-toastify";
+
 import { DataTable } from "../../../components/DataTable";
 import AddMenuModal from "./AddMenu/AddMenuModal";
 import ConfirmDeleteModal from "./ConfirmDelete/ConfirmDeleteModal";
@@ -8,69 +10,83 @@ import {
   useAddMenuMutation,
   useUpdateMenuMutation,
   useDeleteMenuMutation,
-  useGetMenusQuery,
+  useLazyGetMenusQuery,
 } from "../../../store/services/menu.api";
 
 import styles from "./MenuManagement.module.css";
 
 const MenuManagement: React.FC = () => {
+  /** Pagination & search state */
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-
   const limit = 10;
-  const offset = (page - 1) * limit;
 
-  const { data, isLoading, refetch } = useGetMenusQuery({
-    limit,
-    offset,
-    search,
-  });
-
+  /** API hooks */
+  const [triggerGetMenus, { isLoading }] = useLazyGetMenusQuery();
   const [addMenu] = useAddMenuMutation();
   const [updateMenu] = useUpdateMenuMutation();
   const [deleteMenu] = useDeleteMenuMutation();
 
+  /** Modal & editing/deleting state */
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mode, setMode] = useState<"ADD" | "EDIT">("ADD");
   const [editingMenu, setEditingMenu] = useState<IMainMenu | null>(null);
   const [deletingMenu, setDeletingMenu] = useState<IMainMenu | null>(null);
 
+  /** Fetch table data */
   const fetchData = useCallback(
     async (params?: { page: number; search?: string }) => {
-      const page = params?.page || 1;
-      const search = params?.search || "";
-      setPage(page);
-      setSearch(search);
+      const currentPage = params?.page || 1;
+      const currentSearch = params?.search || "";
+
+      setPage(currentPage);
+      setSearch(currentSearch);
+
+      const res = await triggerGetMenus({
+        limit,
+        offset: (currentPage - 1) * limit,
+        search: currentSearch,
+      }).unwrap();
+
       return {
-        data: data?.data || [],
-        total: data?.total || 0,
+        data: res?.data || [],
+        total: res?.total || 0,
       };
     },
-    [data]
+    [triggerGetMenus]
   );
 
+  /** Handlers */
   const handleOpenAdd = () => {
+    setMode("ADD");
     setEditingMenu(null);
     setIsModalOpen(true);
   };
 
-  const handleEdit = (menu: IMainMenu) => {
+  const handleOpenEdit = (menu: IMainMenu) => {
+    setMode("EDIT");
     setEditingMenu(menu);
     setIsModalOpen(true);
   };
 
   const handleSave = async (payload: Partial<IMainMenu>) => {
     try {
-      if (editingMenu?.id) {
-        await updateMenu({ id: editingMenu.id, body: payload }).unwrap();
-      } else {
+      if (mode === "ADD") {
         await addMenu(payload).unwrap();
+        toast.success("Main menu item created successfully");
+      } else if (mode === "EDIT" && editingMenu?.id) {
+        await updateMenu({ id: editingMenu.id, body: payload }).unwrap();
+        toast.success("Menu item updated successfully");
       }
-      refetch();
+
+      await fetchData({ page, search });
       setIsModalOpen(false);
       setEditingMenu(null);
     } catch (error) {
       console.error("Save failed:", error);
-      throw error;
+      toast.error(
+        `Failed to ${mode === "ADD" ? "create" : "update"} menu item`
+      );
     }
   };
 
@@ -79,13 +95,17 @@ const MenuManagement: React.FC = () => {
 
     try {
       await deleteMenu(deletingMenu.id).unwrap();
-      refetch();
-      setDeletingMenu(null);
+      toast.success("Menu item deleted successfully");
+      await fetchData({ page, search });
     } catch (error) {
       console.error("Delete failed:", error);
+      toast.error("Failed to delete menu item");
+    } finally {
+      setDeletingMenu(null);
     }
   };
 
+  /** Table configuration */
   const columns = useMemo(
     () => [
       { label: "Menu Name", accessor: "name" },
@@ -98,14 +118,15 @@ const MenuManagement: React.FC = () => {
 
   const actions = useMemo(
     () => [
-      { label: "Edit", onClick: (row) => handleEdit(row) },
-      { label: "Delete", onClick: (row) => setDeletingMenu(row) },
+      { label: "Edit", onClick: (row: IMainMenu) => handleOpenEdit(row) },
+      { label: "Delete", onClick: (row: IMainMenu) => setDeletingMenu(row) },
     ],
     []
   );
 
   return (
     <div className={styles.container}>
+      {/* Header */}
       <div className={styles.header}>
         <h1 className={styles.title}>Main Menu Management</h1>
         <Button
@@ -116,6 +137,7 @@ const MenuManagement: React.FC = () => {
         />
       </div>
 
+      {/* Data Table */}
       <DataTable
         fetchData={fetchData}
         columns={columns}
@@ -126,6 +148,7 @@ const MenuManagement: React.FC = () => {
         isExport
       />
 
+      {/* Add/Edit Modal */}
       {isModalOpen && (
         <AddMenuModal
           onClose={() => {
@@ -134,9 +157,12 @@ const MenuManagement: React.FC = () => {
           }}
           editMenu={editingMenu}
           onSave={handleSave}
+          mode={mode}
+          isLoading={isLoading}
         />
       )}
 
+      {/* Delete Confirmation Modal */}
       {deletingMenu && (
         <ConfirmDeleteModal
           menuName={deletingMenu.name}

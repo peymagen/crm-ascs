@@ -10,18 +10,18 @@ import PublicRoute from "./components/Layout/publicRoute";
 import GalleryPage from "./pages/gallery";
 import "./i18n";
 
-import MenuManagement from "./pages/admin/MenuManagement";
-import Dashboard from "./pages/admin/Dashboard";
+import MenuManagement from "../src/pages/Admin/MenuManagement";
+import Dashboard from "../src/pages/Admin/Dashboard";
 import Home from "./pages/home";
-import OpportunityData from "./pages/admin/Opportunities";
-import ListBottomData from "./pages/admin/BottomMenu";
-import TelephonicData from "./pages/admin/Telephonic";
-import ListSlider from "./pages/admin/Slider";
+import OpportunityData from "./pages/Admin/Opportunities";
+import ListBottomData from "./pages/Admin/BottomMenu";
+import TelephonicData from "../src/pages/Admin/telephonic";
+import ListSlider from "../src/pages/Admin/slider";
 
-import GalleryCategory from "./pages/admin/GalleryCategory";
-import GalleryImageManagement from "./pages/admin/GalleryImage";
+import GalleryCategory from "../src/pages/Admin/GalleryCategory";
+import GalleryImageManagement from "../src/pages/Admin/GalleryImage";
 
-import ListSetting from "./pages/admin/Settings";
+import ListSetting from "./pages/Admin/settings";
 
 function App() {
   return (

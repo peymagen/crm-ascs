@@ -6,13 +6,12 @@ import styles from "./faq.module.css";
 import { motion } from "framer-motion";
 import DeleteDialog from "./DeleteDialog";
 import {
-    useGetFaqQuery,
-    useCreateFaqMutation,
-    useUpdateFaqMutation,
-    useDeleteFaqMutation,
+  useGetFaqQuery,
+  useCreateFaqMutation,
+  useUpdateFaqMutation,
+  useDeleteFaqMutation,
 } from "../../../store/services/faq.api";
 import { toast } from "react-toastify";
-
 
 interface RowData {
   id: number;
@@ -123,7 +122,7 @@ const FaqData: React.FC = () => {
             type="button"
             isLoading={isLoading}
             buttonType="primary"
-            title="+ Add Faq"
+            title="+ Add New Faq"
             onClick={() => {
               setDefaultValues({});
               setIsOpen(true);

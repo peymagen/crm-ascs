@@ -8,10 +8,10 @@ import DeleteDialog from "./DeleteDialog";
 
 import { toast } from "react-toastify";
 import {
-    useGetSubmenuQuery,
-    useCreateSubmenuMutation,
-    useUpdateSubmenuMutation,
-    useDeleteSubmenuMutation,
+  useGetSubmenuQuery,
+  useCreateSubmenuMutation,
+  useUpdateSubmenuMutation,
+  useDeleteSubmenuMutation,
 } from "../../../store/services/submenu.api";
 
 const SubMenuData: React.FC = () => {
@@ -124,7 +124,7 @@ const SubMenuData: React.FC = () => {
             type="button"
             isLoading={isLoading}
             buttonType="primary"
-            title="+ Add New"
+            title="+ Add New Manu"
             onClick={() => {
               setDefaultValues({});
               setIsOpen(true);
@@ -136,7 +136,7 @@ const SubMenuData: React.FC = () => {
         <DataTable
           fetchData={fetchData}
           columns={columns}
-           actions={[
+          actions={[
             {
               label: "✏️",
               onClick: (row) => {

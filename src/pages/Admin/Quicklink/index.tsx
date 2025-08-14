@@ -124,7 +124,7 @@ const QuickMenuData: React.FC = () => {
             type="button"
             isLoading={isLoading}
             buttonType="primary"
-            title="+ Add New"
+            title="+ Add New Menu"
             onClick={() => {
               setDefaultValues({});
               setIsOpen(true);
@@ -136,7 +136,7 @@ const QuickMenuData: React.FC = () => {
         <DataTable
           fetchData={fetchData}
           columns={columns}
-           actions={[
+          actions={[
             {
               label: "✏️",
               onClick: (row) => {

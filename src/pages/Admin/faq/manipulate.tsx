@@ -1,25 +1,22 @@
-
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { motion } from 'framer-motion';
-import styles from './faq.module.css';
-import Button from '../../../components/Button';
-import Input from '../../../components/Input';
-import Textarea from '../../../components/Textarea';
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { motion } from "framer-motion";
+import styles from "./faq.module.css";
+import Button from "../../../components/Button";
+import Input from "../../../components/Input";
+import Textarea from "../../../components/Textarea";
 
 // Validation schema
 const schema = yup.object().shape({
-  question: yup.string().required('Question is required'),
-  answer: yup.string().required('Answer is required'),
-  
+  question: yup.string().required("Question is required"),
+  answer: yup.string().required("Answer is required"),
 });
 
 interface FormData {
-   question: string;
+  question: string;
   answer: string;
- 
 }
 
 interface AddBottomMenuProps {
@@ -31,13 +28,13 @@ interface AddBottomMenuProps {
   isLoading?: boolean;
 }
 
-const AddFaq: React.FC<AddBottomMenuProps> = ({ 
-  isOpen, 
-  onClose, 
-  defaultValues = {}, 
-  mode, 
+const AddFaq: React.FC<AddBottomMenuProps> = ({
+  isOpen,
+  onClose,
+  defaultValues = {},
+  mode,
   onSubmitHandler,
-  isLoading = false 
+  isLoading = false,
 }) => {
   const {
     register,
@@ -48,8 +45,8 @@ const AddFaq: React.FC<AddBottomMenuProps> = ({
   } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
-        question: '',
-        answer: '',
+      question: "",
+      answer: "",
       ...defaultValues,
     },
   });
@@ -57,19 +54,17 @@ const AddFaq: React.FC<AddBottomMenuProps> = ({
   useEffect(() => {
     if (isOpen) {
       reset({
-        question: '',
-        answer: '',
+        question: "",
+        answer: "",
         ...defaultValues,
       });
     }
   }, [isOpen, defaultValues, reset]);
 
   const onSubmit = (data: FormData) => {
-    console.log('Form data being submitted:', data);
+    console.log("Form data being submitted:", data);
     onSubmitHandler(data);
   };
-
- 
 
   if (!isOpen) return null;
 
@@ -85,8 +80,8 @@ const AddFaq: React.FC<AddBottomMenuProps> = ({
           <h2 className={styles.modalTitle}>
             {mode === "ADD" ? "Add Faq" : "Edit Faq"}
           </h2>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className={styles.closeButton}
             disabled={isLoading}
           >
@@ -94,11 +89,8 @@ const AddFaq: React.FC<AddBottomMenuProps> = ({
           </button>
         </div>
 
-        
-
         <form className={styles.formGrid} onSubmit={handleSubmit(onSubmit)}>
-          
-         <div>
+          <div className={styles.fullSpan}>
             <Input
               label="Question"
               name="question"
@@ -109,7 +101,6 @@ const AddFaq: React.FC<AddBottomMenuProps> = ({
               placeholder="Enter question"
             />
           </div>
-
 
           <div className={styles.fullSpan}>
             <Textarea

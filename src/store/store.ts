@@ -50,8 +50,6 @@ export const store = configureStore({
       apiMainMenu.middleware,
       galleryCategoryApi.middleware,
       galleryImageApi.middleware,
-      apiSubmenu.middleware,
-      apiTelephonic.middleware,
       apiFooterMenu.middleware,
       apiQuickMenu.middleware
     ),

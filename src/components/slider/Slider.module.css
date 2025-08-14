@@ -1,6 +1,5 @@
 .sliderContainer {
   position: relative;
-  width: 100vw; /* Sets the width to 100% of the viewport width */
   height: auto; /* Sets a fixed height of 300px */
   margin: 0 auto;
   overflow: hidden;

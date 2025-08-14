@@ -1,129 +1,150 @@
-/* Make sure page height is 100% so footer can stick at the bottom */
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    display: flex;
-    flex-direction: column;
-    /* background-color: var(--page-background-color);  */
-   background-color:white;
-}
-
 .homePage {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    flex: 1; /* Allow content area to grow and push footer down */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1; /* Allow content area to grow and push footer down */
 }
 
 .languageSwitcher {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .mainContent {
-    display: grid;
-    grid-template-columns: 2.5fr 1.5fr; /* Adjusted ratio for a better fit */
-    gap: 20px;
-    align-items: start;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
 }
 
 .card {
-    background-color: var(--news-card-background-color);
-    padding: 20px;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
+  background-color: var(--secondary-color);
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  height: 25rem;
+  overflow-y: auto;
 }
 
 .contentCard {
-    background-color: #ffffff; /* Keep content area white */
-    padding: 20px;
-    border-radius: 8px;
-    color: var(--text-color);
-    border: 1.5px solid #b30000; /* Red border */
+  background-color: #ffffff; /* Keep content area white */
+  padding: 2rem 0;
+  border-radius: 8px;
+  color: var(--text-color);
 }
 
 .cardTitle {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--primary-color);
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 4px;
-    margin-top: 0;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 10px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  margin-top: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 10px;
 }
 
 .newsItemsContainer {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 .newsItem {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 15px 0;
-    border-bottom: 1px dashed var(--border-color);
-    color: #000;
-}
-
-.newsItem:last-child {
-    border-bottom: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 15px 0;
+  border-bottom: 1px dashed black;
+  color: #000;
 }
 
 .newsDate {
-    font-weight: bold;
-    font-size: 0.9rem;
+  font-weight: bold;
+  font-size: 0.9rem;
 }
 
 .newsText {
-    margin: 0;
-    font-size: 0.95rem;
-    line-height: 1.5;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .newsFooter {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.9rem;
-    padding-top: 15px;
-    margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  padding-top: 15px;
+  margin-top: auto;
 }
 
 .footerLink {
-    color: var(--primary-color);
-    font-weight: 500;
-    text-decoration: none;
+  color: var(--primary-color);
+  font-weight: 500;
+  text-decoration: none;
 }
 
 .footerLink:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* Footer styles — always white and at bottom */
 footer,
 .footer {
-    background-color: #ffffff; /* Solid white background */
-    color: var(--text-color);
-    border: none;
-    box-shadow: none;
-    padding: 20px;
-    width: 100%;
-    margin-top: auto; /* Push footer to bottom */
+  background-color: #ffffff; /* Solid white background */
+  color: var(--text-color);
+  border: none;
+  box-shadow: none;
+  padding: 20px;
+  width: 100%;
+  margin-top: auto; /* Push footer to bottom */
 }
 
 /* Responsive styles for mobile */
 @media (max-width: 900px) {
-    .mainContent {
-        grid-template-columns: 1fr;
-    }
+  .mainContent {
+    grid-template-columns: 1fr;
+  }
+}
+.btnContainer {
+  background-color: var(--secondary-color);
+}
+.container {
+  max-width: 1480px;
+  margin: 1rem auto;
+  padding: 1rem;
+}
+.headerNav {
+  max-width: 1480px;
+  margin: 1rem auto;
+  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.headerNav button {
+  width: fit-content;
+}
+
+.card::-webkit-scrollbar {
+  width: 6px;
+}
+
+.card::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.card::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.card::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

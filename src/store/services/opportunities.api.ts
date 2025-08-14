@@ -11,6 +11,9 @@ export const apiOpportunities = createApi({
     getOpportunities: builder.query({
       query: () => "opportunities",
     }),
+    getNotice: builder.query({
+      query: () => "opportunities/notice",
+    }),
     createOpportunities: builder.mutation({
       query: (newOpportunities) => ({
         url: "opportunities",
@@ -42,11 +45,11 @@ export const apiOpportunities = createApi({
 });
 
 export const {
-    useCreateOpportunitiesMutation,
-    useGetOpportunitiesByIdQuery,
-    useGetOpportunitiesQuery,
-    usePatchOpportunitiesMutation,
-    useUpdateOpportunitiesMutation,
-    useDeleteOpportunitiesMutation
-
+  useCreateOpportunitiesMutation,
+  useGetOpportunitiesByIdQuery,
+  useGetOpportunitiesQuery,
+  useGetNoticeQuery,
+  usePatchOpportunitiesMutation,
+  useUpdateOpportunitiesMutation,
+  useDeleteOpportunitiesMutation,
 } = apiOpportunities;

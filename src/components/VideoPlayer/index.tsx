@@ -1,26 +1,32 @@
-import React from 'react';
-import styles from './VideoPlayer.module.css';
-import VideoPlayerLoader from './loader';
+import React from "react";
+import styles from "./VideoPlayer.module.css";
+import VideoPlayerLoader from "./loader";
 
 interface VideoPlayerProps {
-  videoId: string;
+  videoUrl: string;
   isLoading?: boolean;
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoId, isLoading = false }) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({
+  videoUrl,
+  isLoading = false,
+}) => {
   if (isLoading) {
     return <VideoPlayerLoader />;
   }
 
   return (
     <div className={styles.videoContainer}>
-      <iframe
-        src={`https://www.youtube.com/embed/${videoId}`}
-        title="YouTube video player"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      ></iframe>
+      <video
+        src={videoUrl}
+        controls
+        autoPlay={false}
+        muted
+        playsInline
+        className={styles.videoPlayer}
+      >
+        Your browser does not support the video tag.
+      </video>
     </div>
   );
 };

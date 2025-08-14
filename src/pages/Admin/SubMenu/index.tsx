@@ -23,7 +23,7 @@ const SubMenuData: React.FC = () => {
 
   const limit = 10;
   const offset = (page - 1) * limit;
-  const [defaultValues, setDefaultValues] = useState<Partial<IFooterMenu>>({});
+  const [defaultValues, setDefaultValues] = useState<Partial<ISubMenu>>({});
   const [isLoading, setIsLoading] = useState(false);
 
   // API hooks

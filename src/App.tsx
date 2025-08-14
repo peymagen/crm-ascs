@@ -22,7 +22,7 @@ import GalleryCategory from "./pages/admin/GalleryCategory";
 import GalleryImageManagement from "./pages/admin/GalleryImage";
 
 import ListSetting from "./pages/admin/Settings";
-import FaqData from "./pages/admin/Faq/index";
+import FaqData from "./pages/admin/Faq";
 import QuickMenuData from "./pages/admin/Quicklink";
 import SubMenuData from "./pages/admin/SubMenu";
 import ListPage from "./pages/admin/ListPage";

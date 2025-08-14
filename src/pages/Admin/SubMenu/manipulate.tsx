@@ -37,9 +37,9 @@ const schema = yup
 interface AddBottomMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  defaultValues?: Partial<IFooterMenu>;
+  defaultValues?: Partial<ISubMenu>;
   mode: "ADD" | "EDIT";
-  onSubmitHandler: (data: IFooterMenu) => void;
+  onSubmitHandler: (data: ISubMenu) => void;
   isLoading?: boolean;
 }
 
@@ -51,7 +51,7 @@ const AddSubMenu: React.FC<AddBottomMenuProps> = ({
   onSubmitHandler,
   isLoading = false,
 }) => {
-  const defaultPropValues: IFooterMenu = {
+  const defaultPropValues: ISubMenu = {
     parent_id: undefined,
     name: "",
     url: "",
@@ -65,7 +65,7 @@ const AddSubMenu: React.FC<AddBottomMenuProps> = ({
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<IFooterMenu>({
+  } = useForm<ISubMenu>({
     resolver: yupResolver(schema),
     defaultValues: {
       ...defaultPropValues,
@@ -74,14 +74,15 @@ const AddSubMenu: React.FC<AddBottomMenuProps> = ({
   });
 
   // main menu data come like parent_id
-    const { data: mainMenuData, isLoading: isMenuLoading } = useGetMainMenuQuery({});
+  const { data: mainMenuData, isLoading: isMenuLoading } = useGetMainMenuQuery(
+    {}
+  );
 
-    const parentMenuOptions =
-    mainMenuData?.data?.map((menu: any) => ({
-      label: menu.id,
+  const parentMenuOptions =
+    mainMenuData?.data?.map((menu: IMainMenu) => ({
+      label: menu.name,
       value: menu.id,
     })) || [];
-
 
   useEffect(() => {
     if (isOpen) {
@@ -90,9 +91,9 @@ const AddSubMenu: React.FC<AddBottomMenuProps> = ({
         ...defaultValues,
       });
     }
-  }, [isOpen, reset]); 
+  }, [isOpen, reset]);
 
-  const onSubmit = (data: IFooterMenu) => {
+  const onSubmit = (data: ISubMenu) => {
     console.log("Form data being submitted:", data);
     onSubmitHandler(data);
   };
@@ -128,18 +129,19 @@ const AddSubMenu: React.FC<AddBottomMenuProps> = ({
         </div>
 
         <form className={styles.formGrid} onSubmit={handleSubmit(onSubmit)}>
-          
-          <div>
-            <Select
-              label="Parent Id"
-              name="parent_id"
-              register={register}
-              options={parentMenuOptions}
-              errors={errors}
-              required
-            />
-          </div>
-          
+          {!isMenuLoading && (
+            <div>
+              <Select
+                label="Main Menu"
+                name="parent_id"
+                register={register}
+                options={parentMenuOptions}
+                errors={errors}
+                required
+              />
+            </div>
+          )}
+
           <div>
             <Select
               label="Website"

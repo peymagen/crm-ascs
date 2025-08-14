@@ -1,29 +1,34 @@
-import React, { useState } from 'react';
-import Button from '../Button'; // Using your custom Button component
-import styles from './Header.module.css';
+import React from "react";
+import styles from "./Header.module.css";
+import { useGetSettingByIdQuery } from "../../store/services/setting.api";
+import AccessibilityNavbar from "./Accessibility";
+import MainNavigation from "./MainMenu";
 
-interface HeaderProps {
-  buttons: string[];
-}
-
-const Header: React.FC<HeaderProps> = ({ buttons }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+const Header: React.FC = () => {
+  const { data, isLoading } = useGetSettingByIdQuery(1);
   return (
     <header className={styles.header}>
-      <div className={styles.headerTitle}>CSACS</div>
-      <button className={styles.menuToggle} onClick={() => setIsMenuOpen(!isMenuOpen)}>
-        ☰
-      </button>
-      <nav className={`${styles.headerNav} ${isMenuOpen ? styles.active : ''}`}>
-        {buttons.map((buttonTitle) => (
-          <Button
-            key={buttonTitle}
-            title={buttonTitle}
-            buttonType="primary"
-          />
-        ))}
-      </nav>
+      <AccessibilityNavbar />
+      <div className={styles.headerContent}>
+        <div className={styles.headerDesktop}>
+          <div className={styles.headerDesktopContent}>
+            {!isLoading && (
+              <img
+                src={import.meta.env.VITE_BACKEND_SERVER + data?.data?.logo}
+                alt="Header Left Image"
+                className={styles.headerImg}
+              />
+            )}
+            <img
+              src="/detail.png"
+              alt="Detail Image"
+              className={styles.headerImg}
+            />
+          </div>
+        </div>
+      </div>
+      <div className={styles.redBorder}></div>
+      <MainNavigation />
     </header>
   );
 };

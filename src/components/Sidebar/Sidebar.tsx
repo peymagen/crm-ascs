@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, type ReactElement } from "react";
 import styles from "./Sidebar.module.css";
+import { Link } from "react-router-dom";
 
 type DropdownItem = {
   label: string;
@@ -21,9 +22,9 @@ const navItems: NavItem[] = [
   },
   {
     icon: "calendar_today",
-    label: "Services",
+    label: "Menus",
     dropdown: [
-      { label: "IT Consulting", link: "#" },
+      { label: "Main Menu", link: "/admin/main-menu" },
       { label: "Cloud Solution", link: "#" },
       { label: "Mobile Apps", link: "#" },
     ],
@@ -79,7 +80,20 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
+
+  // Check if mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -88,45 +102,64 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         !sidebarRef.current.contains(e.target as Node)
       ) {
         setOpenDropdown(null);
+        if (isMobile) {
+          setSidebarVisible(false);
+        }
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [isMobile]);
 
   const handleDropdown = (index: number) => {
-    if (collapsed) return;
+    if (collapsed && !isMobile) return;
     setOpenDropdown(openDropdown === index ? null : index);
   };
 
+  const toggleSidebar = () => {
+    console.log("click");
+    if (isMobile) {
+      setSidebarVisible(!sidebarVisible);
+    } else {
+      setCollapsed(!collapsed);
+    }
+    console.log({ sidebarVisible, collapsed });
+    setOpenDropdown(null);
+  };
+  const closeSidebar = () => {
+    if (isMobile) {
+      setSidebarVisible(false);
+    }
+    setOpenDropdown(null);
+  };
   return (
     <>
+      {isMobile && (
+        <button className={styles.mobileMenuButton} onClick={toggleSidebar}>
+          <span className="material-symbols-rounded">menu</span>
+        </button>
+      )}
       <aside
         className={`${styles.sidebar}${
-          collapsed ? " " + styles.collapsed : ""
-        }`}
+          collapsed ? ` ${styles.sidebarCollapsed}` : ""
+        }${sidebarVisible ? ` ${styles.sidebarShow}` : ""}`}
         id="sidebar"
         ref={sidebarRef}
       >
         <header className={styles.sidebarHeader}>
-          <button
-            className={styles.sidebarToggler}
-            onClick={() => {
-              setOpenDropdown(null);
-              setCollapsed((prev) => !prev);
-            }}
-          >
-            <span className={styles.materialSymbols}>chevron_left</span>
+          <button className={styles.sidebarToggler} onClick={toggleSidebar}>
+            <span className="material-symbols-rounded">
+              {isMobile ? (sidebarVisible ? "close" : "menu") : "chevron_left"}
+            </span>
           </button>
         </header>
-
         <nav className={styles.sidebarNav}>
           <ul className={`${styles.navList} ${styles.primaryNav}`}>
             {navItems.map((item, idx) =>
               item.dropdown ? (
                 <li
                   className={`${styles.navItem} ${styles.dropdownContainer}${
-                    openDropdown === idx ? " " + styles.open : ""
+                    openDropdown === idx ? ` ${styles.open}` : ""
                   }`}
                   key={item.label}
                 >
@@ -138,10 +171,12 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                       handleDropdown(idx);
                     }}
                   >
-                    <span className={styles.materialSymbols}>{item.icon}</span>
+                    <span className="material-symbols-rounded">
+                      {item.icon}
+                    </span>
                     <span className={styles.navLabel}>{item.label}</span>
                     <span
-                      className={`${styles.dropdownIcon} ${styles.materialSymbols}`}
+                      className={`material-symbols-rounded ${styles.dropdownIcon}`}
                     >
                       keyboard_arrow_down
                     </span>
@@ -149,53 +184,69 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                   <ul className={styles.dropdownMenu}>
                     {item.dropdown.map((dItem) => (
                       <li key={dItem.label}>
-                        <a
-                          href={dItem.link}
+                        <Link
+                          to={dItem.link}
                           className={`${styles.navLink} ${styles.dropdownLink}`}
+                          onClick={closeSidebar}
                         >
                           {dItem.label}
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>
                   <div className={styles.hoverDropdown}>
                     <div className={styles.dropdownTitle}>{item.label}</div>
                     {item.dropdown.map((dItem) => (
-                      <a
-                        href={dItem.link}
+                      <Link
+                        to={dItem.link}
                         className={styles.dropdownLink}
                         key={dItem.label}
+                        onClick={closeSidebar}
                       >
                         {dItem.label}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </li>
               ) : (
                 <li className={styles.navItem} key={item.label}>
-                  <a href={item.link} className={styles.navLink}>
-                    <span className={styles.materialSymbols}>{item.icon}</span>
+                  <Link
+                    to={item.link || "#"}
+                    className={styles.navLink}
+                    onClick={closeSidebar}
+                  >
+                    <span className="material-symbols-rounded">
+                      {item.icon}
+                    </span>
                     <span className={styles.navLabel}>{item.label}</span>
-                  </a>
+                  </Link>
                   <div className={styles.hoverTooltip}>{item.label}</div>
                 </li>
               )
             )}
           </ul>
-
           <ul className={`${styles.navList} ${styles.secondaryNav}`}>
             {secondaryNav.map((item) => (
               <li className={styles.navItem} key={item.label}>
-                <a href={item.link} className={styles.navLink}>
-                  <span className={styles.materialSymbols}>{item.icon}</span>
+                <Link
+                  to={item.link || "#"}
+                  className={styles.navLink}
+                  onClick={closeSidebar}
+                >
+                  <span className="material-symbols-rounded">{item.icon}</span>
                   <span className={styles.navLabel}>{item.label}</span>
-                </a>
+                </Link>
                 <div className={styles.hoverTooltip}>{item.label}</div>
               </li>
             ))}
           </ul>
         </nav>
       </aside>
+
+      {/* Mobile overlay */}
+      {isMobile && (
+        <div className={styles.sidebarOverlay} onClick={closeSidebar} />
+      )}
       <main className={styles.mainContent}>{children}</main>
     </>
   );

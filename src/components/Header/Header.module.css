@@ -1,25 +1,625 @@
+.accessibilityNavbar {
+  width: 100%;
+  background-color: var(--secondary-color);
+  padding: 0.5rem;
+}
+
+.accessibilityContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  overflow-x: auto;
+  font-family: Arial, sans-serif;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.accessibilityContentMobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.accessibilityButton {
+  color: var(--primary-color);
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 2px 4px;
+  text-decoration: none;
+  font-size: inherit;
+  font-weight: bold;
+}
+
+.accessibilityButton:hover {
+  text-decoration: underline;
+}
+
+.accessibilitySeparator {
+  color: var(--primary-color);
+  margin: 0 2px;
+}
+
+.textSizeContainer {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 2px;
+}
+
+.languageContainer {
+  display: flex;
+  gap: 4px;
+}
+
+.draggableIcon {
+  position: fixed;
+  z-index: 1000;
+  user-select: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: white;
+  padding: 4px;
+  cursor: grab;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  touch-action: none;
+  will-change: transform;
+}
+
+/* Initial positioning */
+.draggableIcon[data-position="right"] {
+  right: 10px;
+  top: 200px;
+}
+
+.draggableIcon[data-position="left"] {
+  left: 10px;
+  top: 200px;
+}
+
+/* Hover and active states */
+.draggableIcon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.draggableIcon:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+}
+
+/* CSS-based dragging simulation using transform */
+.draggableIcon:active {
+  animation: dragFloat 0.1s ease-in-out infinite alternate;
+}
+
+@keyframes dragFloat {
+  0% {
+    transform: scale(1.1) translateY(0px);
+  }
+  100% {
+    transform: scale(1.1) translateY(-2px);
+  }
+}
+
+/* Touch-friendly dragging */
+@media (hover: none) and (pointer: coarse) {
+  .draggableIcon {
+    cursor: grab;
+  }
+
+  .draggableIcon:active {
+    cursor: grabbing;
+    animation: touchDrag 0.2s ease-in-out;
+  }
+
+  @keyframes touchDrag {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.15);
+    }
+    100% {
+      transform: scale(1.1);
+    }
+  }
+}
+
+/* Responsive positioning */
+@media (max-width: 480px) {
+  .draggableIcon[data-position="right"] {
+    right: 5px;
+    top: 180px;
+  }
+
+  .draggableIcon[data-position="left"] {
+    left: 5px;
+    top: 180px;
+  }
+}
+
+@media (max-width: 360px) {
+  .draggableIcon[data-position="right"] {
+    right: 2px;
+    top: 160px;
+  }
+
+  .draggableIcon[data-position="left"] {
+    left: 2px;
+    top: 160px;
+  }
+}
+
+.draggableIconImage {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  pointer-events: none;
+  border-radius: 4px;
+  transition: filter 0.2s ease;
+}
+
+/* Image effects during interaction */
+.draggableIcon:active .draggableIconImage {
+  filter: brightness(1.1) contrast(1.05);
+}
+
+/* Pulse animation for better visibility */
+.draggableIcon {
+  animation: subtlePulse 3s ease-in-out infinite;
+}
+
+@keyframes subtlePulse {
+  0%,
+  100% {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Disable pulse on interaction */
+.draggableIcon:hover,
+.draggableIcon:active {
+  animation: none;
+}
+
+/* Enhanced visual feedback */
+.draggableIcon::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(
+    45deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
+  border-radius: 10px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.draggableIcon:hover::before {
+  opacity: 0.3;
+}
+
+.draggableIcon:active::before {
+  opacity: 0.5;
+}
+
+/* Smooth movement simulation */
+.draggableIcon {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s ease;
+}
+
+/* Focus states for accessibility */
+.draggableIcon:focus {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .draggableIcon {
+    animation: none;
+    transition: none;
+  }
+
+  .draggableIcon:hover {
+    transform: none;
+  }
+
+  .draggableIcon:active {
+    animation: none;
+  }
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: var(--secondary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  min-width: 200px;
+  max-height: 300px;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+}
+
+.dropdownMenuOpen {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdownMenuClosed {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+}
+
+.navItemContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.navItemLink {
+  color: #dc2626;
+  text-decoration: none;
+  padding: 12px 16px;
+  display: block;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 14px;
+  position: relative;
+  border: 0;
+  background: transparent;
+}
+
+.navItemLink:hover,
+.navItemLinkHovered {
+  color: #991b1b;
+  text-decoration: underline;
+}
+
+.navItemArrow {
+  margin-left: 4px;
+  font-size: 12px;
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+
+.navItemArrowOpen {
+  transform: rotate(180deg);
+}
+
+.navItemArrowClosed {
+  transform: rotate(0deg);
+}
+
+.dropdownItem {
+  display: block;
+  padding: 12px 16px;
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-size: 13px;
+}
+
+.dropdownItemWithBorder {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdownItem:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.dropdownItemLabel {
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.dropdownItemDescription {
+  font-size: 11px;
+  color: #666;
+  font-weight: normal;
+  line-height: 1.3;
+}
+
+.mainNavigation {
+  background-color: var(--secondary-color);
+  border-bottom: 2px solid var(--primary-color);
+  position: relative;
+  overflow: visible;
+}
+
+.mainNavigationMobile {
+  background-color: white;
+  border-bottom: 2px solid var(--primary-color);
+  position: relative;
+}
+
+.mobileMenuButtonContainer {
+  background-color: white;
+}
+
+.mobileMenuButtonContainer.mobileMenuButtonOpen {
+  background-color: white;
+}
+
+.mobileMenuButton {
+  padding: 12px 16px;
+  background-color: var(--secondary-color);
+  border: none;
+  color: var(--primary-color);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.mobileMenuButton:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.mobileMenuButtonOpen .mobileMenuButton {
+  background-color: var(--primary-color);
+  color: white;
+  border-bottom: 1px solid var(--primary-color);
+}
+
+.mobileMenuIcon {
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.mobileMenuIconOpen {
+  transform: rotate(90deg);
+}
+
+.mobileMenuIconClosed {
+  transform: rotate(0deg);
+}
+
+.mobileMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--secondary-color);
+  max-height: 0;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  border-top: none;
+}
+
+.mobileMenuVisible {
+  max-height: 400px;
+}
+
+.mobileMenuOpen {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--primary-color);
+  border-top: none;
+}
+
+.mobileMenuClosed {
+  box-shadow: none;
+  border: none;
+}
+
+.mobileMenuItem {
+  display: block;
+  color: var(--primary-color);
+  text-decoration: none;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-family: sans-serif;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.mobileMenuItem span {
+  padding: 8px;
+}
+
+.mobileMenuItemWithBorder {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.mobileMenuItem:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.mobileDropdownItems {
+  padding-left: 20px;
+  background-color: rgba(250, 140, 57, 0.1);
+}
+
+.mobileDropdownItem {
+  display: block;
+  color: var(--primary-color);
+  text-decoration: none;
+  padding: 8px 20px;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.mobileDropdownItemWithBorder {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.mobileDropdownItem:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.desktopNavigation {
+  display: flex;
+  align-items: center;
+  max-width: 1480px;
+  padding: 0;
+  overflow-x: visible;
+  position: relative;
+  margin: 0 auto;
+  background-color: var(--secondary-color);
+}
+
+.desktopNavigationContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-family: sans-serif;
+  white-space: nowrap;
+  min-width: max-content;
+  position: relative;
+}
+
 .header {
+  background-color: white;
+  width: 100%;
+  position: relative;
+}
+
+.headerContent {
+  width: 100%;
+  background-color: white;
+}
+
+.headerMobile {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerMobileImageContainer {
+  width: 100%;
+  max-width: 350px;
+  display: flex;
+  justify-content: center;
+}
+
+.headerMobileImage {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  max-height: 120px;
+}
+
+.headerDesktop {
+  padding: 16px;
+  max-width: 1480px;
+  margin: 0 auto;
+}
+
+.headerDesktopContent {
+  display: flex;
+  align-items: center;
+  place-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.5rem;
+  justify-content: flex-start;
+}
+
+.headerImg {
+  max-height: 150px;
+  object-fit: contain;
+}
+
+.redBorder {
+  width: 100%;
+  height: 4px;
+  background-color: var(--primary-color);
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .desktopOnly {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobileOnly {
+    display: none !important;
+  }
+}
+
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Better touch targets for mobile */
+@media (max-width: 768px) {
+  .headerImg {
+    width: -webkit-fill-available;
+  }
+
+  /* Enhanced touch interaction for draggable icons */
+  .draggableIcon {
+    min-height: 52px;
+    min-width: 52px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    background-color: var(--news-card-background-color);
-    padding: 20px;
-    border-radius: 8px;
-    gap: 10px; /* Adds space between wrapped rows */
-}
+    justify-content: center;
+  }
 
-.headerTitle {
-    color: var(--primary-color);
-    font-weight: bold;
-    font-size: 1.2rem;
+  .draggableIconImage {
+    height: 36px;
+  }
 }
+/* Mobile styles */
+@media (max-width: 768px) {
+  .navItemContainer {
+    position: relative;
+    width: 100%;
+  }
 
-.headerNav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: flex-start;
+  .dropdownMenu {
+    position: static;
+    width: 100%;
+    box-shadow: none;
+  }
+
+  .dropdownItem {
+    padding: 12px 20px;
+  }
+
+  .navItemLink {
+    padding: 15px 20px;
+    width: 100%;
+    text-align: left;
+  }
 }
-
-/* Other styles like .menuToggle remain the same */

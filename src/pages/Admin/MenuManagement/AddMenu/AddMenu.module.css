@@ -1,0 +1,95 @@
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  width: 100%;
+  max-width: 900px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  max-height: 95vh;
+  overflow-y: auto;
+}
+
+.modalTitle {
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modalFormGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.modalSectionHeader {
+  grid-column: 1 / -1;
+  margin-bottom: 8px;
+}
+
+.modalSectionHeader h3 {
+  font-size: 16px;
+  font-weight: bold;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 4px;
+}
+
+.formLabel {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.formInput,
+.formSelect,
+.formTextarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.formTextarea {
+  resize: vertical;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btnCancel {
+  background: #e0e0e0;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.btnPrimary {
+  background: var(--primary-color);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}

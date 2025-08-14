@@ -1,43 +1,51 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { motion } from "framer-motion";
-import styles from "./submenu.module.css";
+import styles from "./listpage.module.css";
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";
+import Textarea from "../../../components/Textarea";
 import Select from "../../../components/Select";
 
-// Validation schema
 const schema = yup.object().shape({
   title: yup.string().required("Title is required"),
-  file_url: yup.string().required("URL is required"),
-  type: yup.string().required("Type is required"),
-  notice: yup.boolean(),
+  description: yup.string().required("Description is required"),
+  slug: yup.string().required("Slug is required"),
+  metaTitle: yup.string().required("Meta title is required"),
+  metaDescription: yup.string().required("Meta description is required"),
+  image: yup.string().required("Image URL is required"),
+  publishDate: yup.string().required("Publish date is required"),
+  lang: yup.string(),
 });
 
 interface FormData {
   title: string;
-  file_url: string;
-  type: string;
-  notice: boolean;
+  description: string;
+  slug: string;
+  metaTitle: string;
+  metaDescription: string;
+  image: string;
+  publishDate: string;
+  lang?: string;
 }
 
-interface AddBottomMenuProps {
+interface ManipulateListPageProps {
   isOpen: boolean;
   onClose: () => void;
   defaultValues?: Partial<FormData>;
   mode: "ADD" | "EDIT";
-  onSubmitHandler: (data: FormData) => void;
+  onSubmit: (data: FormData) => void;
   isLoading?: boolean;
 }
 
-const AddOpportunity: React.FC<AddBottomMenuProps> = ({
+const ManipulateListPage: React.FC<ManipulateListPageProps> = ({
   isOpen,
   onClose,
   defaultValues = {},
   mode,
-  onSubmitHandler,
+  onSubmit,
   isLoading = false,
 }) => {
   const {
@@ -45,14 +53,17 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
     handleSubmit,
     formState: { errors },
     reset,
-    setValue,
   } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
       title: "",
-      file_url: "",
-      type: "",
-      notice: true,
+      description: "",
+      slug: "",
+      metaTitle: "",
+      metaDescription: "",
+      image: "",
+      publishDate: "",
+      lang: "",
       ...defaultValues,
     },
   });
@@ -60,23 +71,19 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
   useEffect(() => {
     if (isOpen) {
       reset({
-        title: "",
-        file_url: "",
-        type: "",
-        notice: true,
         ...defaultValues,
       });
     }
   }, [isOpen, defaultValues, reset]);
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form data being submitted:", data);
-    onSubmitHandler(data);
+  const onSubmitData = (data: FormData) => {
+    onSubmit(data);
   };
 
-  const displayOnMenuOptions = [
-    { label: "True", value: "True" },
-    { label: "False", value: "False" },
+  const languageOptions = [
+    { label: "English", value: "en" },
+    { label: "Spanish", value: "es" },
+    { label: "French", value: "fr" },
   ];
 
   if (!isOpen) return null;
@@ -91,7 +98,7 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
       >
         <div className={styles.modalHeader}>
           <h2 className={styles.modalTitle}>
-            {mode === "ADD" ? "Add Opportunity" : "Edit Opportunity"}
+            {mode === "ADD" ? "Add Page" : "Edit Page"}
           </h2>
           <button
             onClick={onClose}
@@ -102,51 +109,88 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
           </button>
         </div>
 
-        <form className={styles.formGrid} onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <Input
-              label="File_url"
-              name="file_url"
-              type="text"
-              register={register}
-              errors={errors}
-              required
-              placeholder="Enter file URL"
-            />
-          </div>
-
+        <form onSubmit={handleSubmit(onSubmitData)} className={styles.formGrid}>
           <div>
             <Input
               label="Title"
-              name="title"
               type="text"
+              name="title"
               register={register}
               errors={errors}
               required
-              placeholder="Enter Title"
+            />
+          </div>
+
+          <div>
+            <Textarea
+              label="Description"
+              name="description"
+              register={register}
+              errors={errors}
+              required
+              rows={5}
             />
           </div>
 
           <div>
             <Input
-              label="Type"
-              name="type"
-              type="text"
+              label="Slug"
+              name="slug"
               register={register}
               errors={errors}
               required
-              placeholder="Enter Type"
             />
           </div>
 
-          <div className={styles.fullSpan}>
-            <Select
-              label="Notice"
-              name="notice"
+          <div>
+            <Input
+              label="Meta Title"
+              name="metaTitle"
               register={register}
-              options={displayOnMenuOptions}
               errors={errors}
               required
+            />
+          </div>
+
+          <div>
+            <Textarea
+              label="Meta Description"
+              name="metaDescription"
+              register={register}
+              errors={errors}
+              required
+              rows={3}
+            />
+          </div>
+
+          <div>
+            <Input
+              label="Image URL"
+              name="image"
+              register={register}
+              errors={errors}
+              required
+            />
+          </div>
+
+          <div>
+            <Input
+              label="Publish Date"
+              name="publishDate"
+              type="date"
+              register={register}
+              errors={errors}
+              required
+            />
+          </div>
+
+          <div>
+            <Select
+              label="Language"
+              name="lang"
+              register={register}
+              options={languageOptions}
+              errors={errors}
             />
           </div>
 
@@ -162,9 +206,7 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
               <Button
                 type="submit"
                 buttonType="primary"
-                title={
-                  mode === "ADD" ? "Add Opportunity" : "Update Opportunity"
-                }
+                title={mode === "ADD" ? "Create" : "Update"}
                 isLoading={isLoading}
               />
             </div>
@@ -175,4 +217,4 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
   );
 };
 
-export default AddOpportunity;
+export default ManipulateListPage;

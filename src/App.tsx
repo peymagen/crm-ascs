@@ -26,6 +26,7 @@ import FaqData from "./pages/admin/Faq";
 import QuickMenuData from "./pages/admin/Quicklink";
 import SubMenuData from "./pages/admin/SubMenu";
 import ListPage from "./pages/admin/ListPage";
+import Faqs from "./pages/faq";
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
           }
         >
           <Route path="/" element={<Home />} />
+          <Route path="/faq" element={<Faqs />} />
           <Route path="/gallery" element={<GalleryPage />} />
         </Route>
 

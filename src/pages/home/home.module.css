@@ -92,8 +92,6 @@
   text-decoration: underline;
 }
 
-/* Footer styles — always white and at bottom */
-footer,
 .footer {
   background-color: #ffffff; /* Solid white background */
   color: var(--text-color);

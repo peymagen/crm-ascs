@@ -45,8 +45,8 @@
 // //   const [openItems, setOpenItems] = useState<number[]>([]);
 
 // //   const toggleItem = (id: number) => {
-// //     setOpenItems(prev => 
-// //       prev.includes(id) 
+// //     setOpenItems(prev =>
+// //       prev.includes(id)
 // //         ? prev.filter(item => item !== id)
 // //         : [...prev, id]
 // //     );
@@ -54,21 +54,21 @@
 
 // //   const itemVariants = {
 // //     hidden: { opacity: 0, y: 20 },
-// //     visible: { 
-// //       opacity: 1, 
+// //     visible: {
+// //       opacity: 1,
 // //       y: 0,
 // //       transition: { duration: 0.3 }
 // //     }
 // //   };
 
 // //   const contentVariants = {
-// //     hidden: { 
-// //       opacity: 0, 
+// //     hidden: {
+// //       opacity: 0,
 // //       height: 0,
 // //       transition: { duration: 0.2 }
 // //     },
-// //     visible: { 
-// //       opacity: 1, 
+// //     visible: {
+// //       opacity: 1,
 // //       height: 'auto',
 // //       transition: { duration: 0.3 }
 // //     }
@@ -117,7 +117,7 @@
 // //                   ▼
 // //                 </motion.span>
 // //               </button>
-              
+
 // //               <AnimatePresence>
 // //                 {openItems.includes(item.id) && (
 // //                   <motion.div
@@ -143,10 +143,6 @@
 
 // // export default FAQ;
 
-
-
-
-
 // import React, { useState } from 'react';
 // import { motion, AnimatePresence } from 'framer-motion';
 // import { useGetFaqQuery } from '../../store/services/faq.api';
@@ -168,10 +164,10 @@
 //   // Transform API response to match our FAQItem interface
 //   const faqData: FAQItem[] = React.useMemo(() => {
 //     if (!faqResponse) return [];
-    
+
 //     // Handle different response structures
 //     let items: FAQItem[] = [];
-    
+
 //     if (Array.isArray(faqResponse.data)) {
 //       items = faqResponse.data;
 //     } else if (Array.isArray(faqResponse)) {
@@ -180,16 +176,16 @@
 //       // Single item response
 //       items = [faqResponse.data];
 //     }
-    
+
 //     // Filter active FAQs (if status field exists, otherwise show all)
-//     return items.filter((item: FAQItem) => 
+//     return items.filter((item: FAQItem) =>
 //       item.status === undefined || item.status === 1
 //     );
 //   }, [faqResponse]);
 
 //   const toggleItem = (id: number) => {
-//     setOpenItems(prev => 
-//       prev.includes(id) 
+//     setOpenItems(prev =>
+//       prev.includes(id)
 //         ? prev.filter(item => item !== id)
 //         : [...prev, id]
 //     );
@@ -197,21 +193,21 @@
 
 //   const itemVariants = {
 //     hidden: { opacity: 0, y: 20 },
-//     visible: { 
-//       opacity: 1, 
+//     visible: {
+//       opacity: 1,
 //       y: 0,
 //       transition: { duration: 0.3 }
 //     }
 //   };
 
 //   const contentVariants = {
-//     hidden: { 
-//       opacity: 0, 
+//     hidden: {
+//       opacity: 0,
 //       height: 0,
 //       transition: { duration: 0.2 }
 //     },
-//     visible: { 
-//       opacity: 1, 
+//     visible: {
+//       opacity: 1,
 //       height: 'auto',
 //       transition: { duration: 0.3 }
 //     }
@@ -228,10 +224,10 @@
 //               Get answers to common questions about our services
 //             </p>
 //           </div>
-//           <div style={{ 
-//             display: 'flex', 
-//             justifyContent: 'center', 
-//             alignItems: 'center', 
+//           <div style={{
+//             display: 'flex',
+//             justifyContent: 'center',
+//             alignItems: 'center',
 //             minHeight: '200px',
 //             fontSize: '1.1rem',
 //             color: 'var(--primary-color)'
@@ -254,10 +250,10 @@
 //               Get answers to common questions about our services
 //             </p>
 //           </div>
-//           <div style={{ 
-//             display: 'flex', 
-//             justifyContent: 'center', 
-//             alignItems: 'center', 
+//           <div style={{
+//             display: 'flex',
+//             justifyContent: 'center',
+//             alignItems: 'center',
 //             minHeight: '200px',
 //             fontSize: '1.1rem',
 //             color: '#e74c3c'
@@ -280,10 +276,10 @@
 //               Get answers to common questions about our services
 //             </p>
 //           </div>
-//           <div style={{ 
-//             display: 'flex', 
-//             justifyContent: 'center', 
-//             alignItems: 'center', 
+//           <div style={{
+//             display: 'flex',
+//             justifyContent: 'center',
+//             alignItems: 'center',
 //             minHeight: '200px',
 //             fontSize: '1.1rem',
 //             color: 'var(--primary-color)'
@@ -338,7 +334,7 @@
 //                   ▼
 //                 </motion.span>
 //               </button>
-              
+
 //               <AnimatePresence>
 //                 {openItems.includes(item.id) && (
 //                   <motion.div
@@ -364,15 +360,10 @@
 
 // export default FAQ;
 
-
-
-
-
-
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useGetFaqQuery } from '../../store/services/faq.api';
-import styles from './FAQ.module.css';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useGetFaqQuery } from "../../store/services/faq.api";
+import styles from "./FAQ.module.css";
 
 interface FAQItem {
   id: number;
@@ -385,7 +376,7 @@ interface FAQItem {
 
 const FAQ: React.FC = () => {
   const [openItems, setOpenItems] = useState<number[]>([]);
-  const { data: faqResponse, isLoading, isError, error } = useGetFaqQuery();
+  const { data: faqResponse, isLoading, isError, error } = useGetFaqQuery({});
 
   // Transform API response to match our FAQItem interface
   const faqData: FAQItem[] = React.useMemo(() => {
@@ -397,43 +388,41 @@ const FAQ: React.FC = () => {
       items = faqResponse.data;
     } else if (Array.isArray(faqResponse)) {
       items = faqResponse;
-    } else if (faqResponse.data && typeof faqResponse.data === 'object') {
+    } else if (faqResponse.data && typeof faqResponse.data === "object") {
       items = [faqResponse.data];
     }
 
-    return items.filter((item: FAQItem) => 
-      item.status === undefined || item.status === 1
+    return items.filter(
+      (item: FAQItem) => item.status === undefined || item.status === 1
     );
   }, [faqResponse]);
 
   const toggleItem = (id: number) => {
-    setOpenItems(prev => 
-      prev.includes(id) 
-        ? prev.filter(item => item !== id)
-        : [...prev, id]
+    setOpenItems((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
-      transition: { duration: 0.3 }
-    }
+      transition: { duration: 0.3 },
+    },
   };
 
   const contentVariants = {
-    hidden: { 
-      opacity: 0, 
+    hidden: {
+      opacity: 0,
       height: 0,
-      transition: { duration: 0.2 }
+      transition: { duration: 0.2 },
     },
-    visible: { 
-      opacity: 1, 
-      height: 'auto',
-      transition: { duration: 0.3 }
-    }
+    visible: {
+      opacity: 1,
+      height: "auto",
+      transition: { duration: 0.3 },
+    },
   };
 
   // Loading state
@@ -447,14 +436,16 @@ const FAQ: React.FC = () => {
               Get answers to common questions about our services
             </p>
           </div>
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            minHeight: '200px',
-            fontSize: '1.1rem',
-            color: 'var(--primary-color)'
-          }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "200px",
+              fontSize: "1.1rem",
+              color: "var(--primary-color)",
+            }}
+          >
             Loading FAQs...
           </div>
         </div>
@@ -464,19 +455,19 @@ const FAQ: React.FC = () => {
 
   // Error state
   if (isError) {
-    let errorMessage = 'Unknown error';
+    let errorMessage = "Unknown error";
 
     console.error("FAQ API Error:", error);
 
-    if (error && 'data' in error && error.data) {
-      if (typeof error.data === 'string') {
+    if (error && "data" in error && error.data) {
+      if (typeof error.data === "string") {
         errorMessage = error.data;
       } else if (error.data.message) {
         errorMessage = error.data.message;
       } else {
         errorMessage = JSON.stringify(error.data);
       }
-    } else if (error && 'error' in error) {
+    } else if (error && "error" in error) {
       errorMessage = error.error;
     }
 
@@ -489,14 +480,16 @@ const FAQ: React.FC = () => {
               Get answers to common questions about our services
             </p>
           </div>
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            minHeight: '200px',
-            fontSize: '1.1rem',
-            color: '#e74c3c'
-          }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "200px",
+              fontSize: "1.1rem",
+              color: "#e74c3c",
+            }}
+          >
             Error loading FAQs: {errorMessage}
           </div>
         </div>
@@ -515,14 +508,16 @@ const FAQ: React.FC = () => {
               Get answers to common questions about our services
             </p>
           </div>
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            minHeight: '200px',
-            fontSize: '1.1rem',
-            color: 'var(--primary-color)'
-          }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "200px",
+              fontSize: "1.1rem",
+              color: "var(--primary-color)",
+            }}
+          >
             No FAQs available at the moment.
           </div>
         </div>
@@ -559,7 +554,7 @@ const FAQ: React.FC = () => {
             >
               <button
                 className={`${styles.questionButton} ${
-                  openItems.includes(item.id) ? styles.active : ''
+                  openItems.includes(item.id) ? styles.active : ""
                 }`}
                 onClick={() => toggleItem(item.id)}
                 aria-expanded={openItems.includes(item.id)}
@@ -573,7 +568,7 @@ const FAQ: React.FC = () => {
                   ▼
                 </motion.span>
               </button>
-              
+
               <AnimatePresence>
                 {openItems.includes(item.id) && (
                   <motion.div

@@ -4,7 +4,6 @@ import authReducer from "./reducers/authReducer";
 import { apiUser } from "./services/user.api";
 import { apiListpage } from "./services/listpage.api";
 import { apiOpportunities } from "./services/opportunities.api";
-import { apiGallery } from "./services/gallery.api";
 import { apiFaq } from "./services/faq.api";
 import { apiSliders } from "./services/sliders.api";
 import { apiSetting } from "./services/setting.api";
@@ -26,7 +25,6 @@ export const store = configureStore({
     [apiTelephonic.reducerPath]: apiTelephonic.reducer,
     [apiListpage.reducerPath]: apiListpage.reducer,
     [apiOpportunities.reducerPath]: apiOpportunities.reducer,
-    [apiGallery.reducerPath]: apiGallery.reducer,
     [apiFaq.reducerPath]: apiFaq.reducer,
     [apiSliders.reducerPath]: apiSliders.reducer,
     [apiSetting.reducerPath]: apiSetting.reducer,
@@ -47,7 +45,6 @@ export const store = configureStore({
       apiTelephonic.middleware,
       apiListpage.middleware,
       apiOpportunities.middleware,
-      apiGallery.middleware,
       apiFaq.middleware,
       apiSliders.middleware,
       apiSetting.middleware,

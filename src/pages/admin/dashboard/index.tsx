@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./dashboard.module.css";
-import "chart.js/auto";
+// import "chart.js/auto";
 
 interface CardItem {
   title: string;

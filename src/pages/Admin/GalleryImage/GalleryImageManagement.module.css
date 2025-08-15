@@ -42,7 +42,18 @@
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  padding: 20px;
+}
+.modalContainer {
+  position: relative;
+  padding: 0;
+  border-radius: 12px;
+  width: 720px;
+  max-width: 800px;
+  max-height: 90vh;
+  box-sizing: border-box;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 /* Modal content */
@@ -52,7 +63,45 @@
   background: #ffffff;
   border-radius: 8px;
   box-shadow: 0 10px 30px rgba(2, 6, 23, 0.2);
-  padding: 20px;
+}
+
+.modalHead {
+  /* background-color: #dc2626; */
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  /* border-radius: 8px; */
+  margin-bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 25px;
+  background-color: #f3f4f6; /* Light gray header background */
+  border-bottom: 1px solid #e5e7eb; /* Subtle separator line */
+  /* border-top-left-radius: 12px; */
+  /* border-top-right-radius: 12px; */
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  font-weight: bold;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.closeButton:hover:not(:disabled) {
+  color: #dc2626;
+  background-color: #fee2e2;
+}
+
+.closeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .modalTitle {
@@ -63,6 +112,7 @@
 
 /* Form grid layout */
 .modalForm {
+  padding: 20px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
@@ -71,7 +121,9 @@
 
 /* Modal action buttons */
 .modalActions {
-  margin-top: 16px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+
   display: flex;
   gap: 10px;
   justify-content: flex-end;

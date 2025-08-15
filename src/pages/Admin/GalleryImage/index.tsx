@@ -4,6 +4,8 @@ import Button from "../../../components/Button";
 import Manipulate from "./Manipulate";
 import ConfirmDelete from "./ConfirmDelete";
 import styles from "./GalleryImageManagement.module.css";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import {
   useGetGalleryImagesQuery,
@@ -21,15 +23,12 @@ export interface GalleryImage {
 const GalleryImageManagement: React.FC = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-
   const [modalData, setModalData] = useState<{
     mode: "add" | "edit";
     imageData?: GalleryImage;
   } | null>(null);
-
   const [deleteTarget, setDeleteTarget] = useState<GalleryImage | null>(null);
 
-  // Fetch gallery images
   const {
     data: queryData,
     isLoading,
@@ -46,24 +45,21 @@ const GalleryImageManagement: React.FC = () => {
   const [deleteImage, { isLoading: isDeleting }] =
     useDeleteGalleryImageMutation();
 
-  const images = queryData?.data ?? [];
-
-  console.log(images);
-  const total = queryData?.total ?? 0;
-
-  const handleSave = async (formData: FormData & { id?: number }) => {
+  const handleSave = async (formData: FormData) => {
     try {
-      if (formData.id != null) {
-        // id comes from formData appended as string, convert to number
-        const id = Number(formData.get("id"));
-        await updateImage({ id, body: formData }).unwrap();
+      const idValue = formData.get("id");
+      if (idValue) {
+        await updateImage({ id: Number(idValue), body: formData }).unwrap();
+        toast.success("Image updated successfully!");
       } else {
         await addImage(formData).unwrap();
+        toast.success("Image added successfully!");
       }
       setModalData(null);
-      refetch();
+      await refetch();
     } catch (error) {
       console.error("Failed to save image:", error);
+      toast.error("Failed to save image. Please try again.");
     }
   };
 
@@ -71,22 +67,22 @@ const GalleryImageManagement: React.FC = () => {
     if (!deleteTarget) return;
     try {
       await deleteImage(deleteTarget.id).unwrap();
+      toast.success("Image deleted successfully!");
       setDeleteTarget(null);
-      refetch();
+      await refetch();
     } catch (error) {
       console.error("Failed to delete image:", error);
+      toast.error("Failed to delete image. Please try again.");
     }
   };
 
   const fetchData = useCallback(
     async (params?: { page: number; search?: string }) => {
-      const page = params?.page || 1;
-      const search = params?.search || "";
-      setPage(page);
-      setSearch(search);
+      setPage(params?.page || 1);
+      setSearch(params?.search || "");
       return {
-        data: queryData?.data || [],
-        total: queryData?.total || 0,
+        data: queryData?.data ?? [],
+        total: queryData?.total ?? 0,
       };
     },
     [queryData]

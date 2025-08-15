@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import Input from "../../../components/Input";
 import Textarea from "../../../components/Textarea";
 import Button from "../../../components/Button";
@@ -13,17 +15,42 @@ interface FormValues {
 interface Props {
   mode: "add" | "edit";
   category?: { id?: number; title: string; description: string };
-  onSave: (data: { id?: number; title: string; description: string }) => void;
+  isLoading?: boolean;
+  onSave: (data: {
+    id?: number;
+    title: string;
+    description: string;
+  }) => Promise<void> | void;
   onClose: () => void;
 }
 
-const Manipulate: React.FC<Props> = ({ mode, category, onSave, onClose }) => {
+// ✅ Yup schema
+const schema = yup.object().shape({
+  title: yup
+    .string()
+    .required("Title is required")
+    .min(3, "Title must be at least 3 characters")
+    .max(100, "Title cannot exceed 100 characters"),
+  description: yup
+    .string()
+    .max(300, "Description cannot exceed 300 characters")
+    .nullable(),
+});
+
+const Manipulate: React.FC<Props> = ({
+  mode,
+  category,
+  onSave,
+  onClose,
+  isLoading = false,
+}) => {
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
+    resolver: yupResolver(schema),
     defaultValues: { title: "", description: "" },
   });
 
@@ -38,27 +65,32 @@ const Manipulate: React.FC<Props> = ({ mode, category, onSave, onClose }) => {
     }
   }, [mode, category, reset]);
 
-  const submit = (data: FormValues) => {
-    if (mode === "edit") {
-      onSave({
-        id: category?.id,
-        title: data.title.trim(),
-        description: data.description.trim(),
-      });
-    } else {
-      onSave({
-        title: data.title.trim(),
-        description: data.description.trim(),
-      });
-    }
+  const submit = async (data: FormValues) => {
+    const payload = {
+      ...(mode === "edit" && category?.id ? { id: category.id } : {}),
+      title: data.title.trim(),
+      description: data.description?.trim() || "",
+    };
+
+    await onSave(payload);
+    onClose();
   };
 
   return (
     <div className={styles.modalBackdrop}>
       <div className={styles.modalContent}>
-        <h2 className={styles.modalTitle}>
-          {mode === "edit" ? "Edit Category" : "Add Category"}
-        </h2>
+        <div className={styles.modalHead}>
+          <h2 className={styles.modalTitle}>
+            {mode === "edit" ? "Edit Category" : "Add Category"}
+          </h2>
+          <button
+            onClick={onClose}
+            className={styles.closeButton}
+            disabled={isLoading}
+          >
+            ×
+          </button>
+        </div>
 
         <form onSubmit={handleSubmit(submit)} className={styles.modalForm}>
           <Input

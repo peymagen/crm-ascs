@@ -4,13 +4,15 @@ import Manipulate from "./Manipulate";
 import Button from "../../../components/Button";
 import styles from "./GalleryCategory.module.css";
 import ConfirmDelete from "./ConfirmDelete";
+import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 
 import {
   useGetGalleryCategoriesQuery,
   useAddGalleryCategoryMutation,
   useUpdateGalleryCategoryMutation,
   useDeleteGalleryCategoryMutation,
-} from "../../../store/services/galleryCategory.api"; // adjust path as needed
+} from "../../../store/services/galleryCategory.api";
 
 export interface GalleryCategoryItem {
   id: number;
@@ -19,22 +21,17 @@ export interface GalleryCategoryItem {
 }
 
 const GalleryCategory: React.FC = () => {
-  // Modal state for add/edit
   const [modalData, setModalData] = useState<{
     mode: "add" | "edit";
     category?: GalleryCategoryItem;
   } | null>(null);
 
-  // Delete confirmation state
-  const [deleteTarget, setDeleteTarget] = useState<GalleryCategoryItem | null>(
-    null
-  );
+  const [targetToDelete, setTargetToDelete] =
+    useState<GalleryCategoryItem | null>(null);
 
-  // Pagination and search state
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
 
-  // API hooks
   const {
     data: queryData,
     isLoading,
@@ -52,118 +49,130 @@ const GalleryCategory: React.FC = () => {
   const [deleteCategory, { isLoading: isDeleting }] =
     useDeleteGalleryCategoryMutation();
 
-  // Handle save from modal (add or edit)
-  const handleSave = async (
-    data: Omit<GalleryCategoryItem, "id"> & { id?: number }
-  ) => {
-    try {
-      if (data.id != null) {
-        await updateCategory({
-          id: data.id,
-          body: { title: data.title, description: data.description },
-        }).unwrap();
-      } else {
-        await addCategory({
-          title: data.title,
-          description: data.description,
-        }).unwrap();
-      }
-      setModalData(null);
-      refetch(); // Refresh data after mutation
-    } catch (error) {
-      console.error("Failed to save category:", error);
-      // Handle error UI here if needed
-    }
+  const isMutating = isAdding || isUpdating || isDeleting;
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
 
-  // Handle delete confirm
-  const handleDeleteConfirm = async () => {
-    if (!deleteTarget) return;
+  const handleSave = useCallback(
+    async (data: Omit<GalleryCategoryItem, "id"> & { id?: number }) => {
+      try {
+        if (data.id != null) {
+          await updateCategory({
+            id: data.id,
+            body: { title: data.title, description: data.description },
+          }).unwrap();
+          toast.success(`Category "${data.title}" updated successfully`);
+        } else {
+          await addCategory({
+            title: data.title,
+            description: data.description,
+          }).unwrap();
+          toast.success(`Category "${data.title}" added successfully`);
+        }
+        setModalData(null);
+        await refetch();
+      } catch (error) {
+        console.error("Failed to save category:", error);
+        toast.error("Something went wrong while saving the category");
+      }
+    },
+    [addCategory, updateCategory, refetch]
+  );
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!targetToDelete) return;
     try {
-      await deleteCategory(deleteTarget.id).unwrap();
-      setDeleteTarget(null);
-      refetch(); // Refresh after deletion
+      await deleteCategory(targetToDelete.id).unwrap();
+      toast.success(`Category "${targetToDelete.title}" deleted successfully`);
+      setTargetToDelete(null);
+      await refetch();
     } catch (error) {
       console.error("Failed to delete category:", error);
-      // Handle error UI here if needed
+      toast.error("Failed to delete category");
     }
-  };
+  }, [targetToDelete, deleteCategory, refetch]);
 
-  // Actions for each row in the DataTable
   const actions = [
     {
       label: "Edit",
-      onClick: (row: GalleryCategoryItem) => {
-        setModalData({ mode: "edit", category: row });
-      },
+      onClick: (row: GalleryCategoryItem) =>
+        setModalData({ mode: "edit", category: row }),
     },
     {
       label: "Delete",
-      onClick: (row: GalleryCategoryItem) => {
-        setDeleteTarget(row);
-      },
+      onClick: (row: GalleryCategoryItem) => setTargetToDelete(row),
     },
   ];
 
   const fetchData = useCallback(
-    async (params?: { page: number; search?: string }) => {
-      const page = params?.page || 1;
-      const search = params?.search || "";
-      setPage(page);
-      setSearch(search);
+    async (params?: { page?: number; search?: string }) => {
+      const newPage = params?.page ?? page;
+      const newSearch = params?.search ?? search;
+      setPage(newPage);
+      setSearch(newSearch);
+
       return {
         data: queryData?.data || [],
         total: queryData?.total || 0,
       };
     },
-    [queryData]
+    [queryData, page, search]
   );
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>Gallery Categories</h1>
-        <Button
-          title="+ Add Category"
-          buttonType="primary"
-          onClick={() => setModalData({ mode: "add" })}
-          disabled={isAdding || isUpdating || isDeleting}
-        />
-      </div>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={itemVariants}
+        className={styles.formContainer}
+      >
+        <div className={styles.header}>
+          <h1 className={styles.title}>Gallery Categories</h1>
+          <Button
+            title="+ Add Category"
+            buttonType="primary"
+            onClick={() => setModalData({ mode: "add" })}
+            disabled={isMutating}
+          />
+        </div>
 
-      <DataTable
-        fetchData={fetchData}
-        columns={[
-          { label: "ID", accessor: "id" },
-          { label: "Title", accessor: "title" },
-          { label: "Description", accessor: "description" },
-        ]}
-        actions={actions}
-        loading={isLoading || isAdding || isUpdating || isDeleting}
-        isNavigate
-        isSearch
-        isExport
-      />
-
-      {modalData && (
-        <Manipulate
-          mode={modalData.mode}
-          category={modalData.category}
-          onSave={handleSave}
-          onClose={() => setModalData(null)}
-          // isSaving={isAdding || isUpdating}
+        <DataTable
+          fetchData={fetchData}
+          columns={[
+            { label: "ID", accessor: "id" },
+            { label: "Title", accessor: "title" },
+            { label: "Description", accessor: "description" },
+          ]}
+          actions={actions}
+          loading={isLoading || isMutating}
+          isNavigate
+          isSearch
+          isExport
         />
-      )}
 
-      {deleteTarget && (
-        <ConfirmDelete
-          title="Confirm Delete"
-          message={`Are you sure you want to delete "${deleteTarget.title}"?`}
-          onConfirm={handleDeleteConfirm}
-          onCancel={() => setDeleteTarget(null)}
-          // isLoading={isDeleting}
-        />
-      )}
+        {modalData && (
+          <Manipulate
+            mode={modalData.mode}
+            category={modalData.category}
+            onSave={handleSave}
+            onClose={() => setModalData(null)}
+            isLoading={isLoading}
+          />
+        )}
+
+        {targetToDelete && (
+          <ConfirmDelete
+            title="Confirm Delete"
+            message={`Are you sure you want to delete "${targetToDelete.title}"?`}
+            onConfirm={handleDeleteConfirm}
+            onCancel={() => setTargetToDelete(null)}
+          />
+        )}
+      </motion.div>
     </div>
   );
 };

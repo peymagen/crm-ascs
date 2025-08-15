@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px 0;
+  padding: 0 1rem;
   background-color: var(--light-text-color);
 }
 
@@ -17,6 +17,7 @@
   align-items: center;
   justify-content: space-evenly;
   gap: 200px;
+  overflow-y: auto;
 }
 
 .footerTopCarouselItem {

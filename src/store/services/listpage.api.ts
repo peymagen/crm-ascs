@@ -29,6 +29,9 @@ export const apiListpage = createApi({
     getListpageById: builder.query<IPage, number>({
       query: (id: number) => `/pages/${id}`,
     }),
+    getListpageBySlug: builder.query<IPage, string>({
+      query: (id: string) => `/pages/slug/${id}`,
+    }),
     getListpage: builder.query<{ data: IPage[]; total: number }, void>({
       query: ({}) => "pages",
     }),
@@ -65,6 +68,7 @@ export const apiListpage = createApi({
 export const {
   useCreateListpageMutation,
   useGetListpageByIdQuery,
+  useGetListpageBySlugQuery,
   useGetListpageQuery,
   useDeleteListpageMutation,
   usePatchListpageMutation,

@@ -29,6 +29,7 @@ import ListPage from "./pages/admin/ListPage";
 import Faqs from "./pages/faq";
 import SocialLinkData from "./pages/Admin/socialLink";
 import PortalData from "./pages/Admin/OtherPortal";
+import ProjectsPage from "./pages/ProjectsPage/ProjectsPage";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/faq" element={<Faqs />} />
           <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/page/:id" element={<ProjectsPage />} />
         </Route>
 
         <Route

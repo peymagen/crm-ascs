@@ -11,6 +11,9 @@ export const apiMainMenu = createApi({
     getMainMenu: builder.query({
       query: () => "main-menu",
     }),
+    getMainMenuBySlug: builder.query({
+      query: (id: string) => `/main-menu/slug/${id}`,
+    }),
     getMainMenuAll: builder.query({
       query: () => "main-menu/all",
     }),
@@ -48,6 +51,7 @@ export const {
   useCreateMainMenuMutation,
   useGetMainMenuByIdQuery,
   useGetMainMenuQuery,
+  useGetMainMenuBySlugQuery,
   useGetMainMenuAllQuery,
   useDeleteMainMenuMutation,
   usePatchMainMenuMutation,

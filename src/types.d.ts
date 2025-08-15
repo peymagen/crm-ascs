@@ -76,3 +76,13 @@ interface IFooterMenu extends Base {
   sorting_order?: number;
   lang?: string;
 }
+
+interface ISubMenu extends Base {
+  name: string;
+  url?: string;
+  parent_id?: number;
+  other_url?: string;
+  target?: string;
+  sorting_order?: number;
+  lang?: string;
+}

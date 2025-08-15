@@ -1,0 +1,178 @@
+.footerTopMiddle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  background-color: var(--light-text-color);
+}
+
+.footerTopCarousel {
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 200px;
+  overflow-y: auto;
+}
+
+.footerTopCarouselItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footerTopNacoLogo {
+  height: 150px;
+}
+
+.footerTopPortalLogo,
+.footerTopDiLogo {
+  height: 100px;
+}
+
+/* Footer Bottom */
+.footerBottom {
+  background-color: var(--secondary-color);
+  color: var(--dark-text-color);
+  font-family: "Segoe UI", sans-serif;
+  padding: 40px 20px 10px;
+}
+
+.footerBottomTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.footerBottomSection {
+  flex: 1;
+  padding: 10px;
+
+  text-align: center;
+  align-self: flex-start;
+}
+
+.footerBranding {
+  align-self: center;
+}
+
+.mainLogo {
+  height: auto;
+  max-height: 150px;
+  object-fit: contain;
+}
+
+.footerSlogan {
+  margin-top: 15px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dark-text-color);
+  line-height: 1.5;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footerBottomSectionHeader {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: var(--dark-text-color);
+  text-align: left;
+}
+
+.footerBottomLinkItem {
+  margin: 8px 0;
+}
+
+.footerBottomLinkItem a {
+  text-decoration: none;
+  color: var(--primary-color);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  padding: 4px 0;
+  display: inline-block;
+  border-bottom: 2px solid transparent;
+}
+
+.footerBottomLinkItem a:hover {
+  color: var(--dark-text-color);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+/* Social Links */
+.footerSocial {
+  /* Inherited flex from footerBottomSection */
+}
+
+.footerSocialIcons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.footerSocialIcons a {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--primary-color);
+  transition: transform 0.3s ease, color 0.3s ease;
+  text-decoration: auto;
+  justify-items: left;
+}
+
+.footerSocialIcons a:hover {
+  transform: scale(1.2);
+  color: var(--dark-text-color);
+}
+
+/* Divider and Footer Info */
+.footerDivider {
+  width: 90%;
+  margin: 30px auto 20px;
+  background-color: var(--light-text-color);
+  height: 1px;
+  border: none;
+}
+
+.footerBottomInfo {
+  text-align: center;
+}
+.footerBottomManufacture {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.footerBottomManufacture > p,
+.footerBottomManufacture > a {
+  color: var(--primary-color) !important;
+  font-size: 13px;
+  margin-bottom: 10px;
+  margin: 0;
+}
+
+.footerBottomCopyright {
+  color: rgba(14, 14, 14, 0.6);
+  font-size: 12px;
+  padding-bottom: 20px;
+}
+.footerSocialIcons p {
+  margin: 0;
+}
+.quickLinks {
+  display: grid;
+  grid-template-columns: 0.5fr 0.5fr;
+  text-align: left;
+}
+
+.sectionLinks2 {
+  /* no extra styling, but defined for clarity */
+}

@@ -21,7 +21,14 @@ import ListSlider from "../src/pages/Admin/slider";
 import GalleryCategory from "../src/pages/Admin/GalleryCategory";
 import GalleryImageManagement from "../src/pages/Admin/GalleryImage";
 
-import ListSetting from "./pages/Admin/settings";
+import ListSetting from "./pages/admin/Settings";
+import FaqData from "./pages/admin/Faq";
+import QuickMenuData from "./pages/admin/Quicklink";
+import SubMenuData from "./pages/admin/SubMenu";
+import ListPage from "./pages/admin/ListPage";
+import Faqs from "./pages/faq";
+import SocialLinkData from "./pages/Admin/socialLink";
+import PortalData from "./pages/Admin/OtherPortal";
 
 function App() {
   return (
@@ -45,6 +52,7 @@ function App() {
           }
         >
           <Route path="/" element={<Home />} />
+          <Route path="/faq" element={<Faqs />} />
           <Route path="/gallery" element={<GalleryPage />} />
         </Route>
 
@@ -56,10 +64,17 @@ function App() {
           }
         >
           <Route path="/admin" element={<Dashboard />} />
+          <Route path="/admin/faq" element={<FaqData />} />
+          <Route path="/admin/quick-menu" element={<QuickMenuData />} />
+          <Route path="/admin/sub-menu" element={<SubMenuData />} />
+          <Route path="/admin/social-link" element={<SocialLinkData />} />
+          <Route path="/admin/other-portal" element={<PortalData />} />
           <Route path="/admin/main-menu" element={<MenuManagement />} />
           <Route path="/admin/bottom-menu" element={<ListBottomData />} />
           <Route path="/admin/telephonic" element={<TelephonicData />} />
           <Route path="/admin/slider" element={<ListSlider />} />
+          <Route path="/admin/page" element={<ListPage />} />
+
           <Route path="/admin/gallery" element={<GalleryCategory />} />
           <Route
             path="/admin/gallery-image"

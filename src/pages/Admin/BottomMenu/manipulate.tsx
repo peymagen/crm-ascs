@@ -99,7 +99,7 @@ const AddBottomMenu: React.FC<AddBottomMenuProps> = ({
       >
         <div className={styles.modalHeader}>
           <h2 className={styles.modalTitle}>
-            {mode === "ADD" ? "Add Bottom Menu" : "Edit Bottom Menu"}
+            {mode === "ADD" ? "Add Quick Menu" : "Edit Quick Menu"}
           </h2>
           <button
             onClick={onClose}

@@ -40,7 +40,9 @@ export const galleryImageApi = createApi({
 
     getGalleryImage: builder.query<GalleryImage, number>({
       query: (id) => ({ url: `gallery-image/${id}`, method: "GET" }),
-      providesTags: (result, error, id) => [{ type: "GalleryImage", id }],
+    }),
+    getGalleryList: builder.query<GalleryImage, number>({
+      query: () => ({ url: `gallery-image/list`, method: "GET" }),
     }),
 
     addGalleryImage: builder.mutation<GalleryImage, FormData>({
@@ -49,7 +51,6 @@ export const galleryImageApi = createApi({
         method: "POST",
         body: formData,
       }),
-      invalidatesTags: [{ type: "GalleryImage", id: "LIST" }],
     }),
 
     updateGalleryImage: builder.mutation<
@@ -61,18 +62,10 @@ export const galleryImageApi = createApi({
         method: "PUT",
         body,
       }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: "GalleryImage", id },
-        { type: "GalleryImage", id: "LIST" },
-      ],
     }),
 
     deleteGalleryImage: builder.mutation<void, number>({
       query: (id) => ({ url: `gallery-image/${id}`, method: "DELETE" }),
-      invalidatesTags: (result, error, id) => [
-        { type: "GalleryImage", id },
-        { type: "GalleryImage", id: "LIST" },
-      ],
     }),
   }),
 });
@@ -81,6 +74,7 @@ export const {
   useGetGalleryImagesQuery,
   useGetGalleryImageQuery,
   useLazyGetGalleryImagesQuery,
+  useGetGalleryListQuery,
   useAddGalleryImageMutation,
   useUpdateGalleryImageMutation,
   useDeleteGalleryImageMutation,

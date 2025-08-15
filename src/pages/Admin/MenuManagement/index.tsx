@@ -7,11 +7,11 @@ import ConfirmDeleteModal from "./ConfirmDelete/ConfirmDeleteModal";
 import Button from "../../../components/Button";
 
 import {
-  useAddMenuMutation,
-  useUpdateMenuMutation,
-  useDeleteMenuMutation,
-  useLazyGetMenusQuery,
-} from "../../../store/services/menu.api";
+  useUpdateMainMenuMutation,
+  useDeleteMainMenuMutation,
+  useGetMainMenuQuery,
+  useCreateMainMenuMutation,
+} from "../../../store/services/mainMenu.api";
 
 import styles from "./MenuManagement.module.css";
 
@@ -20,12 +20,17 @@ const MenuManagement: React.FC = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const limit = 10;
+  const offset = (page - 1) * limit;
 
-  /** API hooks */
-  const [triggerGetMenus, { isLoading }] = useLazyGetMenusQuery();
-  const [addMenu] = useAddMenuMutation();
-  const [updateMenu] = useUpdateMenuMutation();
-  const [deleteMenu] = useDeleteMenuMutation();
+  const { data, isLoading, refetch } = useGetMainMenuQuery({
+    limit,
+    offset,
+    search,
+  });
+
+  const [addMenu] = useCreateMainMenuMutation();
+  const [updateMenu] = useUpdateMainMenuMutation();
+  const [deleteMenu] = useDeleteMainMenuMutation();
 
   /** Modal & editing/deleting state */
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,18 +47,12 @@ const MenuManagement: React.FC = () => {
       setPage(currentPage);
       setSearch(currentSearch);
 
-      const res = await triggerGetMenus({
-        limit,
-        offset: (currentPage - 1) * limit,
-        search: currentSearch,
-      }).unwrap();
-
       return {
-        data: res?.data || [],
-        total: res?.total || 0,
+        data: data?.data || [],
+        total: data?.total || 0,
       };
     },
-    [triggerGetMenus]
+    [data]
   );
 
   /** Handlers */
@@ -73,13 +72,12 @@ const MenuManagement: React.FC = () => {
     try {
       if (mode === "ADD") {
         await addMenu(payload).unwrap();
+        refetch();
         toast.success("Main menu item created successfully");
       } else if (mode === "EDIT" && editingMenu?.id) {
         await updateMenu({ id: editingMenu.id, body: payload }).unwrap();
         toast.success("Menu item updated successfully");
       }
-
-      await fetchData({ page, search });
       setIsModalOpen(false);
       setEditingMenu(null);
     } catch (error) {
@@ -95,8 +93,8 @@ const MenuManagement: React.FC = () => {
 
     try {
       await deleteMenu(deletingMenu.id).unwrap();
+      refetch();
       toast.success("Menu item deleted successfully");
-      await fetchData({ page, search });
     } catch (error) {
       console.error("Delete failed:", error);
       toast.error("Failed to delete menu item");
@@ -130,7 +128,7 @@ const MenuManagement: React.FC = () => {
       <div className={styles.header}>
         <h1 className={styles.title}>Main Menu Management</h1>
         <Button
-          title="+ Add Main Menu"
+          title="+ Add New Menu"
           type="button"
           onClick={handleOpenAdd}
           buttonType="primary"

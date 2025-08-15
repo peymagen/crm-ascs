@@ -27,6 +27,8 @@ import QuickMenuData from "./pages/admin/Quicklink";
 import SubMenuData from "./pages/admin/SubMenu";
 import ListPage from "./pages/admin/ListPage";
 import Faqs from "./pages/faq";
+import SocialLinkData from "./pages/Admin/socialLink";
+import PortalData from "./pages/Admin/OtherPortal";
 
 function App() {
   return (
@@ -65,6 +67,8 @@ function App() {
           <Route path="/admin/faq" element={<FaqData />} />
           <Route path="/admin/quick-menu" element={<QuickMenuData />} />
           <Route path="/admin/sub-menu" element={<SubMenuData />} />
+          <Route path="/admin/social-link" element={<SocialLinkData />} />
+          <Route path="/admin/other-portal" element={<PortalData />} />
           <Route path="/admin/main-menu" element={<MenuManagement />} />
           <Route path="/admin/bottom-menu" element={<ListBottomData />} />
           <Route path="/admin/telephonic" element={<TelephonicData />} />

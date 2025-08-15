@@ -52,16 +52,17 @@
 
 .footerBottomSection {
   flex: 1;
-  min-width: 200px;
   padding: 10px;
+
+  text-align: center;
+  align-self: flex-start;
 }
 
 .footerBranding {
-  max-width: 250px;
+  align-self: center;
 }
 
 .mainLogo {
-  max-width: 100%;
   height: auto;
   max-height: 150px;
   object-fit: contain;
@@ -86,6 +87,7 @@ ul {
   font-weight: bold;
   margin-bottom: 15px;
   color: var(--dark-text-color);
+  text-align: left;
 }
 
 .footerBottomLinkItem {
@@ -117,13 +119,16 @@ ul {
   flex-direction: column;
   gap: 16px;
   margin-top: 20px;
-  justify-content: flex-start;
 }
 
 .footerSocialIcons a {
+  display: flex;
+  gap: 10px;
+  align-items: center;
   color: var(--primary-color);
-  font-size: 22px;
   transition: transform 0.3s ease, color 0.3s ease;
+  text-decoration: auto;
+  justify-items: left;
 }
 
 .footerSocialIcons a:hover {
@@ -135,7 +140,7 @@ ul {
 .footerDivider {
   width: 90%;
   margin: 30px auto 20px;
-  background-color: var(--dark-text-color);
+  background-color: var(--light-text-color);
   height: 1px;
   border: none;
 }
@@ -143,11 +148,18 @@ ul {
 .footerBottomInfo {
   text-align: center;
 }
-
-.footerBottomManufacture > p {
-  color: var(--primary-color);
+.footerBottomManufacture {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.footerBottomManufacture > p,
+.footerBottomManufacture > a {
+  color: var(--primary-color) !important;
   font-size: 13px;
   margin-bottom: 10px;
+  margin: 0;
 }
 
 .footerBottomCopyright {
@@ -159,7 +171,9 @@ ul {
   margin: 0;
 }
 .quickLinks {
-  /* no extra styling, but defined for clarity */
+  display: grid;
+  grid-template-columns: 0.5fr 0.5fr;
+  text-align: left;
 }
 
 .sectionLinks2 {

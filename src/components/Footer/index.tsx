@@ -2,13 +2,15 @@ import React from "react";
 import styles from "./footer.module.css";
 
 import logoUrls from "./logos.json";
-import quickLinksData from "./quick-links.json";
-import sectionLinksData from "./section-links-2.json";
 
 // Font Awesome Icons
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { useGetSettingByIdQuery } from "../../store/services/setting.api";
+import { useGetFooterMenuQuery } from "../../store/services/footerMenu.api";
 
 const Footer: React.FC = () => {
+  const { data, isLoading } = useGetSettingByIdQuery(1);
+  const { data: links, isLoading: linksLoading } = useGetFooterMenuQuery({});
   return (
     <>
       {/* Top Section with Logos */}
@@ -53,39 +55,28 @@ const Footer: React.FC = () => {
           <div
             className={`${styles.footerBottomSection} ${styles.footerBranding}`}
           >
-            <img
-              src={logoUrls.AIDS.url}
-              alt="AIDS"
-              className={styles.mainLogo}
-            />
-            <p className={styles.footerSlogan}>
-              Together for a healthier future
-            </p>
+            {!isLoading && (
+              <img
+                src={import.meta.env.VITE_BACKEND_SERVER + data?.data?.logo}
+                alt="Logo"
+                className={styles.mainLogo}
+              />
+            )}
           </div>
 
           {/* Center: Links */}
-          <div className={styles.footerBottomSection}>
-            <ul className={styles.quickLinks}>
-              <li className={styles.footerBottomSectionHeader}>
-                {quickLinksData.sectionTitle}
-              </li>
-              {quickLinksData.links.map((link) => (
-                <li key={link.id} className={styles.footerBottomLinkItem}>
-                  <a href={link.url}>{link.name}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className={styles.footerBottomSection}>
-            <ul className={styles.sectionLinks2}>
-              {sectionLinksData.links.map((link) => (
-                <li key={link.id} className={styles.footerBottomLinkItem}>
-                  <a href={link.url}>{link.name}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {!linksLoading && (
+            <div className={styles.footerBottomSection}>
+              <p className={styles.footerBottomSectionHeader}>Quick Links</p>
+              <ul className={styles.quickLinks}>
+                {links.data.map((link: IMainMenu) => (
+                  <li key={link.id} className={styles.footerBottomLinkItem}>
+                    <a href={link.url}>{link.name}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Right: Social Media */}
           <div
@@ -94,9 +85,7 @@ const Footer: React.FC = () => {
             <p className={styles.footerBottomSectionHeader}>Follow Us</p>
             <div className={styles.footerSocialIcons}>
               <a href="https://facebook.com" target="_blank" rel="noreferrer">
-                <p>
-                  <FaFacebook /> Facebook
-                </p>
+                <FaFacebook /> <p>Facebook</p>
               </a>
               <a href="https://twitter.com" target="_blank" rel="noreferrer">
                 <p>
@@ -121,7 +110,10 @@ const Footer: React.FC = () => {
 
         <div className={styles.footerBottomInfo}>
           <div className={styles.footerBottomManufacture}>
-            <p>Content Owned, updated and maintained by Peymagen</p>
+            <p>Content Owned, updated and maintained by </p>
+            <a href="http://peymagen.com/" target="_self">
+              Peymagen Informatics & Automation
+            </a>
           </div>
           <p className={styles.footerBottomCopyright}>
             © Copyright 2025. All Rights Reserved.

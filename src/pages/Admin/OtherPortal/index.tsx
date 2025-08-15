@@ -2,15 +2,15 @@ import React, { useCallback, useState } from "react";
 import AddOtherPortal from "./manipulate";
 import { DataTable } from "../../../components/DataTable";
 import Button from "../../../components/Button";
-import styles from "./otherpage.module.css";
+import styles from "./Portal.module.css";
 import { motion } from "framer-motion";
 import DeleteDialog from "./DeleteDialog";
 import {
-    useGetOtherPageQuery,
-    useCreateOtherPageMutation,
-    useUpdateOtherPageMutation,
-    useDeleteOtherPageMutation,
-} from "../../../store/services/otherPortal.api";
+    useGetPortalQuery,
+    useCreatePortalMutation,
+    useUpdatePortalMutation,
+    useDeletePortalMutation,
+} from "../../../store/services/portal.api";
 import { toast } from "react-toastify";
 
 interface RowData {
@@ -20,7 +20,7 @@ interface RowData {
   image: File;
 }
 
-const OtherPageData: React.FC = () => {
+const PortalData: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"ADD" | "EDIT" | "DELETE">("ADD");
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -36,10 +36,10 @@ const OtherPageData: React.FC = () => {
     data: submenuData,
     isLoading: isDataLoading,
     refetch,
-  } = useGetOtherPageQuery({ limit, offset, search });
-  const [createSlider] = useCreateOtherPageMutation();
-  const [updateSlider] = useUpdateOtherPageMutation();
-  const [deleteSlider] = useDeleteOtherPageMutation();
+  } = useGetPortalQuery({ limit, offset, search });
+  const [createSlider] = useCreatePortalMutation();
+  const [updateSlider] = useUpdatePortalMutation();
+  const [deleteSlider] = useDeletePortalMutation();
 
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
@@ -201,4 +201,4 @@ const OtherPageData: React.FC = () => {
   );
 };
 
-export default OtherPageData;
+export default PortalData;

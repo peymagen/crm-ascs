@@ -8,11 +8,11 @@ import DeleteDialog from "./DeleteDialog";
 
 import { toast } from "react-toastify";
 import {
-    useGetSocialLinkQuery,
-    useCreateSocialLinkMutation,
-    useUpdateSocialLinkMutation,
-    useDeleteSocialLinkMutation,
-} from "../../../store/services/socialLink.api";
+    useGetSocialQuery,
+    useCreateSocialMutation,
+    useUpdateSocialMutation,
+    useDeleteSocialMutation,
+} from "../../../store/services/social.api";
 
 
 interface RowData {
@@ -38,10 +38,10 @@ const SocialLinkData: React.FC = () => {
     data: quickData,
     isLoading: isDataLoading,
     refetch,
-  } = useGetSocialLinkQuery({ limit, offset, search });
-  const [createQuick] = useCreateSocialLinkMutation();
-  const [updateQuick] = useUpdateSocialLinkMutation();
-  const [deleteQuick] = useDeleteSocialLinkMutation();
+  } = useGetSocialQuery({ limit, offset, search });
+  const [createQuick] = useCreateSocialMutation();
+  const [updateQuick] = useUpdateSocialMutation();
+  const [deleteQuick] = useDeleteSocialMutation();
 
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },

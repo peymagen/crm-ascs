@@ -15,8 +15,8 @@ import { apiSubmenu } from "./services/submenu.api";
 import { apiTelephonic } from "./services/telephonic.api";
 import { apiFooterMenu } from "./services/footerMenu.api";
 import { apiQuickMenu } from "./services/quickMenu.api";
-import { apiSocialLink } from "./services/socialLink.api";
-import { apiOtherPage } from "./services/otherPortal.api";
+import { apiSocial } from "./services/social.api";
+import { apiPortal } from "./services/portal.api";
 
 export const store = configureStore({
   reducer: {
@@ -35,8 +35,8 @@ export const store = configureStore({
     [galleryImageApi.reducerPath]: galleryImageApi.reducer,
     [apiFooterMenu.reducerPath]: apiFooterMenu.reducer,
     [apiQuickMenu.reducerPath]: apiQuickMenu.reducer,
-    [apiSocialLink.reducerPath]: apiSocialLink.reducer,
-    [apiOtherPage.reducerPath]: apiOtherPage.reducer,
+    [apiSocial.reducerPath]: apiSocial.reducer,
+    [apiPortal.reducerPath]: apiPortal.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -56,8 +56,8 @@ export const store = configureStore({
       galleryImageApi.middleware,
       apiFooterMenu.middleware,
       apiQuickMenu.middleware,
-      apiSocialLink.middleware,
-      apiOtherPage.middleware,
+      apiSocial.middleware,
+      apiPortal.middleware
     ),
 });
 

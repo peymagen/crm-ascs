@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import AddOtherPortal from "./manipulate";
 import { DataTable } from "../../../components/DataTable";
 import Button from "../../../components/Button";
-import styles from "./Portal.module.css";
+import styles from "./otherpage.module.css";
 import { motion } from "framer-motion";
 import DeleteDialog from "./DeleteDialog";
 import {

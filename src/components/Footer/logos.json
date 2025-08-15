@@ -1,0 +1,21 @@
+{
+  "naco": {
+    "url": "assets/images/naco-logo.png",
+    "link": "http://naco.gov.in/"
+  },
+  "portal": {
+    "name": "portal",
+    "url": "assets/images/portal for public greivances.png",
+    "link": "https://services.india.gov.in/service/detail/registration-on-public-grievances-portal-pg-portal"
+  },
+  "digitalIndia": {
+    "name": "digitalIndia",
+    "url": "assets/images/digitalINdia.png",
+    "link": "https://services.india.gov.in/service/detail/registration-on-public-grievances-portal-pg-portal"
+  },
+  "AIDS": {
+    "name": "AIDS",
+    "url": "assets/images/AIDS.jpg",
+    "link": "https://chandigarhsacs.org.in/"
+  }
+}

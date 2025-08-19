@@ -10,16 +10,16 @@ import PublicRoute from "./components/Layout/publicRoute";
 import GalleryPage from "./pages/gallery";
 import "./i18n";
 
-import MenuManagement from "../src/pages/Admin/MenuManagement";
-import Dashboard from "../src/pages/Admin/Dashboard";
+import MenuManagement from "../src/pages/admin/MenuManagement";
+import Dashboard from "./pages/admin/Dashboard";
 import Home from "./pages/home";
-import OpportunityData from "./pages/Admin/Opportunities";
-import ListBottomData from "./pages/Admin/BottomMenu";
-import TelephonicData from "../src/pages/Admin/telephonic";
-import ListSlider from "../src/pages/Admin/slider";
+import OpportunityData from "./pages/admin/Opportunities";
+import ListBottomData from "./pages/admin/BottomMenu";
+import TelephonicData from "../src/pages/admin/telephonic";
+import ListSlider from "./pages/admin/Slider";
 
-import GalleryCategory from "../src/pages/Admin/GalleryCategory";
-import GalleryImageManagement from "../src/pages/Admin/GalleryImage";
+import GalleryCategory from "../src/pages/admin/GalleryCategory";
+import GalleryImageManagement from "../src/pages/admin/GalleryImage";
 
 import ListSetting from "./pages/admin/Settings";
 import FaqData from "./pages/admin/Faq";
@@ -27,8 +27,8 @@ import QuickMenuData from "./pages/admin/Quicklink";
 import SubMenuData from "./pages/admin/SubMenu";
 import ListPage from "./pages/admin/ListPage";
 import Faqs from "./pages/faq";
-import SocialLinkData from "./pages/Admin/socialLink";
-import PortalData from "./pages/Admin/OtherPortal";
+import SocialLinkData from "./pages/admin/socialLink";
+import PortalData from "./pages/admin/OtherPortal";
 import ProjectsPage from "./pages/ProjectsPage/ProjectsPage";
 
 function App() {
@@ -66,16 +66,16 @@ function App() {
           }
         >
           <Route path="/admin" element={<Dashboard />} />
-          <Route path="/admin/faq" element={<FaqData />} />
-          <Route path="/admin/quick-menu" element={<QuickMenuData />} />
+          <Route path="/admin/main-menu" element={<MenuManagement />} />
           <Route path="/admin/sub-menu" element={<SubMenuData />} />
+          <Route path="/admin/bottom-menu" element={<ListBottomData />} />
+          <Route path="/admin/quick-menu" element={<QuickMenuData />} />
+          <Route path="/admin/page" element={<ListPage />} />
+          <Route path="/admin/faq" element={<FaqData />} />
           <Route path="/admin/social-link" element={<SocialLinkData />} />
           <Route path="/admin/other-portal" element={<PortalData />} />
-          <Route path="/admin/main-menu" element={<MenuManagement />} />
-          <Route path="/admin/bottom-menu" element={<ListBottomData />} />
           <Route path="/admin/telephonic" element={<TelephonicData />} />
           <Route path="/admin/slider" element={<ListSlider />} />
-          <Route path="/admin/page" element={<ListPage />} />
 
           <Route path="/admin/gallery" element={<GalleryCategory />} />
           <Route

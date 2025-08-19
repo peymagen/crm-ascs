@@ -1,6 +1,24 @@
 import React, { useState, useRef, useEffect, type ReactElement } from "react";
 import styles from "./Sidebar.module.css";
 import { Link } from "react-router-dom";
+import {
+  MdDashboard,
+  MdExtension,
+  MdSettings,
+  MdLogout,
+  MdMenu,
+  MdClose,
+  MdKeyboardArrowDown,
+  MdOutlineNewspaper,
+  MdOutlineLink,
+  MdPhotoLibrary,
+  MdLibraryBooks,
+  MdViewCarousel,
+  MdHelp,
+  MdPages,
+  MdShare,
+} from "react-icons/md";
+import { useGetSettingByIdQuery } from "../../store/services/setting.api";
 
 type DropdownItem = {
   label: string;
@@ -8,69 +26,52 @@ type DropdownItem = {
 };
 
 type NavItem = {
-  icon: string;
+  icon: ReactElement;
   label: string;
   link?: string;
   dropdown?: DropdownItem[];
 };
 
 const navItems: NavItem[] = [
+  { icon: <MdDashboard />, label: "Dashboard", link: "/admin" },
   {
-    icon: "dashboard",
-    label: "Dashboard",
-    link: "#",
-  },
-  {
-    icon: "calendar_today",
+    icon: <MdPages />,
     label: "Menus",
     dropdown: [
       { label: "Main Menu", link: "/admin/main-menu" },
-      { label: "Cloud Solution", link: "#" },
-      { label: "Mobile Apps", link: "#" },
+      { label: "Sub Menu", link: "/admin/sub-menu" },
+      { label: "Footer Menu", link: "/admin/bottom-menu" },
+      { label: "Quick Menu", link: "/admin/quick-menu" },
     ],
   },
+  { icon: <MdOutlineNewspaper />, label: "Pages", link: "/admin/page" },
   {
-    icon: "notifications",
-    label: "Notifications",
-    link: "#",
+    icon: <MdOutlineLink />,
+    label: "Social Links",
+    link: "/admin/social-link",
   },
   {
-    icon: "local_library",
-    label: "Resources",
-    link: "#",
-  },
-  {
-    icon: "star",
-    label: "Bookmarks",
+    icon: <MdPhotoLibrary />,
+    label: "Gallery",
     dropdown: [
-      { label: "Saved Tutorials", link: "#" },
-      { label: "Favorite Blogs", link: "#" },
-      { label: "Resources Guide", link: "#" },
+      { label: "Categories", link: "/admin/gallery" },
+      { label: "Images", link: "/admin/gallery-image" },
     ],
   },
+  { icon: <MdLibraryBooks />, label: "Telephonic", link: "/admin/telephonic" },
+  { icon: <MdViewCarousel />, label: "Slider Images", link: "/admin/slider" },
   {
-    icon: "extension",
-    label: "Extensions",
-    link: "#",
+    icon: <MdExtension />,
+    label: "Opportunities",
+    link: "/admin/opportunities",
   },
-  {
-    icon: "settings",
-    label: "Settings",
-    link: "#",
-  },
+  { icon: <MdShare />, label: "Other Portals", link: "/admin/other-portal" },
+  { icon: <MdHelp />, label: "FaQ's", link: "/admin/faq" },
 ];
 
 const secondaryNav: NavItem[] = [
-  {
-    icon: "help",
-    label: "Support",
-    link: "#",
-  },
-  {
-    icon: "logout",
-    label: "Sign Out",
-    link: "#",
-  },
+  { icon: <MdSettings />, label: "Setting", link: "/admin/setting" },
+  { icon: <MdLogout />, label: "Sign Out", link: "#" },
 ];
 
 interface SidebarProps {
@@ -84,17 +85,17 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
-  // Check if mobile on mount and resize
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
+  const { data, isLoading } = useGetSettingByIdQuery(1);
 
+  // Detect mobile
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Close sidebar on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -102,9 +103,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         !sidebarRef.current.contains(e.target as Node)
       ) {
         setOpenDropdown(null);
-        if (isMobile) {
-          setSidebarVisible(false);
-        }
+        if (isMobile) setSidebarVisible(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -112,56 +111,81 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   }, [isMobile]);
 
   const handleDropdown = (index: number) => {
+    console.log("Dropdown index:", index);
     if (collapsed && !isMobile) return;
     setOpenDropdown(openDropdown === index ? null : index);
   };
 
   const toggleSidebar = () => {
-    console.log("click");
     if (isMobile) {
-      setSidebarVisible(!sidebarVisible);
+      setSidebarVisible((prev) => !prev);
     } else {
-      setCollapsed(!collapsed);
+      setCollapsed((prev) => !prev);
     }
-    console.log({ sidebarVisible, collapsed });
     setOpenDropdown(null);
   };
+
   const closeSidebar = () => {
-    if (isMobile) {
-      setSidebarVisible(false);
-    }
+    if (isMobile) setSidebarVisible(false);
     setOpenDropdown(null);
   };
+
   return (
     <>
-      {isMobile && (
+      {/* Mobile Menu Button */}
+      {isMobile && !sidebarVisible && (
         <button className={styles.mobileMenuButton} onClick={toggleSidebar}>
-          <span className="material-symbols-rounded">menu</span>
+          <MdMenu size={24} />
         </button>
       )}
+
+      {/* Sidebar */}
       <aside
-        className={`${styles.sidebar}${
-          collapsed ? ` ${styles.sidebarCollapsed}` : ""
-        }${sidebarVisible ? ` ${styles.sidebarShow}` : ""}`}
-        id="sidebar"
         ref={sidebarRef}
+        id="sidebar"
+        className={[
+          styles.sidebar,
+          collapsed ? styles.sidebarCollapsed : "",
+          sidebarVisible ? styles.sidebarShow : "",
+        ].join(" ")}
       >
+        {/* Header */}
         <header className={styles.sidebarHeader}>
           <button className={styles.sidebarToggler} onClick={toggleSidebar}>
-            <span className="material-symbols-rounded">
-              {isMobile ? (sidebarVisible ? "close" : "menu") : "chevron_left"}
-            </span>
+            {isMobile ? (
+              sidebarVisible ? (
+                <MdClose size={24} />
+              ) : (
+                <MdMenu size={24} />
+              )
+            ) : collapsed ? (
+              <MdMenu size={24} />
+            ) : (
+              <MdClose size={24} />
+            )}
           </button>
+          {!isLoading && (
+            <img
+              src={import.meta.env.VITE_BACKEND_SERVER + data?.data?.logo}
+              alt="Header Left Image"
+              className={styles.headerImg}
+            />
+          )}
         </header>
+
+        {/* Navigation */}
         <nav className={styles.sidebarNav}>
+          {/* Primary nav */}
           <ul className={`${styles.navList} ${styles.primaryNav}`}>
             {navItems.map((item, idx) =>
               item.dropdown ? (
                 <li
-                  className={`${styles.navItem} ${styles.dropdownContainer}${
-                    openDropdown === idx ? ` ${styles.open}` : ""
-                  }`}
                   key={item.label}
+                  className={[
+                    styles.navItem,
+                    styles.dropdownContainer,
+                    openDropdown === idx ? styles.open : "",
+                  ].join(" ")}
                 >
                   <a
                     href="#"
@@ -171,17 +195,22 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                       handleDropdown(idx);
                     }}
                   >
-                    <span className="material-symbols-rounded">
-                      {item.icon}
-                    </span>
+                    <span>{item.icon}</span>
                     <span className={styles.navLabel}>{item.label}</span>
-                    <span
-                      className={`material-symbols-rounded ${styles.dropdownIcon}`}
-                    >
-                      keyboard_arrow_down
-                    </span>
+                    <MdKeyboardArrowDown
+                      className={styles.dropdownIcon}
+                      size={20}
+                    />
                   </a>
-                  <ul className={styles.dropdownMenu}>
+
+                  {/* Dropdown Menu */}
+                  <ul
+                    className={
+                      openDropdown === idx && isMobile
+                        ? styles.dropdownMenuActive
+                        : styles.dropdownMenu
+                    }
+                  >
                     {item.dropdown.map((dItem) => (
                       <li key={dItem.label}>
                         <Link
@@ -194,13 +223,21 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                       </li>
                     ))}
                   </ul>
-                  <div className={styles.hoverDropdown}>
+
+                  {/* Hover dropdown (desktop collapsed) */}
+                  <div
+                    className={
+                      openDropdown === idx && !isMobile
+                        ? styles.hoverDropdownActive
+                        : styles.hoverDropdown
+                    }
+                  >
                     <div className={styles.dropdownTitle}>{item.label}</div>
                     {item.dropdown.map((dItem) => (
                       <Link
                         to={dItem.link}
-                        className={styles.dropdownLink}
                         key={dItem.label}
+                        className={styles.dropdownLink}
                         onClick={closeSidebar}
                       >
                         {dItem.label}
@@ -209,15 +246,13 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                   </div>
                 </li>
               ) : (
-                <li className={styles.navItem} key={item.label}>
+                <li key={item.label} className={styles.navItem}>
                   <Link
                     to={item.link || "#"}
                     className={styles.navLink}
                     onClick={closeSidebar}
                   >
-                    <span className="material-symbols-rounded">
-                      {item.icon}
-                    </span>
+                    <span>{item.icon}</span>
                     <span className={styles.navLabel}>{item.label}</span>
                   </Link>
                   <div className={styles.hoverTooltip}>{item.label}</div>
@@ -225,15 +260,17 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
               )
             )}
           </ul>
+
+          {/* Secondary nav */}
           <ul className={`${styles.navList} ${styles.secondaryNav}`}>
             {secondaryNav.map((item) => (
-              <li className={styles.navItem} key={item.label}>
+              <li key={item.label} className={styles.navItem}>
                 <Link
                   to={item.link || "#"}
                   className={styles.navLink}
                   onClick={closeSidebar}
                 >
-                  <span className="material-symbols-rounded">{item.icon}</span>
+                  <span>{item.icon}</span>
                   <span className={styles.navLabel}>{item.label}</span>
                 </Link>
                 <div className={styles.hoverTooltip}>{item.label}</div>
@@ -243,10 +280,12 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         </nav>
       </aside>
 
-      {/* Mobile overlay */}
-      {isMobile && (
+      {/* Overlay (Mobile only) */}
+      {isMobile && sidebarVisible && (
         <div className={styles.sidebarOverlay} onClick={closeSidebar} />
       )}
+
+      {/* Main Content */}
       <main className={styles.mainContent}>{children}</main>
     </>
   );

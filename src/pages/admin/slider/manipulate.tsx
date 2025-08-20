@@ -1,66 +1,61 @@
-
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { motion } from 'framer-motion';
-import styles from './slider.module.css';
-import Button from '../../../components/Button';
-import Input from '../../../components/Input';
-
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { motion } from "framer-motion";
+import styles from "./slider.module.css";
+import Button from "../../../components/Button";
+import Input from "../../../components/Input";
+import Textarea from "../../../components/Textarea";
 
 // Validation schema
 const schema = yup.object().shape({
-  title: yup.string().required('Title is required'),
-  description: yup.string().required('Description is required'),
+  title: yup.string().required("Title is required"),
+  description: yup.string().required("Description is required"),
   image: yup
-    .mixed<File>()
-    .test("fileExists", "Image is required for new entries", function(value) {
-      const { parent } = this;
-      // If it's an edit mode and no new file is selected, it's okay
-      if (parent.mode === "EDIT" && !value) {
-        return true;
-      }
-      // For ADD mode or when a file is provided, it should be a File
-      return value instanceof File;
-    }),
+    .mixed()
+    .test("fileOrString", "Image is required", (value) => {
+      // Allow string (existing image) or FileList (new upload)
+      return typeof value === "string" || value instanceof FileList;
+    })
+    .required("Image is required"),
 });
 
 interface FormData {
   title: string;
   description: string;
-  image: File;
+  image: File | string;
 }
 
 interface AddSliderMenuProps {
   isOpen: boolean;
   onClose: () => void;
   defaultValues?: Partial<FormData>;
-  mode: "ADD" | "EDIT";
-  onSubmitHandler: (data: FormData) => void;
+  mode: "ADD" | "EDIT" | "DELETE";
+  onSubmit: (data: FormData) => void;
   isLoading?: boolean;
 }
 
-const AddSlider: React.FC<AddSliderMenuProps> = ({ 
-  isOpen, 
-  onClose, 
-  defaultValues = {}, 
-  mode, 
-  onSubmitHandler,
-  isLoading = false 
+const AddSlider: React.FC<AddSliderMenuProps> = ({
+  isOpen,
+  onClose,
+  defaultValues = {},
+  mode,
+  onSubmit,
+  isLoading = false,
 }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-    setValue,
-  } = useForm<FormData>({
+    watch,
+  } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      title: '',
-      description: '',
-      image: undefined as unknown as File,
+      title: "",
+      description: "",
+      image: "",
       ...defaultValues,
     },
   });
@@ -68,47 +63,34 @@ const AddSlider: React.FC<AddSliderMenuProps> = ({
   useEffect(() => {
     if (isOpen) {
       reset({
-        title: '',
-        description: '',
-        image: undefined as unknown as File,
+        title: "",
+        description: "",
+        image: "",
         ...defaultValues,
       });
     }
   }, [isOpen, defaultValues, reset]);
 
-  const onSubmit = (data: FormData) => {
-    console.log('Form data being submitted:', data);
-    
-    if (mode === "ADD") {
-      // For ADD mode, create FormData for file upload
-      const formData = new FormData();
-      formData.append('title', data.title);
-      formData.append('description', data.description);
-      if (data.image) {
-        formData.append('image', data.image);
+  const onSubmitData = (values: FormData) => {
+    const formData = new FormData();
+
+    // Append all form values
+    Object.entries(values).forEach(([key, value]) => {
+      if (key === "image" && value instanceof FileList && value.length > 0) {
+        formData.append("image", value[0]);
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, value as string);
       }
-      onSubmitHandler(formData as any);
-    } else {
-      // For EDIT mode, handle differently based on whether image is updated
-      if (data.image && data.image instanceof File) {
-        // If new image is provided, use FormData
-        const formData = new FormData();
-        formData.append('title', data.title);
-        formData.append('description', data.description);
-        formData.append('image', data.image);
-        onSubmitHandler(formData as any);
-      } else {
-        // If no new image, send JSON data
-        const updateData = {
-          title: data.title,
-          description: data.description,
-        };
-        onSubmitHandler(updateData as any);
-      }
+    });
+
+    // Debug: log FormData contents
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
     }
+
+    onSubmit(formData);
   };
 
-  
   if (!isOpen) return null;
 
   return (
@@ -123,8 +105,8 @@ const AddSlider: React.FC<AddSliderMenuProps> = ({
           <h2 className={styles.modalTitle}>
             {mode === "ADD" ? "Add Slider" : "Edit Slider"}
           </h2>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className={styles.closeButton}
             disabled={isLoading}
           >
@@ -132,20 +114,8 @@ const AddSlider: React.FC<AddSliderMenuProps> = ({
           </button>
         </div>
 
-        <div className={styles.breadcrumb}>
-          <span className={styles.breadcrumbLink}>Admin</span>
-          <span> / </span>
-          <span className={styles.breadcrumbLink}>slider</span>
-          <span> / </span>
-          <span className={styles.breadcrumbCurrent}>
-            {mode === "ADD" ? "Add slider" : "Edit slider"}
-          </span>
-        </div>
-
-        <form className={styles.formGrid} onSubmit={handleSubmit(onSubmit)}>
-          
-
-          <div>
+        <form className={styles.formGrid} onSubmit={handleSubmit(onSubmitData)}>
+          <div className={styles.fullSpan}>
             <Input
               label="Title"
               name="title"
@@ -157,32 +127,29 @@ const AddSlider: React.FC<AddSliderMenuProps> = ({
             />
           </div>
 
-          <div>
-            <Input
-              label="Description"
-              name="description"
-              type="text"
-              register={register}
-              errors={errors}
-              placeholder="Enter description"
-            />
-          </div>
-
-
-
-          <div>
+          <div className={styles.fullSpan}>
             <Input
               label="Image"
               name="image"
               type="file"
+              accept="image/*"
               register={register}
+              watch={watch}
               errors={errors}
-              setValue={setValue}
               required
             />
           </div>
 
-
+          <div className={styles.fullSpan}>
+            <Textarea
+              label="Description"
+              name="description"
+              register={register}
+              errors={errors}
+              required
+              rows={3}
+            />
+          </div>
 
           <div className={styles.fullSpan}>
             <div className={styles.formActions}>

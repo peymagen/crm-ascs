@@ -8,6 +8,7 @@ import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 import Textarea from "../../../components/Textarea";
 import Select from "../../../components/Select";
+import RichTextEditor from "../../../components/RichTextEditor";
 
 const schema = yup.object().shape({
   title: yup.string().required("Title is required"),
@@ -15,9 +16,15 @@ const schema = yup.object().shape({
   slug: yup.string().required("Slug is required"),
   metaTitle: yup.string().required("Meta title is required"),
   metaDescription: yup.string().required("Meta description is required"),
-  image: yup.string().required("Image URL is required"),
+  image: yup
+    .mixed()
+    .test("fileOrString", "Image is required", (value) => {
+      // Allow string (existing image) or FileList (new upload)
+      return typeof value === "string" || value instanceof FileList;
+    })
+    .required("Image is required"),
   publishDate: yup.string().required("Publish date is required"),
-  lang: yup.string(),
+  lang: yup.string().required("Language is required"),
 });
 
 interface FormData {
@@ -28,7 +35,7 @@ interface FormData {
   metaDescription: string;
   image: string;
   publishDate: string;
-  lang?: string;
+  lang: string;
 }
 
 interface ManipulateListPageProps {
@@ -48,14 +55,8 @@ const ManipulateListPage: React.FC<ManipulateListPageProps> = ({
   onSubmit,
   isLoading = false,
 }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<FormData>({
-    resolver: yupResolver(schema),
-    defaultValues: {
+  const defaultData = React.useMemo(
+    () => ({
       title: "",
       description: "",
       slug: "",
@@ -63,7 +64,22 @@ const ManipulateListPage: React.FC<ManipulateListPageProps> = ({
       metaDescription: "",
       image: "",
       publishDate: "",
-      lang: "",
+      lang: "en",
+    }),
+    []
+  );
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+    watch,
+  } = useForm<FormData>({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      ...defaultData,
       ...defaultValues,
     },
   });
@@ -71,20 +87,35 @@ const ManipulateListPage: React.FC<ManipulateListPageProps> = ({
   useEffect(() => {
     if (isOpen) {
       reset({
+        ...defaultData,
         ...defaultValues,
       });
     }
-  }, [isOpen, defaultValues, reset]);
+  }, [isOpen, defaultValues, reset, defaultData]);
 
-  const onSubmitData = (data: FormData) => {
-    onSubmit(data);
+  const onSubmitData = (values: FormData) => {
+    const formData = new FormData();
+
+    // Append all form values
+    Object.entries(values).forEach(([key, value]) => {
+      if (
+        key === "status" ||
+        key === "createdOn" ||
+        key === "updatedOn" ||
+        key === "id"
+      )
+        return; // Skip status field if it exists
+      if (key === "image" && value instanceof FileList && value.length > 0) {
+        formData.append("image", value[0]);
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, value as string);
+      }
+    });
+
+    onSubmit(formData);
   };
 
-  const languageOptions = [
-    { label: "English", value: "en" },
-    { label: "Spanish", value: "es" },
-    { label: "French", value: "fr" },
-  ];
+  const languageOptions = [{ label: "English", value: "en" }];
 
   if (!isOpen) return null;
 
@@ -110,7 +141,7 @@ const ManipulateListPage: React.FC<ManipulateListPageProps> = ({
         </div>
 
         <form onSubmit={handleSubmit(onSubmitData)} className={styles.formGrid}>
-          <div>
+          <div className={styles.fullSpan}>
             <Input
               label="Title"
               type="text"
@@ -120,15 +151,14 @@ const ManipulateListPage: React.FC<ManipulateListPageProps> = ({
               required
             />
           </div>
-
-          <div>
-            <Textarea
+          <div className={styles.fullSpan}>
+            <RichTextEditor
               label="Description"
+              watch={watch}
               name="description"
-              register={register}
+              setValue={setValue}
               errors={errors}
               required
-              rows={5}
             />
           </div>
 
@@ -165,8 +195,11 @@ const ManipulateListPage: React.FC<ManipulateListPageProps> = ({
 
           <div>
             <Input
-              label="Image URL"
+              label="Image"
               name="image"
+              type="file"
+              accept="image/*"
+              watch={watch}
               register={register}
               errors={errors}
               required

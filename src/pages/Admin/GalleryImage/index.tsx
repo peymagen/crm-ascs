@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { DataTable } from "../../../components/DataTable";
 import Button from "../../../components/Button";
 import Manipulate from "./Manipulate";
@@ -32,6 +32,7 @@ const GalleryImageManagement: React.FC = () => {
   const {
     data: queryData,
     isLoading,
+    isFetching,
     refetch,
   } = useGetGalleryImagesQuery({
     limit: 10,
@@ -57,9 +58,11 @@ const GalleryImageManagement: React.FC = () => {
       }
       setModalData(null);
       await refetch();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to save image:", error);
-      toast.error("Failed to save image. Please try again.");
+      const errorMessage =
+        error.data?.message || "Failed to save image. Please try again.";
+      toast.error(errorMessage);
     }
   };
 
@@ -70,16 +73,21 @@ const GalleryImageManagement: React.FC = () => {
       toast.success("Image deleted successfully!");
       setDeleteTarget(null);
       await refetch();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to delete image:", error);
-      toast.error("Failed to delete image. Please try again.");
+      const errorMessage =
+        error.data?.message || "Failed to delete image. Please try again.";
+      toast.error(errorMessage);
     }
   };
 
   const fetchData = useCallback(
     async (params?: { page: number; search?: string }) => {
-      setPage(params?.page || 1);
-      setSearch(params?.search || "");
+      const newPage = params?.page || 1;
+      const newSearch = params?.search || "";
+      setPage(newPage);
+      setSearch(newSearch);
+
       return {
         data: queryData?.data ?? [],
         total: queryData?.total ?? 0,
@@ -87,6 +95,48 @@ const GalleryImageManagement: React.FC = () => {
     },
     [queryData]
   );
+
+  // Memoize columns to prevent unnecessary re-renders
+  const columns = useMemo(
+    () => [
+      { label: "ID", accessor: "id" },
+      {
+        label: "Image",
+        accessor: "image",
+        render: (value: string) => (
+          <div className={styles.imagePreview}>
+            <img
+              src={value}
+              alt="Gallery preview"
+              className={styles.thumbnail}
+            />
+            <span className={styles.imageUrl}>{value}</span>
+          </div>
+        ),
+      },
+      { label: "Reference ID", accessor: "ref_id" },
+    ],
+    []
+  );
+
+  // Memoize actions to prevent unnecessary re-renders
+  const actions = useMemo(
+    () => [
+      {
+        label: "Edit",
+        onClick: (row: GalleryImage) =>
+          setModalData({ mode: "edit", imageData: row }),
+      },
+      {
+        label: "Delete",
+        onClick: (row: GalleryImage) => setDeleteTarget(row),
+      },
+    ],
+    []
+  );
+
+  const isLoadingState =
+    isLoading || isAdding || isUpdating || isDeleting || isFetching;
 
   return (
     <div className={styles.container}>
@@ -96,29 +146,15 @@ const GalleryImageManagement: React.FC = () => {
           title="+ Add Image"
           buttonType="primary"
           onClick={() => setModalData({ mode: "add" })}
-          disabled={isAdding || isUpdating || isDeleting}
+          disabled={isLoadingState}
         />
       </div>
 
       <DataTable
         fetchData={fetchData}
-        columns={[
-          { label: "ID", accessor: "id" },
-          { label: "Image URL", accessor: "image" },
-          { label: "Reference ID", accessor: "ref_id" },
-        ]}
-        actions={[
-          {
-            label: "Edit",
-            onClick: (row: GalleryImage) =>
-              setModalData({ mode: "edit", imageData: row }),
-          },
-          {
-            label: "Delete",
-            onClick: (row: GalleryImage) => setDeleteTarget(row),
-          },
-        ]}
-        loading={isLoading || isAdding || isUpdating || isDeleting}
+        columns={columns}
+        actions={actions}
+        loading={isLoadingState}
         isNavigate
         isSearch
         isExport
@@ -126,10 +162,12 @@ const GalleryImageManagement: React.FC = () => {
 
       {modalData && (
         <Manipulate
-          mode={modalData.mode}
-          imageData={modalData.imageData}
-          onSave={handleSave}
+          isOpen={!!modalData}
           onClose={() => setModalData(null)}
+          onSubmit={handleSave}
+          mode={modalData.mode === "add" ? "ADD" : "EDIT"}
+          defaultValues={modalData.imageData || {}}
+          isLoading={isAdding || isUpdating}
         />
       )}
 
@@ -139,6 +177,7 @@ const GalleryImageManagement: React.FC = () => {
           message={`Are you sure you want to delete image #${deleteTarget.id}?`}
           onConfirm={handleDeleteConfirm}
           onCancel={() => setDeleteTarget(null)}
+          isLoading={isDeleting}
         />
       )}
     </div>

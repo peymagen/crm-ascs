@@ -3,9 +3,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Input from "../../../components/Input";
-import Textarea from "../../../components/Textarea";
 import Button from "../../../components/Button";
 import styles from "./GalleryCategory.module.css";
+import RichTextEditor from "../../../components/RichTextEditor";
 
 interface FormValues {
   title: string;
@@ -48,6 +48,8 @@ const Manipulate: React.FC<Props> = ({
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
@@ -103,12 +105,13 @@ const Manipulate: React.FC<Props> = ({
           />
 
           <div className={styles.colFull}>
-            <Textarea
+            <RichTextEditor
               label="Description"
+              watch={watch}
               name="description"
-              register={register}
+              setValue={setValue}
               errors={errors}
-              placeholder="Short description"
+              required
             />
           </div>
 

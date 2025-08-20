@@ -119,20 +119,15 @@
 
 /* ===== MODAL HEAD ===== */
 .modalHead {
-  /* background-color: #dc2626; */
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-  /* border-radius: 8px; */
   margin-bottom: 20px;
-  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px 25px;
   background-color: #f3f4f6; /* Light gray header background */
-  border-bottom: 1px solid #e5e7eb; /* Subtle separator line */
-  /* border-top-left-radius: 12px; */
-  /* border-top-right-radius: 12px; */
+  border-bottom: 1px solid #e5e7eb;
 }
 
 /* Make modal title inside header more prominent */

@@ -63,7 +63,6 @@ const ListSetting: React.FC = () => {
   const columns = [
     { label: "Name", accessor: "name" },
     { label: "Slogan", accessor: "slogan" },
-    { label: "Content", accessor: "content" },
     { label: "AudioUrl", accessor: "audioUrl" },
     { label: "Logo", accessor: "logo" },
     { label: "Video", accessor: "video" },

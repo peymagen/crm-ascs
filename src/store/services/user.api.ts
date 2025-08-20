@@ -8,12 +8,6 @@ export const apiUser = createApi({
     getUserById: builder.query({
       query: (id) => `users/${id}`,
     }),
-    getCollegeDashboard: builder.query({
-      query: () => `users/dashboard/college`,
-    }),
-    getCompanyDashboard: builder.query({
-      query: () => `users/dashboard/company`,
-    }),
     getUsers: builder.query({
       query: () => "users",
     }),
@@ -75,8 +69,6 @@ export const apiUser = createApi({
 export const {
   useGetUserByIdQuery,
   useGetUsersQuery,
-  useGetCollegeDashboardQuery,
-  useGetCompanyDashboardQuery,
   useCreateUserMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,

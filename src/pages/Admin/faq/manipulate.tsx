@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import styles from "./faq.module.css";
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";
-import Textarea from "../../../components/Textarea";
+import RichTextEditor from "../../../components/RichTextEditor";
 
 // Validation schema
 const schema = yup.object().shape({
@@ -42,6 +42,7 @@ const AddFaq: React.FC<AddBottomMenuProps> = ({
     formState: { errors },
     reset,
     setValue,
+    watch,
   } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -101,15 +102,14 @@ const AddFaq: React.FC<AddBottomMenuProps> = ({
               placeholder="Enter question"
             />
           </div>
-
           <div className={styles.fullSpan}>
-            <Textarea
+            <RichTextEditor
               label="Answer"
               name="answer"
-              register={register}
+              watch={watch}
+              setValue={setValue}
               errors={errors}
-              placeholder="Enter Answer"
-              rows={3}
+              required
             />
           </div>
 

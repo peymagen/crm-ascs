@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import styles from "./Login.module.css";
-import logo from "../../assets/images/logo.png";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import Div from "../../components/Div";
@@ -12,8 +11,7 @@ import { useLoginUserMutation } from "../../store/services/user.api";
 import { toast } from "react-toastify";
 import { setTokens } from "../../store/reducers/authReducer";
 import { useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
-import FAQ from "../../components/FAQ";
+import { useGetSettingByIdQuery } from "../../store/services/setting.api";
 
 // Validation schema
 const schema = yup.object().shape({
@@ -33,6 +31,7 @@ const Login: React.FC = () => {
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const [loginUser] = useLoginUserMutation();
   const dispatch = useDispatch();
+  const { data, isLoading: seetingLoading } = useGetSettingByIdQuery(1);
 
   const {
     register,
@@ -93,25 +92,22 @@ const Login: React.FC = () => {
     },
   };
 
-  const { t, i18n } = useTranslation();
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
-    localStorage.setItem("i18nextLng", lng); // optional if you want to persist
-  };
   return (
     <>
       <div className={styles.loginPage}>
         <div className={styles.leftSection}>
           <div className={styles.logoContainer}>
-            <h1 className={styles.collegeName}>{t("welcome")}</h1>
-            <p className={styles.portalTitle}>Placement Portal</p>
+            <h1 className={styles.collegeName}>{"welcome"}</h1>
+            <p className={styles.portalTitle}>{data?.data?.name}</p>
           </div>
           <div className={styles.imageContainer}>
-            <img
-              src={logo}
-              alt="National Fire Service College"
-              className={styles.heroImage}
-            />
+            {!seetingLoading && (
+              <img
+                src={import.meta.env.VITE_BACKEND_SERVER + data?.data?.logo}
+                alt="Logo"
+                className={styles.heroImage}
+              />
+            )}
           </div>
         </div>
 
@@ -119,7 +115,7 @@ const Login: React.FC = () => {
           <AnimatePresence mode="wait">
             {!showForgotPassword ? (
               <Div key="login" direction="bottom" immediate>
-                <h1 className={styles.title}>NFSC Placement Portal</h1>
+                <h1 className={styles.title}>Admin Portal</h1>
                 <p className={styles.subtitle}>Sign in to your account</p>
 
                 <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
@@ -139,17 +135,16 @@ const Login: React.FC = () => {
                     errors={errors}
                     required
                   />
-                  <Button
+                  {/* <Button
                     type="button"
                     onClick={() => changeLanguage("en")}
                     buttonType="link"
                     title="Forget Password?"
-                  />
+                  /> */}
 
                   <Button
                     type="submit"
                     isLoading={isLoading}
-                    // onClick={() => changeLanguage("hi")}
                     buttonType="primary"
                     title="Sign In"
                   />
@@ -214,7 +209,6 @@ const Login: React.FC = () => {
           </AnimatePresence>
         </div>
       </div>
-      <FAQ />
     </>
   );
 };

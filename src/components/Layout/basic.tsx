@@ -7,7 +7,7 @@ const Basic = () => {
   };
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/admin" />;
   }
   return (
     <div>

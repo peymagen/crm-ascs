@@ -145,7 +145,6 @@ const GalleryCategory: React.FC = () => {
           columns={[
             { label: "ID", accessor: "id" },
             { label: "Title", accessor: "title" },
-            { label: "Description", accessor: "description" },
           ]}
           actions={actions}
           loading={isLoading || isMutating}

@@ -7,6 +7,7 @@ import styles from "./style.module.css";
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 import Select from "../../../components/Select";
+import RichTextEditor from "../../../components/RichTextEditor";
 
 // Validation schema
 const schema = yup.object().shape({
@@ -185,16 +186,6 @@ const AddSetting: React.FC<AddBottomMenuProps> = ({
           </button>
         </div>
 
-        <div className={styles.breadcrumb}>
-          <span className={styles.breadcrumbLink}>admin</span>
-          <span> / </span>
-          <span className={styles.breadcrumbLink}>setting</span>
-          <span> / </span>
-          <span className={styles.breadcrumbCurrent}>
-            {mode === "ADD" ? "Add setting" : "Edit setting"}
-          </span>
-        </div>
-
         <form className={styles.formGrid} onSubmit={handleSubmit(onSubmit)}>
           <div>
             <Input
@@ -272,23 +263,21 @@ const AddSetting: React.FC<AddBottomMenuProps> = ({
           </div>
 
           <div>
-            <Input
-              label="Content"
-              name="content"
-              type="text"
-              register={register}
-              errors={errors}
-              required
-              placeholder="Enter Content"
-            />
-          </div>
-
-          <div>
             <Select
               label="Language"
               name="lang"
               register={register}
               options={[{ value: "en", label: "English" }]}
+              errors={errors}
+              required
+            />
+          </div>
+          <div className={styles.fullSpan}>
+            <RichTextEditor
+              label="Content"
+              name="content"
+              watch={watch}
+              setValue={setValue}
               errors={errors}
               required
             />

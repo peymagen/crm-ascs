@@ -1,129 +1,272 @@
-import React, { useState, useEffect, type ReactElement } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState, useRef, useEffect, type ReactElement } from "react";
 import styles from "./Sidebar.module.css";
-import logo from "../../assets/images/logo.png";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "../../store/store";
-import { resetTokens } from "../../store/reducers/authReducer";
+import { Link } from "react-router-dom";
+import {
+  MdDashboard,
+  MdExtension,
+  MdSettings,
+  MdLogout,
+  MdMenu,
+  MdClose,
+  MdKeyboardArrowDown,
+  MdOutlineNewspaper,
+  MdOutlineLink,
+  MdPhotoLibrary,
+  MdLibraryBooks,
+  MdViewCarousel,
+  MdHelp,
+  MdPages,
+  MdShare,
+} from "react-icons/md";
+import { useGetSettingByIdQuery } from "../../store/services/setting.api";
+
+type DropdownItem = {
+  label: string;
+  link: string;
+};
+
+type NavItem = {
+  icon: ReactElement;
+  label: string;
+  link?: string;
+  dropdown?: DropdownItem[];
+};
+
+const navItems: NavItem[] = [
+  { icon: <MdDashboard />, label: "Dashboard", link: "/admin" },
+  {
+    icon: <MdPages />,
+    label: "Menus",
+    dropdown: [
+      { label: "Main Menu", link: "/admin/main-menu" },
+      { label: "Sub Menu", link: "/admin/sub-menu" },
+      { label: "Footer Menu", link: "/admin/bottom-menu" },
+      { label: "Quick Menu", link: "/admin/quick-menu" },
+    ],
+  },
+  { icon: <MdOutlineNewspaper />, label: "Pages", link: "/admin/page" },
+  {
+    icon: <MdOutlineLink />,
+    label: "Social Links",
+    link: "/admin/social-link",
+  },
+  {
+    icon: <MdPhotoLibrary />,
+    label: "Gallery",
+    dropdown: [
+      { label: "Categories", link: "/admin/gallery" },
+      { label: "Images", link: "/admin/gallery-image" },
+    ],
+  },
+  { icon: <MdLibraryBooks />, label: "Telephonic", link: "/admin/telephonic" },
+  { icon: <MdViewCarousel />, label: "Slider Images", link: "/admin/slider" },
+  {
+    icon: <MdExtension />,
+    label: "Opportunities",
+    link: "/admin/opportunities",
+  },
+  { icon: <MdShare />, label: "Other Portals", link: "/admin/other-portal" },
+  { icon: <MdHelp />, label: "FaQ's", link: "/admin/faq" },
+];
+
+const secondaryNav: NavItem[] = [
+  { icon: <MdSettings />, label: "Setting", link: "/admin/setting" },
+  { icon: <MdLogout />, label: "Sign Out", link: "#" },
+];
 
 interface SidebarProps {
   children: ReactElement;
 }
 
-const menuItems = {
-  ADMIN: [
-    { name: "Dashboard", path: "/dashboard" },
-    { name: "Students", path: "/register-student" },
-    { name: "Companies", path: "/register-company" },
-    { name: "Job", path: "/job-list" },
-    { name: "Placed Student", path: "/job-list" },
-    { name: "Admins", path: "/register-admin" },
-  ],
-  STUDENT: [
-    { name: "Dashboard", path: "/dashboard" },
-    { name: "Job", path: "/job-list" },
-    { name: "Personal Detail", path: "/personal-detail" },
-    { name: "Academic Detail", path: "/academic-detail" },
-    { name: "Co-Curricular Activities", path: "/co-curriculum" },
-    { name: "Skills & more", path: "/student-activities" },
-    { name: "Postion & Responsibilities", path: "/student-responsibilities" },
-    { name: "Important Links", path: "/student-links" },
-    { name: "Resume", path: "/resume" },
-  ],
-  COMPANY: [
-    { name: "Dashboard", path: "/dashboard" },
-    { name: "Job", path: "/job-list" },
-    { name: "Company Detail", path: "/company-detail" },
-    { name: "HR Detail", path: "/hr-detail" },
-  ],
-};
-
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
-  const location = useLocation();
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 768);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
+  const { data, isLoading } = useGetSettingByIdQuery(1);
+
+  // Detect mobile
   useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth <= 768;
-      setIsMobile(mobile);
-      if (!mobile) setIsMobileOpen(false);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const dispatch = useDispatch();
-  const toggleSidebar = () => setIsMobileOpen(!isMobileOpen);
-  const closeMobile = () => isMobile && setIsMobileOpen(false);
-  const logOut = () => {
-    dispatch(resetTokens());
-    closeMobile();
+  // Close sidebar on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(e.target as Node)
+      ) {
+        setOpenDropdown(null);
+        if (isMobile) setSidebarVisible(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isMobile]);
+
+  const handleDropdown = (index: number) => {
+    console.log("Dropdown index:", index);
+    if (collapsed && !isMobile) return;
+    setOpenDropdown(openDropdown === index ? null : index);
   };
-  const user = useSelector((state: RootState) => state.auth.user) as IUser;
+
+  const toggleSidebar = () => {
+    if (isMobile) {
+      setSidebarVisible((prev) => !prev);
+    } else {
+      setCollapsed((prev) => !prev);
+    }
+    setOpenDropdown(null);
+  };
+
+  const closeSidebar = () => {
+    if (isMobile) setSidebarVisible(false);
+    setOpenDropdown(null);
+  };
 
   return (
-    <div className={styles.layout}>
-      <header className={styles.header}>
-        <div className={styles.leftHeader}>
-          {isMobile && (
-            <button className={styles.toggleButton} onClick={toggleSidebar}>
-              ☰
-            </button>
+    <>
+      {/* Mobile Menu Button */}
+      {isMobile && !sidebarVisible && (
+        <button className={styles.mobileMenuButton} onClick={toggleSidebar}>
+          <MdMenu size={24} />
+        </button>
+      )}
+
+      {/* Sidebar */}
+      <aside
+        ref={sidebarRef}
+        id="sidebar"
+        className={[
+          styles.sidebar,
+          collapsed ? styles.sidebarCollapsed : "",
+          sidebarVisible ? styles.sidebarShow : "",
+        ].join(" ")}
+      >
+        {/* Header */}
+        <header className={styles.sidebarHeader}>
+          <button className={styles.sidebarToggler} onClick={toggleSidebar}>
+            {isMobile ? (
+              sidebarVisible ? (
+                <MdClose size={24} />
+              ) : (
+                <MdMenu size={24} />
+              )
+            ) : collapsed ? (
+              <MdMenu size={24} />
+            ) : (
+              <MdClose size={24} />
+            )}
+          </button>
+          {!isLoading && (
+            <img
+              src={import.meta.env.VITE_BACKEND_SERVER + data?.data?.logo}
+              alt="Header Left Image"
+              className={styles.headerImg}
+            />
           )}
-          <img
-            src={logo}
-            alt="National Fire Service College"
-            className={styles.heroImage}
-          />
-          {!isMobile && (
-            <div>
-              <h3>National Fire Service College</h3>
-              <p>Placement Portal</p>
-            </div>
-          )}
-        </div>
-        <div className={styles.userIcon}>
-          <p>{user.email}</p>
-          <img
-            src={logo}
-            alt="National Fire Service College"
-            className={styles.heroImage}
-          />
-        </div>
-      </header>
-      <div className={styles.container}>
-        <aside
-          className={`${styles.sidebar} ${
-            isMobile
-              ? isMobileOpen
-                ? styles.mobileVisible
-                : styles.mobileHidden
-              : ""
-          }`}
-        >
-          {menuItems["ADMIN"].map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`${styles.menuItem} ${
-                location.pathname === item.path ? styles.active : ""
-              }`}
-              onClick={closeMobile}
-            >
-              {item.name}
-            </Link>
-          ))}
-          <Link to="#" className={styles.menuItem} onClick={logOut}>
-            Logout
-          </Link>
-        </aside>
-        <main className={styles.mainContent}>{children}</main>
-        {isMobileOpen && isMobile && (
-          <div className={styles.overlay} onClick={closeMobile} />
-        )}
-      </div>
-    </div>
+        </header>
+
+        {/* Navigation */}
+        <nav className={styles.sidebarNav}>
+          {/* Primary nav */}
+          <ul className={`${styles.navList} ${styles.primaryNav}`}>
+            {navItems.map((item, idx) =>
+              item.dropdown ? (
+                <li
+                  key={item.label}
+                  className={[
+                    styles.navItem,
+                    styles.dropdownContainer,
+                    openDropdown === idx ? styles.open : "",
+                  ].join(" ")}
+                >
+                  <a
+                    href="#"
+                    className={`${styles.navLink} ${styles.dropdownToggle}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleDropdown(idx);
+                    }}
+                  >
+                    <span>{item.icon}</span>
+                    <span className={styles.navLabel}>{item.label}</span>
+                    <MdKeyboardArrowDown
+                      className={styles.dropdownIcon}
+                      size={20}
+                    />
+                  </a>
+
+                  {/* Dropdown Menu */}
+                  <ul
+                    className={
+                      openDropdown === idx
+                        ? styles.dropdownMenuActive
+                        : styles.dropdownMenu
+                    }
+                  >
+                    {item.dropdown.map((dItem) => (
+                      <li key={dItem.label}>
+                        <Link
+                          to={dItem.link}
+                          className={`${styles.navLink} ${styles.dropdownLink}`}
+                          onClick={closeSidebar}
+                        >
+                          {dItem.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ) : (
+                <li key={item.label} className={styles.navItem}>
+                  <Link
+                    to={item.link || "#"}
+                    className={styles.navLink}
+                    onClick={closeSidebar}
+                  >
+                    <span>{item.icon}</span>
+                    <span className={styles.navLabel}>{item.label}</span>
+                  </Link>
+                  <div className={styles.hoverTooltip}>{item.label}</div>
+                </li>
+              )
+            )}
+          </ul>
+
+          {/* Secondary nav */}
+          <ul className={`${styles.navList} ${styles.secondaryNav}`}>
+            {secondaryNav.map((item) => (
+              <li key={item.label} className={styles.navItem}>
+                <Link
+                  to={item.link || "#"}
+                  className={styles.navLink}
+                  onClick={closeSidebar}
+                >
+                  <span>{item.icon}</span>
+                  <span className={styles.navLabel}>{item.label}</span>
+                </Link>
+                <div className={styles.hoverTooltip}>{item.label}</div>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+
+      {/* Overlay (Mobile only) */}
+      {isMobile && sidebarVisible && (
+        <div className={styles.sidebarOverlay} onClick={closeSidebar} />
+      )}
+
+      {/* Main Content */}
+      <main className={styles.mainContent}>{children}</main>
+    </>
   );
 };
 

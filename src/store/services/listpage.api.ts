@@ -13,44 +13,38 @@ type Builder = EndpointBuilder<
   "apiListpage"
 >;
 
-interface IPage {
-  id: number;
-  title: string;
-  content: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export const apiListpage = createApi({
   reducerPath: "apiListpage",
   baseQuery: baseQueryWithReauth,
   endpoints: (builder: Builder) => ({
-    getListpageById: builder.query<IPage, number>({
+    getListpageById: builder.query({
       query: (id: number) => `/pages/${id}`,
     }),
-    getListpageBySlug: builder.query<IPage, string>({
+    getListpageBySlug: builder.query({
       query: (id: string) => `/pages/slug/${id}`,
     }),
-    getListpage: builder.query<{ data: IPage[]; total: number }, void>({
-      query: ({}) => "pages",
+    getListpage: builder.query({
+      query: () => "pages",
     }),
-    createListpage: builder.mutation<IPage, Partial<IPage>>({
-      query: (newListpage: Partial<IPage>) => ({
+    createListpage: builder.mutation({
+      query: (newListpage) => ({
         url: "pages",
         method: "POST",
         body: newListpage,
       }),
     }),
-    updateListpage: builder.mutation<IPage, IPage>({
-      query: (updatedListpage: IPage) => ({
-        url: `pages/${updatedListpage.id}`,
-        method: "PUT",
-        body: updatedListpage,
-      }),
+    updateListpage: builder.mutation({
+      query: (updatedListpage) => {
+        console.log("uuuuuuuu", updatedListpage); // Moved inside function body
+        return {
+          url: `pages/${updatedListpage.get("id")}`,
+          method: "PUT",
+          body: updatedListpage,
+        };
+      },
     }),
-    patchListpage: builder.mutation<IPage, Partial<IPage>>({
-      query: (updatedListpage: Partial<IPage>) => ({
+    patchListpage: builder.mutation({
+      query: (updatedListpage) => ({
         url: `pages/${updatedListpage.id}`,
         method: "PATCH",
         body: updatedListpage,

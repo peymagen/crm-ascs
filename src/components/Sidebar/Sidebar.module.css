@@ -176,6 +176,7 @@
   transition: max-height 0.3s ease;
   background: rgb(250, 140, 57);
   border-radius: 8px;
+  transition: all 0.3s ease;
   margin-top: 4px;
 }
 

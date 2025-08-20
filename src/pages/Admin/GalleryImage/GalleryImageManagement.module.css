@@ -14,7 +14,15 @@
   justify-content: space-between;
   margin-bottom: 16px;
 }
+.fullSpan {
+  grid-column: span 1;
+}
 
+@media (min-width: 768px) {
+  .fullSpan {
+    grid-column: span 2;
+  }
+}
 .header button {
   width: fit-content;
 }
@@ -66,20 +74,15 @@
 }
 
 .modalHead {
-  /* background-color: #dc2626; */
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-  /* border-radius: 8px; */
   margin-bottom: 20px;
-  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px 25px;
   background-color: #f3f4f6; /* Light gray header background */
-  border-bottom: 1px solid #e5e7eb; /* Subtle separator line */
-  /* border-top-left-radius: 12px; */
-  /* border-top-right-radius: 12px; */
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .closeButton {
@@ -105,7 +108,6 @@
 }
 
 .modalTitle {
-  margin: 0 0 12px 0;
   font-size: 18px;
   color: #0f172a;
 }

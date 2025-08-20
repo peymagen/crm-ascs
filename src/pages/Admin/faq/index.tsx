@@ -52,7 +52,6 @@ const FaqData: React.FC = () => {
   const columns = [
     { label: "ID", accessor: "id" },
     { label: "Question", accessor: "question" },
-    { label: "Answer", accessor: "answer" },
   ];
 
   const fetchData = useCallback(

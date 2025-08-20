@@ -14,13 +14,16 @@ import {
 import { toast } from "react-toastify";
 
 interface RowData {
-  [key: string]: string | number;
   id: number;
   title: string;
   content: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
+  lang: string;
+  description: string;
+  metaDescription: string;
+  metaTitle: string;
+  publishDate: string;
+  slug: string;
+  image?: FileList | File[] | string;
 }
 
 const ListPage: React.FC = () => {
@@ -78,19 +81,21 @@ const ListPage: React.FC = () => {
     setDefaultValues({});
   };
 
-  const handleSubmit = async (values: Partial<RowData>) => {
+  const handleSubmit = async (formData: FormData) => {
     setIsLoading(true);
     try {
       if (mode === "ADD") {
-        await createListpage(values).unwrap();
+        await createListpage(formData).unwrap();
         toast.success("Page created successfully!");
       } else if (mode === "EDIT" && selectedId) {
-        await updateListpage({ ...values, id: selectedId } as RowData).unwrap();
+        formData.append("id", selectedId.toString());
+        await updateListpage(formData).unwrap();
         toast.success("Page updated successfully!");
       }
       refetch();
       handleClose();
     } catch (error) {
+      console.error("Error:", error);
       toast.error("An error occurred!");
     }
     setIsLoading(false);
@@ -113,7 +118,7 @@ const ListPage: React.FC = () => {
   const columns = [
     { label: "Title", accessor: "title" },
     { label: "Slug", accessor: "slug" },
-    { label: "Meta Title", accessor: "MetaTitle" },
+    { label: "Meta Title", accessor: "metaTitle" },
     { label: "Published", accessor: "publishDate" },
     { label: "Image", accessor: "image" },
   ];
@@ -144,16 +149,9 @@ const ListPage: React.FC = () => {
             {
               label: "✏️",
               onClick: (row: { [x: string]: unknown }) => {
-                const rowData: RowData = {
-                  id: Number(row.id),
-                  title: String(row.title),
-                  content: String(row.content),
-                  status: String(row.status),
-                  createdAt: String(row.createdAt),
-                  updatedAt: String(row.updatedAt),
-                };
-                setDefaultValues(rowData);
+                setDefaultValues(row);
                 setIsOpen(true);
+                setSelectedId(Number(row.id));
                 setMode("EDIT");
               },
             },
@@ -175,7 +173,7 @@ const ListPage: React.FC = () => {
           <ManipulateListPage
             isOpen={isOpen}
             onClose={handleClose}
-            onSubmit={(values: Partial<RowData>) => handleSubmit(values)}
+            onSubmit={handleSubmit} // Pass the function directly
             mode={mode}
             defaultValues={defaultValues}
             isLoading={isLoading}
@@ -186,7 +184,6 @@ const ListPage: React.FC = () => {
             onClose={handleClose}
             onConfirm={handleConfirmDelete}
             isLoading={isLoading}
-            itemName={defaultValues.title || ""}
           />
         )}
       </motion.div>

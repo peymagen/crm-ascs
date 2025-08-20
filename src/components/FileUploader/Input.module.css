@@ -41,10 +41,3 @@
   margin-left: 0.2rem;
   font-size: 0.8rem;
 }
-
-.formGroup img,
-.formGroup video {
-  width: 100%;
-  height: auto;
-  margin-top: 0.5rem;
-}

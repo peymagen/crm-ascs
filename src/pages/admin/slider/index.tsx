@@ -182,7 +182,7 @@ const ListSlider: React.FC = () => {
         }}
         defaultValues={defaultValues}
         mode={mode}
-        onSubmitHandler={handleSubmit}
+        onSubmit={handleSubmit}
         isLoading={isLoading}
       />
 

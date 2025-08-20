@@ -579,6 +579,7 @@ const FAQ: React.FC = () => {
                     className={styles.answerContainer}
                   >
                     <div className={styles.answerContent}>
+                      <div dangerouslySetInnerHTML={{ __html: item.answer }} />
                       <p className={styles.answerText}>{item.answer}</p>
                     </div>
                   </motion.div>

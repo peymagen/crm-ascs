@@ -1,19 +1,16 @@
 import { motion } from "framer-motion";
 import styles from "./Input.module.css";
-import {
-  type UseFormRegister,
-  type FieldValues,
-  type FieldErrors,
-  type FieldError,
-  type Merge,
-  type FieldErrorsImpl,
-  type Path,
-  type UseFormSetValue,
-  type PathValue,
-  type UseFormWatch,
-  set,
+import type {
+  UseFormRegister,
+  FieldValues,
+  FieldErrors,
+  FieldError,
+  Merge,
+  FieldErrorsImpl,
+  Path,
+  UseFormSetValue,
+  PathValue,
 } from "react-hook-form";
-import { useEffect, useMemo } from "react";
 
 interface InputProps<T extends FieldValues> {
   label: string;
@@ -22,10 +19,8 @@ interface InputProps<T extends FieldValues> {
   register: UseFormRegister<T>;
   errors?: FieldErrors<T>;
   setValue?: UseFormSetValue<T>;
-  watch?: UseFormWatch<T>;
   required?: boolean;
   placeholder?: string;
-  accept?: string;
   min?: string;
   max?: string;
 }
@@ -36,13 +31,11 @@ const Input = <T extends FieldValues = FieldValues>({
   type = "text",
   register,
   errors,
-  watch,
   setValue,
   required = false,
   placeholder = `Enter your ${label.toLowerCase()} here`,
   min = "",
   max = "",
-  accept,
 }: InputProps<T>) => {
   const itemVariants = {
     hidden: { opacity: 1, y: 10 },
@@ -62,72 +55,6 @@ const Input = <T extends FieldValues = FieldValues>({
     }, errors);
   };
 
-  const watchedValue = watch?.(name);
-
-  useEffect(() => {
-    if (watchedValue && watchedValue.length > 0) {
-      console.log("Selected file:", watchedValue[0]);
-      setValue?.(name, watchedValue[0]);
-    }
-  }, [watchedValue, name, setValue]);
-
-  const renderPreview = useMemo(() => {
-    console.log("watchedValue", watchedValue);
-    if (!watchedValue) return null;
-
-    let url: string | null = null;
-
-    if (watchedValue?.[0] instanceof File) {
-      url = URL.createObjectURL(watchedValue[0]);
-    } else if (typeof watchedValue === "string" && watchedValue.trim() !== "") {
-      url = watchedValue;
-    }
-
-    if (!url) return null;
-
-    if (accept?.includes("image") || /\.(jpeg|jpg|png|gif)$/i.test(url)) {
-      return (
-        <img
-          src={url}
-          alt="preview"
-          className="w-32 h-32 object-cover rounded"
-        />
-      );
-    }
-
-    if (accept?.includes("video") || /\.(mp4|webm|ogg)$/i.test(url)) {
-      return <video src={url} controls className="w-48 h-32 rounded" />;
-    }
-
-    if (accept?.includes("audio") || /\.(mp3|wav|ogg)$/i.test(url)) {
-      return <audio src={url} controls className="mt-2" />;
-    }
-
-    if (accept?.includes("pdf") || /\.pdf$/i.test(url)) {
-      return (
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-500 underline"
-        >
-          View PDF
-        </a>
-      );
-    }
-
-    return (
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-500 underline"
-      >
-        View File
-      </a>
-    );
-  }, [accept, watchedValue]);
-
   const error = getNestedError(errors ?? {}, name) as
     | FieldError
     | Merge<FieldError, FieldErrorsImpl<FieldError>>
@@ -143,8 +70,12 @@ const Input = <T extends FieldValues = FieldValues>({
         <input
           id={name}
           type="file"
-          accept={accept}
-          {...register(name, { required })}
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (setValue && file) {
+              setValue(name, file as PathValue<T, typeof name>);
+            }
+          }}
           className={`${styles.input} ${error ? styles.inputError : ""}`}
           aria-invalid={error ? "true" : "false"}
         />
@@ -171,7 +102,6 @@ const Input = <T extends FieldValues = FieldValues>({
           {typeof error?.message === "string" ? error.message : "Invalid input"}
         </motion.p>
       )}
-      {renderPreview}
     </motion.div>
   );
 };

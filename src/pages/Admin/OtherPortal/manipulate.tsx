@@ -1,29 +1,23 @@
-
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { motion } from 'framer-motion';
-import styles from './otherpage.module.css';
-import Button from '../../../components/Button';
-import Input from '../../../components/Input';
-
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { motion } from "framer-motion";
+import styles from "./otherpage.module.css";
+import Button from "../../../components/Button";
+import Input from "../../../components/Input";
 
 // Validation schema
 const schema = yup.object().shape({
-  title: yup.string().required('Title is required'),
+  title: yup.string().required("Title is required"),
   url: yup.string(),
   image: yup
-    .mixed<File>()
-    .test("fileExists", "Image is required ", function(value) {
-      const { parent } = this;
-     
-      if (parent.mode === "EDIT" && !value) {
-        return true;
-      }
-     
-      return value instanceof File;
-    }),
+    .mixed()
+    .test("fileOrString", "Image is required", (value) => {
+      // Allow string (existing image) or FileList (new upload)
+      return typeof value === "string" || value instanceof FileList;
+    })
+    .required("Image is required"),
 });
 
 interface FormData {
@@ -41,25 +35,25 @@ interface AddSliderMenuProps {
   isLoading?: boolean;
 }
 
-const AddOtherPortal: React.FC<AddSliderMenuProps> = ({ 
-  isOpen, 
-  onClose, 
-  defaultValues = {}, 
-  mode, 
+const AddOtherPortal: React.FC<AddSliderMenuProps> = ({
+  isOpen,
+  onClose,
+  defaultValues = {},
+  mode,
   onSubmitHandler,
-  isLoading = false 
+  isLoading = false,
 }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-    setValue,
+    watch,
   } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
-      title: '',
-      url: '',
+      title: "",
+      url: "",
       image: undefined as unknown as File,
       ...defaultValues,
     },
@@ -68,8 +62,8 @@ const AddOtherPortal: React.FC<AddSliderMenuProps> = ({
   useEffect(() => {
     if (isOpen) {
       reset({
-        title: '',
-        url: '',
+        title: "",
+        url: "",
         image: undefined as unknown as File,
         ...defaultValues,
       });
@@ -77,38 +71,17 @@ const AddOtherPortal: React.FC<AddSliderMenuProps> = ({
   }, [isOpen, defaultValues, reset]);
 
   const onSubmit = (data: FormData) => {
-    console.log('Form data being submitted:', data);
-    
-    if (mode === "ADD") {
-      // For ADD mode, create FormData for file upload
-      const formData = new FormData();
-      formData.append('title', data.title);
-      formData.append('url', data.url);
-      if (data.image) {
-        formData.append('image', data.image);
-      }
-      onSubmitHandler(formData as any);
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("url", data.url);
+    if (data.image && data.image instanceof FileList && data.image.length > 0) {
+      formData.append("image", data.image[0]);
     } else {
-      // For EDIT mode, handle differently based on whether image is updated
-      if (data.image && data.image instanceof File) {
-        // If new image is provided, use FormData
-        const formData = new FormData();
-        formData.append('title', data.title);
-        formData.append('url', data.url);
-        formData.append('image', data.image);
-        onSubmitHandler(formData as any);
-      } else {
-        // If no new image, send JSON data
-        const updateData = {
-          title: data.title,
-          url: data.url,
-        };
-        onSubmitHandler(updateData as any);
-      }
+      console.log(" No image provided, skipping image append");
     }
+    onSubmitHandler(formData as any);
   };
 
-  
   if (!isOpen) return null;
 
   return (
@@ -123,8 +96,8 @@ const AddOtherPortal: React.FC<AddSliderMenuProps> = ({
           <h2 className={styles.modalTitle}>
             {mode === "ADD" ? "Add Other-portal" : "Edit Other-portal"}
           </h2>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className={styles.closeButton}
             disabled={isLoading}
           >
@@ -132,11 +105,7 @@ const AddOtherPortal: React.FC<AddSliderMenuProps> = ({
           </button>
         </div>
 
-        
-
         <form className={styles.formGrid} onSubmit={handleSubmit(onSubmit)}>
-          
-
           <div>
             <Input
               label="Title"
@@ -151,6 +120,18 @@ const AddOtherPortal: React.FC<AddSliderMenuProps> = ({
 
           <div>
             <Input
+              label="Image"
+              name="image"
+              type="file"
+              accept="image/*"
+              register={register}
+              errors={errors}
+              watch={watch}
+              required
+            />
+          </div>
+          <div>
+            <Input
               label="URL"
               name="url"
               type="text"
@@ -159,23 +140,6 @@ const AddOtherPortal: React.FC<AddSliderMenuProps> = ({
               placeholder="Enter url"
             />
           </div>
-
-
-
-          <div>
-            <Input
-              label="Image"
-              name="image"
-              type="file"
-              register={register}
-              errors={errors}
-              setValue={setValue}
-              required
-              
-            />
-          </div>
-
-
 
           <div className={styles.fullSpan}>
             <div className={styles.formActions}>
@@ -189,7 +153,9 @@ const AddOtherPortal: React.FC<AddSliderMenuProps> = ({
               <Button
                 type="submit"
                 buttonType="primary"
-                title={mode === "ADD" ? "Add Other-portal" : "Update Other-portal"}
+                title={
+                  mode === "ADD" ? "Add Other-portal" : "Update Other-portal"
+                }
                 isLoading={isLoading}
               />
             </div>
@@ -201,7 +167,3 @@ const AddOtherPortal: React.FC<AddSliderMenuProps> = ({
 };
 
 export default AddOtherPortal;
-
-
-
-

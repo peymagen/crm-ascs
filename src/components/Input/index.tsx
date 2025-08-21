@@ -9,9 +9,7 @@ import {
   type FieldErrorsImpl,
   type Path,
   type UseFormSetValue,
-  type PathValue,
   type UseFormWatch,
-  set,
 } from "react-hook-form";
 import { useEffect, useMemo } from "react";
 
@@ -66,13 +64,11 @@ const Input = <T extends FieldValues = FieldValues>({
 
   useEffect(() => {
     if (watchedValue && watchedValue.length > 0) {
-      console.log("Selected file:", watchedValue[0]);
       setValue?.(name, watchedValue[0]);
     }
   }, [watchedValue, name, setValue]);
 
   const renderPreview = useMemo(() => {
-    console.log("watchedValue", watchedValue);
     if (!watchedValue) return null;
 
     let url: string | null = null;

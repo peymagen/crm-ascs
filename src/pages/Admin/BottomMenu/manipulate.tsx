@@ -32,7 +32,7 @@ interface AddBottomMenuProps {
   isOpen: boolean;
   onClose: () => void;
   defaultValues?: Partial<IFooterMenu>;
-  mode: "ADD" | "EDIT";
+  mode: "ADD" | "EDIT" | "DELETE";
   onSubmitHandler: (data: IFooterMenu) => void;
   isLoading?: boolean;
 }

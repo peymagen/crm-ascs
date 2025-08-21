@@ -100,20 +100,7 @@ const GalleryImageManagement: React.FC = () => {
   const columns = useMemo(
     () => [
       { label: "ID", accessor: "id" },
-      {
-        label: "Image",
-        accessor: "image",
-        render: (value: string) => (
-          <div className={styles.imagePreview}>
-            <img
-              src={value}
-              alt="Gallery preview"
-              className={styles.thumbnail}
-            />
-            <span className={styles.imageUrl}>{value}</span>
-          </div>
-        ),
-      },
+
       { label: "Reference ID", accessor: "ref_id" },
     ],
     []
@@ -177,7 +164,6 @@ const GalleryImageManagement: React.FC = () => {
           message={`Are you sure you want to delete image #${deleteTarget.id}?`}
           onConfirm={handleDeleteConfirm}
           onCancel={() => setDeleteTarget(null)}
-          isLoading={isDeleting}
         />
       )}
     </div>

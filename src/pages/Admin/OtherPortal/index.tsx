@@ -6,10 +6,10 @@ import styles from "./otherpage.module.css";
 import { motion } from "framer-motion";
 import DeleteDialog from "./DeleteDialog";
 import {
-    useGetPortalQuery,
-    useCreatePortalMutation,
-    useUpdatePortalMutation,
-    useDeletePortalMutation,
+  useGetPortalQuery,
+  useCreatePortalMutation,
+  useUpdatePortalMutation,
+  useDeletePortalMutation,
 } from "../../../store/services/portal.api";
 import { toast } from "react-toastify";
 
@@ -96,13 +96,10 @@ const PortalData: React.FC = () => {
         await createSlider(formData).unwrap();
         toast.success("Other-portal created successfully");
       } else if (mode === "EDIT") {
-        // Handle FormData vs regular object differently
         if (formData instanceof FormData) {
-          // If it's FormData (with new image), append the ID
           formData.append("id", defaultValues.id?.toString() || "");
           await updateSlider(formData).unwrap();
         } else {
-          // If it's regular object (no new image), add ID to object
           await updateSlider({ ...formData, id: defaultValues.id }).unwrap();
         }
         toast.success("Other-portal updated successfully");
@@ -110,7 +107,9 @@ const PortalData: React.FC = () => {
       refetch();
     } catch (error) {
       console.error("Submit failed:", error);
-      toast.error(`Failed to ${mode === "ADD" ? "create" : "update"} other-portal`);
+      toast.error(
+        `Failed to ${mode === "ADD" ? "create" : "update"} other-portal`
+      );
     } finally {
       setIsLoading(false);
       setIsOpen(false);

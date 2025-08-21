@@ -65,7 +65,7 @@ const ListSetting: React.FC = () => {
     { label: "Slogan", accessor: "slogan" },
     { label: "AudioUrl", accessor: "audioUrl" },
     { label: "Logo", accessor: "logo" },
-    { label: "Video", accessor: "video" },
+    { label: "Video", accessor: "videoUrl" },
   ];
 
   const fetchData = useCallback(
@@ -87,7 +87,7 @@ const ListSetting: React.FC = () => {
     try {
       if (selectedId) {
         await deleteSetting({ id: selectedId }).unwrap();
-        toast.success("Slider deleted successfully");
+        toast.success("Setting deleted successfully");
         refetch();
       }
     } catch (error) {
@@ -105,23 +105,20 @@ const ListSetting: React.FC = () => {
     try {
       if (mode === "ADD") {
         await createSetting(formData).unwrap();
-        toast.success("Slider created successfully");
+        toast.success("Setting created successfully");
       } else if (mode === "EDIT") {
-        // Handle FormData vs regular object differently
         if (formData instanceof FormData) {
-          // If it's FormData (with new image), append the ID
           formData.append("id", defaultValues.id?.toString() || "");
           await updateSetting(formData).unwrap();
         } else {
-          // If it's regular object (no new image), add ID to object
           await updateSetting({ ...formData, id: defaultValues.id }).unwrap();
         }
-        toast.success("Slider updated successfully");
+        toast.success("Setting updated successfully");
       }
       refetch();
     } catch (error) {
       console.error("Submit failed:", error);
-      toast.error(`Failed to ${mode === "ADD" ? "create" : "update"} slider`);
+      toast.error(`Failed to ${mode === "ADD" ? "create" : "update"} Setting`);
     } finally {
       setIsLoading(false);
       setIsOpen(false);

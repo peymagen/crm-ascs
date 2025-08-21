@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -11,14 +11,21 @@ import Select from "../../../components/Select";
 // Validation schema
 const schema = yup.object().shape({
   title: yup.string().required("Title is required"),
-  file_url: yup.string().required("URL is required"),
+  file_url: yup
+    .mixed()
+    .test("fileOrString", "File is required", (value) => {
+      // Allow string (existing file) or FileList (new upload)
+      return typeof value === "string" || value instanceof FileList;
+    })
+    .required("File is required"),
   type: yup.string().required("Type is required"),
   notice: yup.boolean(),
 });
 
 interface FormData {
+  id?: number;
   title: string;
-  file_url: string;
+  file_url: File | string;
   type: string;
   notice: boolean;
 }
@@ -28,7 +35,7 @@ interface AddBottomMenuProps {
   onClose: () => void;
   defaultValues?: Partial<FormData>;
   mode: "ADD" | "EDIT";
-  onSubmitHandler: (data: FormData) => void;
+  onSubmit: (data: FormData) => void;
   isLoading?: boolean;
 }
 
@@ -37,7 +44,7 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
   onClose,
   defaultValues = {},
   mode,
-  onSubmitHandler,
+  onSubmit,
   isLoading = false,
 }) => {
   const {
@@ -45,14 +52,14 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
     handleSubmit,
     formState: { errors },
     reset,
-    setValue,
-  } = useForm<FormData>({
+    watch,
+  } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       title: "",
       file_url: "",
       type: "",
-      notice: true,
+      notice: 1,
       ...defaultValues,
     },
   });
@@ -63,20 +70,46 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
         title: "",
         file_url: "",
         type: "",
-        notice: true,
+        notice: 1,
         ...defaultValues,
       });
     }
   }, [isOpen, defaultValues, reset]);
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form data being submitted:", data);
-    onSubmitHandler(data);
+  const onSubmitData = (values: FormData) => {
+    const formData = new FormData();
+
+    // Append ID if in EDIT mode
+    if (mode === "EDIT" && defaultValues.id) {
+      formData.append("id", defaultValues.id.toString());
+    }
+
+    // Append all form values
+    Object.entries(values).forEach(([key, value]) => {
+      if (key === "status" || key === "updatedOn" || key === "createdOn")
+        return;
+      if (key === "file_url" && value instanceof FileList && value.length > 0) {
+        formData.append("file_url", value[0]);
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, value as string);
+      }
+    });
+
+    // Debug: log FormData contents
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    onSubmit(formData);
   };
 
   const displayOnMenuOptions = [
-    { label: "True", value: "True" },
-    { label: "False", value: "False" },
+    { label: "True", value: 1 },
+    { label: "False", value: 0 },
+  ];
+  const displayTypeOptions = [
+    { label: "Tenders", value: "TENDERS" },
+    { label: "Vacancies", value: "VACANCIES" },
   ];
 
   if (!isOpen) return null;
@@ -102,44 +135,43 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
           </button>
         </div>
 
-        <form className={styles.formGrid} onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <Input
-              label="File_url"
-              name="file_url"
-              type="text"
-              register={register}
-              errors={errors}
-              required
-              placeholder="Enter file URL"
-            />
-          </div>
-
+        <form className={styles.formGrid} onSubmit={handleSubmit(onSubmitData)}>
           <div>
             <Input
               label="Title"
               name="title"
               type="text"
+              placeholder="Enter Title"
               register={register}
               errors={errors}
               required
-              placeholder="Enter Title"
+            />
+          </div>
+          <div>
+            <Input
+              label="File"
+              name="file_url"
+              type="file"
+              accept="application/*"
+              watch={watch}
+              register={register}
+              errors={errors}
+              required
             />
           </div>
 
           <div>
-            <Input
+            <Select
               label="Type"
               name="type"
-              type="text"
               register={register}
+              options={displayTypeOptions}
               errors={errors}
               required
-              placeholder="Enter Type"
             />
           </div>
 
-          <div className={styles.fullSpan}>
+          <div>
             <Select
               label="Notice"
               name="notice"

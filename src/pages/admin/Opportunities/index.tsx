@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import AddOpportunity from "./manipulate";
 import { DataTable } from "../../../components/DataTable";
 import Button from "../../../components/Button";
@@ -32,15 +32,21 @@ const OpportunityData: React.FC = () => {
 
   const limit = 10;
   const offset = (page - 1) * limit;
+
   // API hooks
   const {
-    data: telephonicData,
+    data: opportunitiesData,
     isLoading: isDataLoading,
+    isFetching,
     refetch,
   } = useGetOpportunitiesQuery({ limit, offset, search });
-  const [createTelephonic] = useCreateOpportunitiesMutation();
-  const [updateTelephonic] = useUpdateOpportunitiesMutation();
-  const [deleteTelephonic] = useDeleteOpportunitiesMutation();
+
+  const [createOpportunity, { isLoading: isCreating }] =
+    useCreateOpportunitiesMutation();
+  const [updateOpportunity, { isLoading: isUpdating }] =
+    useUpdateOpportunitiesMutation();
+  const [deleteOpportunity, { isLoading: isDeleting }] =
+    useDeleteOpportunitiesMutation();
 
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
@@ -51,39 +57,93 @@ const OpportunityData: React.FC = () => {
     },
   };
 
-  const columns = [
-    { label: "ID", accessor: "id" },
-    { label: "Title", accessor: "title" },
-    { label: "File_url", accessor: "file_url" },
-    { label: "Type", accessor: "type" },
-    { label: "Notice", accessor: "notice" },
-  ];
+  // Memoize columns to prevent unnecessary re-renders
+  const columns = useMemo(
+    () => [
+      { label: "ID", accessor: "id" },
+      { label: "Title", accessor: "title" },
+      {
+        label: "File URL",
+        accessor: "file_url",
+        render: (value: string) =>
+          value ? (
+            <a
+              href={value}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.fileLink}
+              title="View file"
+            >
+              📄 View File
+            </a>
+          ) : (
+            <span className={styles.noFile}>No file</span>
+          ),
+      },
+      { label: "Type", accessor: "type" },
+      {
+        label: "Notice",
+        accessor: "notice",
+        render: (value: boolean) => (
+          <span className={value ? styles.noticeYes : styles.noticeNo}>
+            {value ? "Yes" : "No"}
+          </span>
+        ),
+      },
+    ],
+    []
+  );
+
+  // Memoize actions to prevent unnecessary re-renders
+  const actions = useMemo(
+    () => [
+      {
+        label: "Edit",
+        onClick: (row: RowData) => {
+          setDefaultValues(row);
+          setIsOpen(true);
+          setMode("EDIT");
+        },
+      },
+      {
+        label: "Delete",
+        onClick: (row: RowData) => {
+          setMode("DELETE");
+          setSelectedId(row.id);
+          setIsOpen(true);
+        },
+      },
+    ],
+    []
+  );
 
   const fetchData = useCallback(
     async (params?: { page: number; search?: string }) => {
-      const page = params?.page || 1;
-      const search = params?.search || "";
-      setPage(page);
-      setSearch(search);
+      const newPage = params?.page || 1;
+      const newSearch = params?.search || "";
+      setPage(newPage);
+      setSearch(newSearch);
+
       return {
-        data: telephonicData?.data || [],
-        total: telephonicData?.total || 0,
+        data: opportunitiesData?.data || [],
+        total: opportunitiesData?.total || 0,
       };
     },
-    [telephonicData]
+    [opportunitiesData]
   );
 
   const handleDelete = async () => {
+    if (!selectedId) return;
+
     setIsLoading(true);
     try {
-      if (selectedId) {
-        await deleteTelephonic({ id: selectedId }).unwrap();
-        toast.success("Record deleted successfully");
-        refetch();
-      }
-    } catch (error) {
+      await deleteOpportunity({ id: selectedId }).unwrap();
+      toast.success("Record deleted successfully");
+      refetch();
+    } catch (error: any) {
       console.error("Delete failed:", error);
-      toast.error("Failed to delete record");
+      const errorMessage = error.data?.message || "Failed to delete record";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
       setIsOpen(false);
@@ -91,26 +151,39 @@ const OpportunityData: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (formData: any) => {
+  const handleSave = async (formData: FormData) => {
     setIsLoading(true);
     try {
-      if (mode === "ADD") {
-        await createTelephonic(formData).unwrap();
-        toast.success("Record created successfully");
-      } else if (mode === "EDIT") {
-        await updateTelephonic({ ...formData, id: defaultValues.id }).unwrap();
-        toast.success("Record updated successfully");
+      console.log("Submitting form data:", formData);
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+      const idValue = formData.get("id");
+      if (idValue) {
+        await updateOpportunity({
+          id: Number(idValue),
+          body: formData,
+        }).unwrap();
+        toast.success("Opportunity updated successfully!");
+      } else {
+        await createOpportunity(formData).unwrap();
+        toast.success("Opportunity created successfully!");
       }
       refetch();
-    } catch (error) {
-      console.error("Submit failed:", error);
-      toast.error(`Failed to ${mode === "ADD" ? "create" : "update"} record`);
+    } catch (error: any) {
+      console.error("Failed to save opportunity:", error);
+      const errorMessage =
+        error.data?.message || "Failed to save opportunity. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
       setIsOpen(false);
       setDefaultValues({});
     }
   };
+
+  const isLoadingState =
+    isDataLoading || isCreating || isUpdating || isDeleting || isFetching;
 
   return (
     <div className={styles.main}>
@@ -124,7 +197,7 @@ const OpportunityData: React.FC = () => {
           <h1 className={styles.title}>Opportunities Management</h1>
           <Button
             type="button"
-            isLoading={isLoading}
+            isLoading={isLoadingState}
             buttonType="primary"
             title="+ Add New Opportunity"
             onClick={() => {
@@ -138,30 +211,11 @@ const OpportunityData: React.FC = () => {
         <DataTable
           fetchData={fetchData}
           columns={columns}
-          actions={[
-            {
-              label: "Edit",
-              onClick: (row) => {
-                setDefaultValues(row as RowData);
-                setIsOpen(true);
-                setMode("EDIT");
-                console.log("Edit clicked:", row);
-              },
-            },
-            {
-              label: "Delete",
-              onClick: (row) => {
-                setMode("DELETE");
-                setSelectedId((row as RowData).id);
-                setIsOpen(true);
-                console.log("Delete clicked:", row);
-              },
-            },
-          ]}
+          actions={actions}
           isSearch={true}
           isExport={true}
           isNavigate={true}
-          loading={isDataLoading}
+          loading={isLoadingState}
         />
       </motion.div>
 
@@ -173,8 +227,8 @@ const OpportunityData: React.FC = () => {
         }}
         defaultValues={defaultValues}
         mode={mode}
-        onSubmitHandler={handleSubmit}
-        isLoading={isLoading}
+        onSubmit={handleSave}
+        isLoading={isCreating || isUpdating}
       />
 
       <DeleteDialog
@@ -184,9 +238,9 @@ const OpportunityData: React.FC = () => {
           setSelectedId(null);
         }}
         onConfirm={handleDelete}
-        isLoading={isLoading}
+        isLoading={isDeleting}
         title="Confirm Deletion"
-        message="Are you sure you want to delete this record? This action cannot be undone."
+        message="Are you sure you want to delete this opportunity? This action cannot be undone."
       />
     </div>
   );

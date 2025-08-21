@@ -20,14 +20,14 @@ export const apiSetting = createApi({
     }),
     updateSetting: builder.mutation({
       query: (updatedSetting) => ({
-        url: `setting/${updatedSetting.id}`,
+        url: `setting/${updatedSetting.get("id")}`,
         method: "PUT",
         body: updatedSetting,
       }),
     }),
     patchSetting: builder.mutation<IUser, Partial<IUser>>({
       query: (updatedSetting) => ({
-        url: `setting/${updatedSetting.id}`,
+        url: `setting/${updatedSetting.get("id")}`,
         method: "PATCH",
         body: updatedSetting,
       }),

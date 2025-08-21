@@ -25,14 +25,14 @@ export const apiOpportunities = createApi({
       query: (updatedOpportunities) => ({
         url: `opportunities/${updatedOpportunities.id}`,
         method: "PUT",
-        body: updatedOpportunities,
+        body: updatedOpportunities.body,
       }),
     }),
     patchOpportunities: builder.mutation<IUser, Partial<IUser>>({
       query: (updatedOpportunities) => ({
         url: `opportunities/${updatedOpportunities.id}`,
         method: "PATCH",
-        body: updatedOpportunities,
+        body: updatedOpportunities.body,
       }),
     }),
     deleteOpportunities: builder.mutation({

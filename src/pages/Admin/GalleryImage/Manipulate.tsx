@@ -104,11 +104,6 @@ const Manipulate: React.FC<Props> = ({
       }
     });
 
-    // Debug: log FormData contents
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
-
     onSubmit(formData);
   };
 

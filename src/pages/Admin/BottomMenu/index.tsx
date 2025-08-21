@@ -87,7 +87,7 @@ const ListBottomData: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (formData: any) => {
+  const handleSubmit = async (formData: IFooterMenu) => {
     setIsLoading(true);
     try {
       if (mode === "ADD") {
@@ -140,7 +140,7 @@ const ListBottomData: React.FC = () => {
             {
               label: "Edit",
               onClick: (row) => {
-                setDefaultValues(row as IFooterMenu);
+                setDefaultValues(row);
                 setIsOpen(true);
                 setMode("EDIT");
                 console.log("Edit clicked:", row);
@@ -150,7 +150,7 @@ const ListBottomData: React.FC = () => {
               label: "Delete",
               onClick: (row) => {
                 setMode("DELETE");
-                setSelectedId((row as IFooterMenu).id);
+                setSelectedId(typeof row.id === "number" ? row.id : null);
                 setIsOpen(true);
                 console.log("Delete clicked:", row);
               },

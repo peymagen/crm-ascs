@@ -20,14 +20,14 @@ export const apiPortal = createApi({
     }),
     updatePortal: builder.mutation({
       query: (updatedPortal) => ({
-        url: `other-portal/${updatedPortal.id}`,
+        url: `other-portal/${updatedPortal.get("id")}`,
         method: "PUT",
         body: updatedPortal,
       }),
     }),
     patchPortal: builder.mutation<IUser, Partial<IUser>>({
       query: (updatedPortal) => ({
-        url: `other-portal/${updatedPortal.id}`,
+        url: `other-portal/${updatedPortal.get("id")}`,
         method: "PATCH",
         body: updatedPortal,
       }),

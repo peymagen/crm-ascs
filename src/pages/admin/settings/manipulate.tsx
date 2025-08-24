@@ -14,7 +14,7 @@ const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
   slogan: yup.string().required("Slogan on Menu is required"),
   logo: yup
-    .mixed()
+    .mixed<File | FileList | string>()
     .test("fileType", "Unsupported format", (value) => {
       if (!value || !(value instanceof FileList) || value.length === 0)
         return true;
@@ -28,7 +28,7 @@ const schema = yup.object().shape({
       return value[0].size <= 2 * 1024 * 1024;
     }),
   videoUrl: yup
-    .mixed()
+    .mixed<File | FileList | string>()
     .test("fileType", "Unsupported format", (value) => {
       if (!value || !(value instanceof FileList) || value.length === 0)
         return true;
@@ -41,7 +41,7 @@ const schema = yup.object().shape({
     }),
 
   audioUrl: yup
-    .mixed()
+    .mixed<File | FileList | string>()
     .test("fileType", "Unsupported format", (value) => {
       if (!value || !(value instanceof FileList) || value.length === 0)
         return true;
@@ -57,26 +57,16 @@ const schema = yup.object().shape({
   lang: yup.string().required("Language is required"),
 });
 
-interface FormData {
-  name: string;
-  logo: File;
-  slogan: string;
-  videoUrl: File;
-  content: string;
-  audioUrl: File;
-  lang: string;
-}
-
-interface AddBottomMenuProps {
+interface AddSettings {
   isOpen: boolean;
   onClose: () => void;
-  defaultValues?: Partial<FormData>;
-  mode: "ADD" | "EDIT";
-  onSubmitHandler: (data: FormData) => void;
+  defaultValues?: Partial<ISettings>;
+  mode: "ADD" | "EDIT" | "DELETE";
+  onSubmitHandler: (data: ISettings) => void;
   isLoading?: boolean;
 }
 
-const AddSetting: React.FC<AddBottomMenuProps> = ({
+const AddSetting: React.FC<AddSettings> = ({
   isOpen,
   onClose,
   defaultValues = {},
@@ -91,16 +81,16 @@ const AddSetting: React.FC<AddBottomMenuProps> = ({
     reset,
     setValue,
     watch,
-  } = useForm<FormData>({
+  } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       name: "",
       slogan: "",
       content: "",
       lang: "",
-      logo: undefined as unknown as File,
-      videoUrl: undefined as unknown as File,
-      audioUrl: undefined as unknown as File,
+      logo: "" as string,
+      videoUrl: "" as string,
+      audioUrl: "" as string,
       ...defaultValues,
     },
   });
@@ -112,51 +102,40 @@ const AddSetting: React.FC<AddBottomMenuProps> = ({
         slogan: "",
         content: "",
         lang: "",
-        logo: undefined as unknown as File,
-        videoUrl: undefined as unknown as File,
-        audioUrl: undefined as unknown as File,
+        logo: "",
+        videoUrl: "",
+        audioUrl: "",
         ...defaultValues,
       });
-
-      // Clear file inputs when modal opens
-      if (typeof document !== "undefined") {
-        const fileInputs = document.querySelectorAll('input[type="file"]');
-        fileInputs.forEach((input) => ((input as HTMLInputElement).value = ""));
-      }
     }
   }, [isOpen, defaultValues, reset]);
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (data: ISettings) => {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("slogan", data.slogan);
     formData.append("lang", data.lang);
     formData.append("content", data.content);
-    if (data.logo && data.logo instanceof FileList && data.logo.length > 0) {
+
+    if (data.logo instanceof FileList && data.logo.length > 0) {
       formData.append("logo", data.logo[0]);
-    } else {
-      console.log(" No image provided, skipping image append");
-    }
-    if (
-      data.videoUrl &&
-      data.videoUrl instanceof FileList &&
-      data.videoUrl.length > 0
-    ) {
-      formData.append("videoUrl", data.videoUrl[0]);
-    } else {
-      console.log(" No video provided, skipping image append");
-    }
-    if (
-      data.audioUrl &&
-      data.audioUrl instanceof FileList &&
-      data.audioUrl.length > 0
-    ) {
-      formData.append("audioUrl", data.audioUrl[0]);
-    } else {
-      console.log(" No Audio provided, skipping image append");
+    } else if (typeof data.logo === "string" && data.logo) {
+      formData.append("logo", data.logo);
     }
 
-    onSubmitHandler(formData);
+    if (data.videoUrl instanceof FileList && data.videoUrl.length > 0) {
+      formData.append("videoUrl", data.videoUrl[0]);
+    } else if (typeof data.videoUrl === "string" && data.videoUrl) {
+      formData.append("videoUrl", data.videoUrl);
+    }
+
+    if (data.audioUrl instanceof FileList && data.audioUrl.length > 0) {
+      formData.append("audioUrl", data.audioUrl[0]);
+    } else if (typeof data.audioUrl === "string" && data.audioUrl) {
+      formData.append("audioUrl", data.audioUrl);
+    }
+
+    onSubmitHandler(formData as unknown as ISettings);
   };
 
   if (!isOpen) return null;

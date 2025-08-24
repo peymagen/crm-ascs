@@ -10,40 +10,28 @@ import Textarea from "../../../components/Textarea";
 import Select from "../../../components/Select";
 import RichTextEditor from "../../../components/RichTextEditor";
 
-const schema = yup.object().shape({
+const schema = yup.object({
   title: yup.string().required("Title is required"),
   description: yup.string().required("Description is required"),
   slug: yup.string().required("Slug is required"),
   metaTitle: yup.string().required("Meta title is required"),
   metaDescription: yup.string().required("Meta description is required"),
   image: yup
-    .mixed()
+    .mixed<FileList | File | string>()
     .test("fileOrString", "Image is required", (value) => {
-      // Allow string (existing image) or FileList (new upload)
       return typeof value === "string" || value instanceof FileList;
     })
-    .required("Image is required"),
+    .optional(),
   publishDate: yup.string().required("Publish date is required"),
   lang: yup.string().required("Language is required"),
 });
 
-interface FormData {
-  title: string;
-  description: string;
-  slug: string;
-  metaTitle: string;
-  metaDescription: string;
-  image: string;
-  publishDate: string;
-  lang: string;
-}
-
 interface ManipulateListPageProps {
   isOpen: boolean;
   onClose: () => void;
-  defaultValues?: Partial<FormData>;
+  defaultValues?: Partial<IPage>;
   mode: "ADD" | "EDIT";
-  onSubmit: (data: FormData) => void;
+  onSubmit: (data: IPage) => void | Promise<void>;
   isLoading?: boolean;
 }
 
@@ -62,7 +50,7 @@ const ManipulateListPage: React.FC<ManipulateListPageProps> = ({
       slug: "",
       metaTitle: "",
       metaDescription: "",
-      image: "",
+      image: "" as string | FileList, // Only string or FileList, not File
       publishDate: "",
       lang: "en",
     }),
@@ -76,7 +64,7 @@ const ManipulateListPage: React.FC<ManipulateListPageProps> = ({
     reset,
     setValue,
     watch,
-  } = useForm<FormData>({
+  } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       ...defaultData,
@@ -89,11 +77,16 @@ const ManipulateListPage: React.FC<ManipulateListPageProps> = ({
       reset({
         ...defaultData,
         ...defaultValues,
+        image:
+          defaultValues.image instanceof FileList ||
+          typeof defaultValues.image === "string"
+            ? defaultValues.image
+            : "",
       });
     }
   }, [isOpen, defaultValues, reset, defaultData]);
 
-  const onSubmitData = (values: FormData) => {
+  const onSubmitData = (values: Partial<IPage>) => {
     const formData = new FormData();
 
     // Append all form values
@@ -112,7 +105,7 @@ const ManipulateListPage: React.FC<ManipulateListPageProps> = ({
       }
     });
 
-    onSubmit(formData);
+    onSubmit(formData as unknown as IPage);
   };
 
   const languageOptions = [{ label: "English", value: "en" }];

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -20,10 +20,7 @@ const schema = yup
     name: yup.string().required("Name is required"),
     url: yup.string(),
     other_url: yup.string().url("Must be a valid URL"),
-    sorting_order: yup
-      .string()
-      .matches(/^[1-9]\d*$/, "Sorting order must be a positive number")
-      .required("Sorting order is required"),
+    sorting_order: yup.number().required("Sorting order is required"),
     target: yup.string().required("Target is required"),
     lang: yup.string().required("Language is required"),
   })
@@ -34,16 +31,16 @@ const schema = yup
     (obj) => !!obj.url || !!obj.other_url
   );
 
-interface AddBottomMenuProps {
+interface AddSubMenu {
   isOpen: boolean;
   onClose: () => void;
   defaultValues?: Partial<ISubMenu>;
-  mode: "ADD" | "EDIT";
+  mode: "ADD" | "EDIT" | "DELETE";
   onSubmitHandler: (data: ISubMenu) => void;
   isLoading?: boolean;
 }
 
-const AddSubMenu: React.FC<AddBottomMenuProps> = ({
+const AddSubMenu: React.FC<AddSubMenu> = ({
   isOpen,
   onClose,
   defaultValues = {},
@@ -51,21 +48,24 @@ const AddSubMenu: React.FC<AddBottomMenuProps> = ({
   onSubmitHandler,
   isLoading = false,
 }) => {
-  const defaultPropValues: ISubMenu = {
-    parent_id: undefined,
-    name: "",
-    url: "",
-    other_url: "",
-    sorting_order: 1,
-    target: "_self",
-    lang: "en",
-  };
+  const defaultPropValues = React.useMemo(
+    () => ({
+      parent_id: undefined,
+      name: "",
+      url: "",
+      other_url: "",
+      sorting_order: 1,
+      target: "_self",
+      lang: "en",
+    }),
+    []
+  );
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<ISubMenu>({
+  } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       ...defaultPropValues,
@@ -91,7 +91,7 @@ const AddSubMenu: React.FC<AddBottomMenuProps> = ({
         ...defaultValues,
       });
     }
-  }, [isOpen, reset]);
+  }, [defaultPropValues, defaultValues, isOpen, reset]);
 
   const onSubmit = (data: ISubMenu) => {
     console.log("Form data being submitted:", data);

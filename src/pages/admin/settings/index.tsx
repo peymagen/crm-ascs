@@ -13,22 +13,11 @@ import {
 } from "../../../store/services/setting.api";
 import { toast } from "react-toastify";
 
-interface RowData {
-  id: number;
-  name: string;
-  logo: File;
-  slogan: string;
-  videoUrl: File;
-  content: string;
-  audioUrl: File;
-  lang: string;
-}
-
 const ListSetting: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"ADD" | "EDIT" | "DELETE">("ADD");
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [defaultValues, setDefaultValues] = useState<Partial<RowData>>({});
+  const [defaultValues, setDefaultValues] = useState<Partial<ISettings>>({});
   const [isLoading, setIsLoading] = useState(false);
 
   const [page, setPage] = useState(1);
@@ -100,7 +89,7 @@ const ListSetting: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (formData: any) => {
+  const handleSubmit = async (formData: ISettings) => {
     setIsLoading(true);
     try {
       if (mode === "ADD") {
@@ -154,19 +143,19 @@ const ListSetting: React.FC = () => {
           columns={columns}
           actions={[
             {
-              label: "Edit",
+              label: "✏️",
               onClick: (row) => {
-                setDefaultValues(row as RowData);
+                setDefaultValues(row as unknown as ISettings);
                 setIsOpen(true);
                 setMode("EDIT");
                 console.log("Edit clicked:", row);
               },
             },
             {
-              label: "Delete",
+              label: "🗑️",
               onClick: (row) => {
                 setMode("DELETE");
-                setSelectedId((row as RowData).id);
+                setSelectedId((row as unknown as ISettings).id ?? null);
                 setIsOpen(true);
                 console.log("Delete clicked:", row);
               },

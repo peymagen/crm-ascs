@@ -13,7 +13,7 @@ const schema = yup.object().shape({
   title: yup.string().required("Title is required"),
   description: yup.string().required("Description is required"),
   image: yup
-    .mixed()
+    .mixed<File | FileList | string>()
     .test("fileOrString", "Image is required", (value) => {
       // Allow string (existing image) or FileList (new upload)
       return typeof value === "string" || value instanceof FileList;
@@ -21,18 +21,12 @@ const schema = yup.object().shape({
     .required("Image is required"),
 });
 
-interface FormData {
-  title: string;
-  description: string;
-  image: File | string;
-}
-
 interface AddSliderMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  defaultValues?: Partial<FormData>;
+  defaultValues?: Partial<ISliders>;
   mode: "ADD" | "EDIT" | "DELETE";
-  onSubmit: (data: FormData) => void;
+  onSubmit: (data: ISliders) => void;
   isLoading?: boolean;
 }
 
@@ -71,24 +65,18 @@ const AddSlider: React.FC<AddSliderMenuProps> = ({
     }
   }, [isOpen, defaultValues, reset]);
 
-  const onSubmitData = (values: FormData) => {
+  const onSubmitData = (values: ISliders) => {
     const formData = new FormData();
 
-    // Append all form values
-    Object.entries(values).forEach(([key, value]) => {
-      if (key === "image" && value instanceof FileList && value.length > 0) {
-        formData.append("image", value[0]);
-      } else if (value !== undefined && value !== null) {
-        formData.append(key, value as string);
-      }
-    });
-
-    // Debug: log FormData contents
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
+    if (values.image instanceof FileList && values.image.length > 0) {
+      formData.append("image", values.image[0]);
+    } else if (values.image instanceof File) {
+      formData.append("image", values.image);
+    } else if (typeof values.image === "string") {
+      formData.append("image", values.image);
     }
 
-    onSubmit(formData);
+    onSubmit(formData as unknown as ISliders);
   };
 
   if (!isOpen) return null;

@@ -14,7 +14,7 @@ import {
   useDeleteGalleryImageMutation,
 } from "../../../store/services/galleryImage.api";
 
-export interface GalleryImage {
+export interface IGalleryImage {
   id: number;
   ref_id: number;
   image: string; // stored path or URL
@@ -25,9 +25,9 @@ const GalleryImageManagement: React.FC = () => {
   const [search, setSearch] = useState("");
   const [modalData, setModalData] = useState<{
     mode: "add" | "edit";
-    imageData?: GalleryImage;
+    imageData?: IGalleryImage;
   } | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<GalleryImage | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<IGalleryImage | null>(null);
 
   const {
     data: queryData,
@@ -58,11 +58,9 @@ const GalleryImageManagement: React.FC = () => {
       }
       setModalData(null);
       await refetch();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to save image:", error);
-      const errorMessage =
-        error.data?.message || "Failed to save image. Please try again.";
-      toast.error(errorMessage);
+      toast.error("Something went wrong while saving the image");
     }
   };
 
@@ -73,11 +71,9 @@ const GalleryImageManagement: React.FC = () => {
       toast.success("Image deleted successfully!");
       setDeleteTarget(null);
       await refetch();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to delete image:", error);
-      const errorMessage =
-        error.data?.message || "Failed to delete image. Please try again.";
-      toast.error(errorMessage);
+      toast.error("Failed to delete image. Please try again.");
     }
   };
 
@@ -89,7 +85,12 @@ const GalleryImageManagement: React.FC = () => {
       setSearch(newSearch);
 
       return {
-        data: queryData?.data ?? [],
+        data:
+          queryData?.data.map((item) => ({
+            id: item.id,
+            ref_id: item.ref_id,
+            image: item.image ?? "",
+          })) || [],
         total: queryData?.total ?? 0,
       };
     },
@@ -110,13 +111,17 @@ const GalleryImageManagement: React.FC = () => {
   const actions = useMemo(
     () => [
       {
-        label: "Edit",
-        onClick: (row: GalleryImage) =>
-          setModalData({ mode: "edit", imageData: row }),
+        label: "✏️",
+        onClick: (row: { [x: string]: unknown }) =>
+          setModalData({
+            mode: "edit",
+            imageData: row as unknown as IGalleryImage,
+          }),
       },
       {
-        label: "Delete",
-        onClick: (row: GalleryImage) => setDeleteTarget(row),
+        label: "🗑️",
+        onClick: (row: { [x: string]: unknown }) =>
+          setDeleteTarget(row as unknown as IGalleryImage),
       },
     ],
     []

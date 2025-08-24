@@ -13,18 +13,11 @@ import {
 } from "../../../store/services/sliders.api";
 import { toast } from "react-toastify";
 
-interface RowData {
-  id: number;
-  title: string;
-  description: string;
-  image: File;
-}
-
 const ListSlider: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"ADD" | "EDIT" | "DELETE">("ADD");
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [defaultValues, setDefaultValues] = useState<Partial<RowData>>({});
+  const [defaultValues, setDefaultValues] = useState<Partial<ISliders>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -89,7 +82,7 @@ const ListSlider: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (formData: any) => {
+  const handleSubmit = async (formData: ISliders) => {
     setIsLoading(true);
     try {
       if (mode === "ADD") {
@@ -150,8 +143,7 @@ const ListSlider: React.FC = () => {
               onClick: (row) => {
                 // For edit mode, we need to exclude the image from defaultValues
                 // since we can't pre-populate file inputs
-                const { image, ...editValues } = row as RowData;
-                setDefaultValues(editValues);
+                setDefaultValues(row as unknown as ISliders);
                 setIsOpen(true);
                 setMode("EDIT");
                 console.log("Edit clicked:", row);
@@ -161,7 +153,7 @@ const ListSlider: React.FC = () => {
               label: "🗑️",
               onClick: (row) => {
                 setMode("DELETE");
-                setSelectedId((row as RowData).id);
+                setSelectedId((row as unknown as ISliders).id ?? null);
                 setIsOpen(true);
                 console.log("Delete clicked:", row);
               },

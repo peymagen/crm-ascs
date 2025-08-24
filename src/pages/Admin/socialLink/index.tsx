@@ -8,18 +8,11 @@ import DeleteDialog from "./DeleteDialog";
 
 import { toast } from "react-toastify";
 import {
-    useGetSocialQuery,
-    useCreateSocialMutation,
-    useUpdateSocialMutation,
-    useDeleteSocialMutation,
+  useGetSocialQuery,
+  useCreateSocialMutation,
+  useUpdateSocialMutation,
+  useDeleteSocialMutation,
 } from "../../../store/services/social.api";
-
-
-interface RowData {
-  id:number,
-  title: string;
-  url: string;
-}
 
 const SocialLinkData: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,7 +23,7 @@ const SocialLinkData: React.FC = () => {
 
   const limit = 10;
   const offset = (page - 1) * limit;
-  const [defaultValues, setDefaultValues] = useState<Partial<RowData>>({});
+  const [defaultValues, setDefaultValues] = useState<Partial<ISocialLink>>({});
   const [isLoading, setIsLoading] = useState(false);
 
   // API hooks
@@ -93,7 +86,7 @@ const SocialLinkData: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (formData: any) => {
+  const handleSubmit = async (formData: ISocialLink) => {
     setIsLoading(true);
     try {
       if (mode === "ADD") {
@@ -146,7 +139,7 @@ const SocialLinkData: React.FC = () => {
             {
               label: "✏️",
               onClick: (row) => {
-                setDefaultValues(row as RowData);
+                setDefaultValues(row as unknown as ISocialLink);
                 setIsOpen(true);
                 setMode("EDIT");
                 console.log("Edit clicked:", row);
@@ -156,7 +149,7 @@ const SocialLinkData: React.FC = () => {
               label: "🗑️",
               onClick: (row) => {
                 setMode("DELETE");
-                setSelectedId((row as RowData).id);
+                setSelectedId((row as unknown as ISocialLink).id ?? null);
                 setIsOpen(true);
                 console.log("Delete clicked:", row);
               },

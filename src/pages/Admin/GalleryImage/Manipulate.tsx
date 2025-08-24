@@ -9,16 +9,10 @@ import styles from "./GalleryImageManagement.module.css";
 import { useGetGalleryCategoriesQuery } from "../../../store/services/galleryCategory.api";
 import Select from "../../../components/Select";
 
-interface GalleryImageItem {
-  id?: number;
-  ref_id: number;
-  image: File | string;
-}
-
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  defaultValues?: Partial<GalleryImageItem>;
+  defaultValues?: Partial<IGalleryImage>;
   mode: "ADD" | "EDIT";
   onSubmit: (data: FormData) => void;
   isLoading?: boolean;
@@ -33,12 +27,20 @@ const schema = yup.object().shape({
     .positive("Reference ID must be positive")
     .moreThan(0, "Please select a category"),
   image: yup
-    .mixed()
-    .test("fileOrString", "Image is required", (value) => {
-      // Allow string (existing image) or FileList (new upload)
-      return typeof value === "string" || value instanceof FileList;
+    .mixed<FileList | File | string>()
+    .required("Image is required")
+    .test("fileType", "Unsupported format", (value) => {
+      if (!value || !(value instanceof FileList) || value.length === 0)
+        return true;
+      return ["image/jpeg", "image/png", "image/svg+xml"].includes(
+        value[0].type
+      );
     })
-    .required("Image is required"),
+    .test("fileSize", "Max size 2MB", (value) => {
+      if (!value || !(value instanceof FileList) || value.length === 0)
+        return true;
+      return value[0].size <= 2 * 1024 * 1024;
+    }),
 });
 
 const Manipulate: React.FC<Props> = ({
@@ -87,7 +89,7 @@ const Manipulate: React.FC<Props> = ({
     }
   }, [isOpen, defaultValues, reset, defaultData]);
 
-  const onSubmitData = (values: any) => {
+  const onSubmitData = (values: IGalleryImage) => {
     const formData = new FormData();
 
     // Append ID if in EDIT mode
@@ -109,9 +111,9 @@ const Manipulate: React.FC<Props> = ({
 
   const options = useMemo(() => {
     return [
-      { value: 0, label: "Select Category" } as const,
+      { value: "0", label: "Select Category" },
       ...(queryData?.data?.map((category) => ({
-        value: category.id,
+        value: String(category.id),
         label: category.title,
       })) || []),
     ];

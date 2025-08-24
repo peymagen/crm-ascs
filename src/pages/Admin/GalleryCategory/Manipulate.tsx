@@ -7,20 +7,11 @@ import Button from "../../../components/Button";
 import styles from "./GalleryCategory.module.css";
 import RichTextEditor from "../../../components/RichTextEditor";
 
-interface FormValues {
-  title: string;
-  description: string;
-}
-
 interface Props {
   mode: "add" | "edit";
   category?: { id?: number; title: string; description: string };
   isLoading?: boolean;
-  onSave: (data: {
-    id?: number;
-    title: string;
-    description: string;
-  }) => Promise<void> | void;
+  onSave: (data: IGalleryCategory) => Promise<void> | void;
   onClose: () => void;
 }
 
@@ -33,8 +24,8 @@ const schema = yup.object().shape({
     .max(100, "Title cannot exceed 100 characters"),
   description: yup
     .string()
-    .max(300, "Description cannot exceed 300 characters")
-    .nullable(),
+    .required("Description is required")
+    .max(300, "Description cannot exceed 300 characters"),
 });
 
 const Manipulate: React.FC<Props> = ({
@@ -51,7 +42,7 @@ const Manipulate: React.FC<Props> = ({
     setValue,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({
+  } = useForm({
     resolver: yupResolver(schema),
     defaultValues: { title: "", description: "" },
   });
@@ -67,7 +58,7 @@ const Manipulate: React.FC<Props> = ({
     }
   }, [mode, category, reset]);
 
-  const submit = async (data: FormValues) => {
+  const submit = async (data: IGalleryCategory) => {
     const payload = {
       ...(mode === "edit" && category?.id ? { id: category.id } : {}),
       title: data.title.trim(),
@@ -101,7 +92,7 @@ const Manipulate: React.FC<Props> = ({
             register={register}
             errors={errors}
             required
-            placeholder="Category title"
+            placeholder="Title"
           />
 
           <div className={styles.colFull}>

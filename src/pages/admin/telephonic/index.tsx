@@ -13,19 +13,11 @@ import {
 } from "../../../store/services/telephonic.api";
 import { toast } from "react-toastify";
 
-interface RowData {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  description: string;
-}
-
 const TelephonicData: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"ADD" | "EDIT" | "DELETE">("ADD");
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [defaultValues, setDefaultValues] = useState<Partial<RowData>>({});
+  const [defaultValues, setDefaultValues] = useState<Partial<ITelephonic>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -91,7 +83,7 @@ const TelephonicData: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (formData: any) => {
+  const handleSubmit = async (formData: ITelephonic) => {
     setIsLoading(true);
     try {
       if (mode === "ADD") {
@@ -142,7 +134,7 @@ const TelephonicData: React.FC = () => {
             {
               label: "✏️",
               onClick: (row) => {
-                setDefaultValues(row as RowData);
+                setDefaultValues(row as unknown as ITelephonic);
                 setIsOpen(true);
                 setMode("EDIT");
                 console.log("Edit clicked:", row);
@@ -152,7 +144,7 @@ const TelephonicData: React.FC = () => {
               label: "🗑️",
               onClick: (row) => {
                 setMode("DELETE");
-                setSelectedId((row as RowData).id);
+                setSelectedId((row as unknown as ITelephonic).id ?? null);
                 setIsOpen(true);
                 console.log("Delete clicked:", row);
               },

@@ -12,34 +12,26 @@ import Select from "../../../components/Select";
 const schema = yup.object().shape({
   title: yup.string().required("Title is required"),
   file_url: yup
-    .mixed()
+    .mixed<File | FileList | string>()
     .test("fileOrString", "File is required", (value) => {
       // Allow string (existing file) or FileList (new upload)
       return typeof value === "string" || value instanceof FileList;
     })
     .required("File is required"),
   type: yup.string().required("Type is required"),
-  notice: yup.boolean(),
+  notice: yup.number(),
 });
 
-interface FormData {
-  id?: number;
-  title: string;
-  file_url: File | string;
-  type: string;
-  notice: boolean;
-}
-
-interface AddBottomMenuProps {
+interface AddOpportunity {
   isOpen: boolean;
   onClose: () => void;
-  defaultValues?: Partial<FormData>;
-  mode: "ADD" | "EDIT";
-  onSubmit: (data: FormData) => void;
+  defaultValues?: Partial<IOpportunity>;
+  mode: "ADD" | "EDIT" | "DELETE";
+  onSubmit: (data: IOpportunity) => void;
   isLoading?: boolean;
 }
 
-const AddOpportunity: React.FC<AddBottomMenuProps> = ({
+const AddOpportunity: React.FC<AddOpportunity> = ({
   isOpen,
   onClose,
   defaultValues = {},
@@ -76,7 +68,12 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
     }
   }, [isOpen, defaultValues, reset]);
 
-  const onSubmitData = (values: FormData) => {
+  const onSubmitData = (values: {
+    notice?: number;
+    title: string;
+    file_url: string | File | FileList;
+    type: string;
+  }) => {
     const formData = new FormData();
 
     // Append ID if in EDIT mode
@@ -95,12 +92,7 @@ const AddOpportunity: React.FC<AddBottomMenuProps> = ({
       }
     });
 
-    // Debug: log FormData contents
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
-
-    onSubmit(formData);
+    onSubmit(formData as unknown as IOpportunity);
   };
 
   const displayOnMenuOptions = [

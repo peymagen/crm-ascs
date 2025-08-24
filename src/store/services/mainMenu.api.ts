@@ -28,19 +28,19 @@ export const apiMainMenu = createApi({
       query: (updatedMainMenu) => ({
         url: `main-menu/${updatedMainMenu.id}`,
         method: "PUT",
-        body: updatedMainMenu,
+        body: updatedMainMenu.body,
       }),
     }),
-    patchMainMenu: builder.mutation<IUser, Partial<IUser>>({
+    patchMainMenu: builder.mutation({
       query: (updatedMainMenu) => ({
         url: `main-menu/${updatedMainMenu.id}`,
         method: "PATCH",
-        body: updatedMainMenu,
+        body: updatedMainMenu.body,
       }),
     }),
     deleteMainMenu: builder.mutation({
       query: (updatedMainMenu) => ({
-        url: `main-menu/${updatedMainMenu.id}`,
+        url: `main-menu/${updatedMainMenu}`,
         method: "DELETE",
       }),
     }),

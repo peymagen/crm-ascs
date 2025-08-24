@@ -86,7 +86,7 @@ const FaqData: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (formData: any) => {
+  const handleSubmit = async (formData: IFAQ) => {
     setIsLoading(true);
     try {
       if (mode === "ADD") {
@@ -137,7 +137,7 @@ const FaqData: React.FC = () => {
             {
               label: "✏️",
               onClick: (row) => {
-                setDefaultValues(row as RowData);
+                setDefaultValues(row);
                 setIsOpen(true);
                 setMode("EDIT");
                 console.log("Edit clicked:", row);
@@ -147,7 +147,7 @@ const FaqData: React.FC = () => {
               label: "🗑️",
               onClick: (row) => {
                 setMode("DELETE");
-                setSelectedId((row as RowData).id);
+                setSelectedId(typeof row.id === "number" ? row.id : null);
                 setIsOpen(true);
                 console.log("Delete clicked:", row);
               },

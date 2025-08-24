@@ -13,19 +13,11 @@ import {
 } from "../../../store/services/opportunities.api";
 import { toast } from "react-toastify";
 
-interface RowData {
-  id: number;
-  title: string;
-  file_url: string;
-  type: string;
-  notice: boolean;
-}
-
 const OpportunityData: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"ADD" | "EDIT" | "DELETE">("ADD");
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [defaultValues, setDefaultValues] = useState<Partial<RowData>>({});
+  const [defaultValues, setDefaultValues] = useState<Partial<IOpportunity>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -98,18 +90,28 @@ const OpportunityData: React.FC = () => {
   const actions = useMemo(
     () => [
       {
-        label: "Edit",
-        onClick: (row: RowData) => {
-          setDefaultValues(row);
+        label: "✏️",
+        onClick: (row: { [x: string]: unknown }) => {
+          setDefaultValues({
+            ...row,
+            notice:
+              typeof row.notice === "boolean"
+                ? row.notice
+                  ? 1
+                  : 0
+                : Number(row.notice),
+          });
           setIsOpen(true);
           setMode("EDIT");
         },
       },
       {
-        label: "Delete",
-        onClick: (row: RowData) => {
+        label: "🗑️",
+        onClick: (row: { [x: string]: unknown }) => {
           setMode("DELETE");
-          setSelectedId(row.id);
+          setSelectedId(
+            typeof row.id === "number" ? row.id : row.id ? Number(row.id) : null
+          );
           setIsOpen(true);
         },
       },
@@ -140,9 +142,9 @@ const OpportunityData: React.FC = () => {
       await deleteOpportunity({ id: selectedId }).unwrap();
       toast.success("Record deleted successfully");
       refetch();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Delete failed:", error);
-      const errorMessage = error.data?.message || "Failed to delete record";
+      const errorMessage = "Failed to delete record";
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -151,13 +153,9 @@ const OpportunityData: React.FC = () => {
     }
   };
 
-  const handleSave = async (formData: FormData) => {
+  const handleSave = async (formData: IOpportunity) => {
     setIsLoading(true);
     try {
-      console.log("Submitting form data:", formData);
-      for (let [key, value] of formData.entries()) {
-        console.log(key, value);
-      }
       const idValue = formData.get("id");
       if (idValue) {
         await updateOpportunity({
@@ -170,10 +168,9 @@ const OpportunityData: React.FC = () => {
         toast.success("Opportunity created successfully!");
       }
       refetch();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to save opportunity:", error);
-      const errorMessage =
-        error.data?.message || "Failed to save opportunity. Please try again.";
+      const errorMessage = "Failed to save opportunity. Please try again.";
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -187,37 +184,39 @@ const OpportunityData: React.FC = () => {
 
   return (
     <div className={styles.main}>
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={itemVariants}
-        className={styles.formContainer}
-      >
-        <div className={styles.header}>
-          <h1 className={styles.title}>Opportunities Management</h1>
-          <Button
-            type="button"
-            isLoading={isLoadingState}
-            buttonType="primary"
-            title="+ Add New Opportunity"
-            onClick={() => {
-              setDefaultValues({});
-              setIsOpen(true);
-              setMode("ADD");
-            }}
-          />
-        </div>
+      {!isLoading && (
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={itemVariants}
+          className={styles.formContainer}
+        >
+          <div className={styles.header}>
+            <h1 className={styles.title}>Opportunities Management</h1>
+            <Button
+              type="button"
+              isLoading={isLoadingState}
+              buttonType="primary"
+              title="+ Add New Opportunity"
+              onClick={() => {
+                setDefaultValues({});
+                setIsOpen(true);
+                setMode("ADD");
+              }}
+            />
+          </div>
 
-        <DataTable
-          fetchData={fetchData}
-          columns={columns}
-          actions={actions}
-          isSearch={true}
-          isExport={true}
-          isNavigate={true}
-          loading={isLoadingState}
-        />
-      </motion.div>
+          <DataTable
+            fetchData={fetchData}
+            columns={columns}
+            actions={actions}
+            isSearch={true}
+            isExport={true}
+            isNavigate={true}
+            loading={isLoadingState}
+          />
+        </motion.div>
+      )}
 
       <AddOpportunity
         isOpen={isOpen && ["ADD", "EDIT"].includes(mode)}

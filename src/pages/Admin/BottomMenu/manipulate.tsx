@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -14,10 +14,7 @@ const schema = yup
     name: yup.string().required("Name is required"),
     url: yup.string(),
     other_url: yup.string().url("Must be a valid URL"),
-    sorting_order: yup
-      .string()
-      .matches(/^[1-9]\d*$/, "Sorting order must be a positive number")
-      .required("Sorting order is required"),
+    sorting_order: yup.number().required("Sorting order is required"),
     target: yup.string().required("Target is required"),
     lang: yup.string().required("Language is required"),
   })
@@ -45,20 +42,23 @@ const AddBottomMenu: React.FC<AddBottomMenuProps> = ({
   onSubmitHandler,
   isLoading = false,
 }) => {
-  const defaultPropValues: IFooterMenu = {
-    name: "",
-    url: "",
-    other_url: "",
-    sorting_order: 1,
-    target: "_self",
-    lang: "en",
-  };
+  const defaultPropValues = React.useMemo(
+    () => ({
+      name: "",
+      url: "",
+      other_url: "",
+      sorting_order: 1,
+      target: "_self",
+      lang: "en",
+    }),
+    []
+  );
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<IFooterMenu>({
+  } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       ...defaultPropValues,
@@ -73,7 +73,7 @@ const AddBottomMenu: React.FC<AddBottomMenuProps> = ({
         ...defaultValues,
       });
     }
-  }, [isOpen, reset]); // Only depend on isOpen and reset
+  }, [defaultPropValues, defaultValues, isOpen, reset]); // Only depend on isOpen and reset
 
   const onSubmit = (data: IFooterMenu) => {
     console.log("Form data being submitted:", data);

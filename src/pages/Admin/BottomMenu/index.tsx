@@ -138,7 +138,7 @@ const ListBottomData: React.FC = () => {
           columns={columns}
           actions={[
             {
-              label: "Edit",
+              label: "✏️",
               onClick: (row) => {
                 setDefaultValues(row);
                 setIsOpen(true);
@@ -147,7 +147,7 @@ const ListBottomData: React.FC = () => {
               },
             },
             {
-              label: "Delete",
+              label: "🗑️",
               onClick: (row) => {
                 setMode("DELETE");
                 setSelectedId(typeof row.id === "number" ? row.id : null);

@@ -13,24 +13,11 @@ import {
 } from "../../../store/services/listpage.api";
 import { toast } from "react-toastify";
 
-interface RowData {
-  id: number;
-  title: string;
-  content: string;
-  lang: string;
-  description: string;
-  metaDescription: string;
-  metaTitle: string;
-  publishDate: string;
-  slug: string;
-  image?: FileList | File[] | string;
-}
-
 const ListPage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"ADD" | "EDIT" | "DELETE">("ADD");
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [defaultValues, setDefaultValues] = useState<Partial<RowData>>({});
+  const [defaultValues, setDefaultValues] = useState<Partial<IPage>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -81,7 +68,7 @@ const ListPage: React.FC = () => {
     setDefaultValues({});
   };
 
-  const handleSubmit = async (formData: FormData) => {
+  const handleSubmit = async (formData: IPage) => {
     setIsLoading(true);
     try {
       if (mode === "ADD") {
@@ -110,6 +97,7 @@ const ListPage: React.FC = () => {
       refetch();
       handleClose();
     } catch (error) {
+      console.error("Error:", error);
       toast.error("An error occurred!");
     }
     setIsLoading(false);

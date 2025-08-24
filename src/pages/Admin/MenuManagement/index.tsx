@@ -72,12 +72,12 @@ const MenuManagement: React.FC = () => {
     try {
       if (mode === "ADD") {
         await addMenu(payload).unwrap();
-        refetch();
         toast.success("Main menu item created successfully");
       } else if (mode === "EDIT" && editingMenu?.id) {
         await updateMenu({ id: editingMenu.id, body: payload }).unwrap();
         toast.success("Menu item updated successfully");
       }
+      refetch();
       setIsModalOpen(false);
       setEditingMenu(null);
     } catch (error) {
@@ -92,6 +92,7 @@ const MenuManagement: React.FC = () => {
     if (!deletingMenu) return;
 
     try {
+      console.log(deletingMenu);
       await deleteMenu(deletingMenu.id).unwrap();
       refetch();
       toast.success("Menu item deleted successfully");
@@ -116,8 +117,16 @@ const MenuManagement: React.FC = () => {
 
   const actions = useMemo(
     () => [
-      { label: "Edit", onClick: (row: IMainMenu) => handleOpenEdit(row) },
-      { label: "Delete", onClick: (row: IMainMenu) => setDeletingMenu(row) },
+      {
+        label: "✏️",
+        onClick: (row: { [x: string]: unknown }) =>
+          handleOpenEdit(row as unknown as IMainMenu),
+      },
+      {
+        label: "🗑️",
+        onClick: (row: { [x: string]: unknown }) =>
+          setDeletingMenu(row as unknown as IMainMenu),
+      },
     ],
     []
   );

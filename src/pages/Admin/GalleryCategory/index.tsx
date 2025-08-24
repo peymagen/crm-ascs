@@ -14,23 +14,15 @@ import {
   useDeleteGalleryCategoryMutation,
 } from "../../../store/services/galleryCategory.api";
 
-export interface GalleryCategoryItem {
-  id: number;
-  title: string;
-  description: string;
-}
+type ModalData = { mode: "add" } | { mode: "edit"; category: IGalleryCategory };
 
 const GalleryCategory: React.FC = () => {
-  const [modalData, setModalData] = useState<{
-    mode: "add" | "edit";
-    category?: GalleryCategoryItem;
-  } | null>(null);
-
-  const [targetToDelete, setTargetToDelete] =
-    useState<GalleryCategoryItem | null>(null);
-
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const [modalData, setModalData] = useState<ModalData | null>(null);
+  const [targetToDelete, setTargetToDelete] = useState<IGalleryCategory | null>(
+    null
+  );
+  const [page, setPage] = useState<number>(1);
+  const [search, setSearch] = useState<string>("");
 
   const {
     data: queryData,
@@ -57,7 +49,7 @@ const GalleryCategory: React.FC = () => {
   };
 
   const handleSave = useCallback(
-    async (data: Omit<GalleryCategoryItem, "id"> & { id?: number }) => {
+    async (data: Omit<IGalleryCategory, "id"> & { id?: number }) => {
       try {
         if (data.id != null) {
           await updateCategory({
@@ -85,7 +77,7 @@ const GalleryCategory: React.FC = () => {
   const handleDeleteConfirm = useCallback(async () => {
     if (!targetToDelete) return;
     try {
-      await deleteCategory(targetToDelete.id).unwrap();
+      await deleteCategory(targetToDelete.id ?? 0).unwrap();
       toast.success(`Category "${targetToDelete.title}" deleted successfully`);
       setTargetToDelete(null);
       await refetch();
@@ -97,13 +89,17 @@ const GalleryCategory: React.FC = () => {
 
   const actions = [
     {
-      label: "Edit",
-      onClick: (row: GalleryCategoryItem) =>
-        setModalData({ mode: "edit", category: row }),
+      label: "✏️",
+      onClick: (row: { [x: string]: unknown }) =>
+        setModalData({
+          mode: "edit",
+          category: row as unknown as IGalleryCategory,
+        }),
     },
     {
-      label: "Delete",
-      onClick: (row: GalleryCategoryItem) => setTargetToDelete(row),
+      label: "🗑️",
+      onClick: (row: { [x: string]: unknown }) =>
+        setTargetToDelete(row as unknown as IGalleryCategory),
     },
   ];
 
@@ -115,7 +111,12 @@ const GalleryCategory: React.FC = () => {
       setSearch(newSearch);
 
       return {
-        data: queryData?.data || [],
+        data:
+          queryData?.data.map((item) => ({
+            id: item.id,
+            title: item.title,
+            description: item.description ?? "",
+          })) || [],
         total: queryData?.total || 0,
       };
     },
@@ -156,10 +157,12 @@ const GalleryCategory: React.FC = () => {
         {modalData && (
           <Manipulate
             mode={modalData.mode}
-            category={modalData.category}
+            category={
+              modalData.mode === "edit" ? modalData.category : undefined
+            }
             onSave={handleSave}
             onClose={() => setModalData(null)}
-            isLoading={isLoading}
+            isLoading={isMutating}
           />
         )}
 

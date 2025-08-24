@@ -1,59 +1,50 @@
-
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { motion } from 'framer-motion';
-import styles from './submenu.module.css';
-import Button from '../../../components/Button';
-import Input from '../../../components/Input';
-import Textarea from '../../../components/Textarea';
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { motion } from "framer-motion";
+import styles from "./submenu.module.css";
+import Button from "../../../components/Button";
+import Input from "../../../components/Input";
+import Textarea from "../../../components/Textarea";
 
 // Validation schema
 const schema = yup.object().shape({
-  name: yup.string().required('Name is required'),
-  email: yup.string().required('Email is required'),
-  phone: yup.string().required('Phone No. is required'),
-  description: yup.string(),
+  name: yup.string().required("Name is required"),
+  email: yup.string().required("Email is required"),
+  phone: yup.string().required("Phone No. is required"),
+  description: yup.string().required("Description is required"),
 });
 
-interface FormData {
-   name: string;
-  email: string;
-  phone: string;
-  description: string;
-}
-
-interface AddBottomMenuProps {
+interface AddTelephonic {
   isOpen: boolean;
   onClose: () => void;
-  defaultValues?: Partial<FormData>;
-  mode: "ADD" | "EDIT";
-  onSubmitHandler: (data: FormData) => void;
+  defaultValues?: Partial<ITelephonic>;
+  mode: "ADD" | "EDIT" | "DELETE";
+  onSubmitHandler: (data: ITelephonic) => void;
   isLoading?: boolean;
 }
 
-const AddTelephonic: React.FC<AddBottomMenuProps> = ({ 
-  isOpen, 
-  onClose, 
-  defaultValues = {}, 
-  mode, 
+const AddTelephonic: React.FC<AddTelephonic> = ({
+  isOpen,
+  onClose,
+  defaultValues = {},
+  mode,
   onSubmitHandler,
-  isLoading = false 
+  isLoading = false,
 }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-    setValue,
-  } = useForm<FormData>({
+  } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-        name: '',
-        email: '',
-        phone: '',
-        description: '',
+      name: "",
+      email: "",
+      phone: "",
+      description: "",
       ...defaultValues,
     },
   });
@@ -61,21 +52,19 @@ const AddTelephonic: React.FC<AddBottomMenuProps> = ({
   useEffect(() => {
     if (isOpen) {
       reset({
-        name: '',
-        email: '',
-        phone: '',
-        description: '',
+        name: "",
+        email: "",
+        phone: "",
+        description: "",
         ...defaultValues,
       });
     }
   }, [isOpen, defaultValues, reset]);
 
-  const onSubmit = (data: FormData) => {
-    console.log('Form data being submitted:', data);
+  const onSubmit = (data: ITelephonic) => {
+    console.log("Form data being submitted:", data);
     onSubmitHandler(data);
   };
-
- 
 
   if (!isOpen) return null;
 
@@ -91,8 +80,8 @@ const AddTelephonic: React.FC<AddBottomMenuProps> = ({
           <h2 className={styles.modalTitle}>
             {mode === "ADD" ? "Add Telephone" : "Edit Telephone"}
           </h2>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className={styles.closeButton}
             disabled={isLoading}
           >
@@ -111,8 +100,7 @@ const AddTelephonic: React.FC<AddBottomMenuProps> = ({
         </div>
 
         <form className={styles.formGrid} onSubmit={handleSubmit(onSubmit)}>
-          
-         <div>
+          <div>
             <Input
               label="Name"
               name="name"
@@ -145,7 +133,6 @@ const AddTelephonic: React.FC<AddBottomMenuProps> = ({
               errors={errors}
               required
               placeholder="Enter Phone"
-            
             />
           </div>
 
@@ -159,7 +146,6 @@ const AddTelephonic: React.FC<AddBottomMenuProps> = ({
               rows={3}
             />
           </div>
-
 
           <div className={styles.fullSpan}>
             <div className={styles.formActions}>

@@ -14,21 +14,16 @@ const schema = yup.object().shape({
   answer: yup.string().required("Answer is required"),
 });
 
-interface FormData {
-  question: string;
-  answer: string;
-}
-
-interface AddBottomMenuProps {
+interface AddFaq {
   isOpen: boolean;
   onClose: () => void;
-  defaultValues?: Partial<FormData>;
-  mode: "ADD" | "EDIT";
-  onSubmitHandler: (data: FormData) => void;
+  defaultValues?: Partial<IFAQ>;
+  mode: "ADD" | "EDIT" | "DELETE";
+  onSubmitHandler: (data: IFAQ) => void;
   isLoading?: boolean;
 }
 
-const AddFaq: React.FC<AddBottomMenuProps> = ({
+const AddFaq: React.FC<AddFaq> = ({
   isOpen,
   onClose,
   defaultValues = {},
@@ -43,7 +38,7 @@ const AddFaq: React.FC<AddBottomMenuProps> = ({
     reset,
     setValue,
     watch,
-  } = useForm<FormData>({
+  } = useForm<IFAQ>({
     resolver: yupResolver(schema),
     defaultValues: {
       question: "",
@@ -62,7 +57,7 @@ const AddFaq: React.FC<AddBottomMenuProps> = ({
     }
   }, [isOpen, defaultValues, reset]);
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (data: IFAQ) => {
     console.log("Form data being submitted:", data);
     onSubmitHandler(data);
   };

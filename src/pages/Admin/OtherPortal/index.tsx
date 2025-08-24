@@ -13,18 +13,11 @@ import {
 } from "../../../store/services/portal.api";
 import { toast } from "react-toastify";
 
-interface RowData {
-  id: number;
-  title: string;
-  url: string;
-  image: File;
-}
-
 const PortalData: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"ADD" | "EDIT" | "DELETE">("ADD");
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [defaultValues, setDefaultValues] = useState<Partial<RowData>>({});
+  const [defaultValues, setDefaultValues] = useState<Partial<IPortal>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -89,7 +82,7 @@ const PortalData: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (formData: any) => {
+  const handleSubmit = async (formData: IPortal) => {
     setIsLoading(true);
     try {
       if (mode === "ADD") {
@@ -146,10 +139,8 @@ const PortalData: React.FC = () => {
           actions={[
             {
               label: "✏️",
-              onClick: (row) => {
-                // For edit mode, we need to exclude the image from defaultValues
-                // since we can't pre-populate file inputs
-                const { image, ...editValues } = row as RowData;
+              onClick: (row: { [x: string]: unknown }) => {
+                const editValues = row as unknown as IPortal;
                 setDefaultValues(editValues);
                 setIsOpen(true);
                 setMode("EDIT");
@@ -158,9 +149,9 @@ const PortalData: React.FC = () => {
             },
             {
               label: "🗑️",
-              onClick: (row) => {
+              onClick: (row: { [x: string]: unknown }) => {
                 setMode("DELETE");
-                setSelectedId((row as RowData).id);
+                setSelectedId((row as unknown as IPortal).id ?? null);
                 setIsOpen(true);
                 console.log("Delete clicked:", row);
               },

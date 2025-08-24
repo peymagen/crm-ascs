@@ -1,26 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence, easeOut } from "framer-motion";
 import { useGetGalleryListQuery } from "../../store/services/galleryImage.api";
 import styles from "./Gallery.module.css";
-
-interface GalleryImage {
-  id: number;
-  ref_id: number;
-  image: string;
-  status?: number;
-  updatedOn?: string;
-  createdOn?: string;
-}
-
-interface GalleryItem {
-  id: number;
-  title: string;
-  description: string;
-  status?: number;
-  updatedOn?: string;
-  createdOn?: string;
-  images: GalleryImage[];
-}
 
 interface ModalImage {
   src: string;
@@ -35,9 +16,14 @@ const Gallery: React.FC = () => {
     isLoading,
     isError,
     error,
-  } = useGetGalleryListQuery({});
+  } = useGetGalleryListQuery(0) as {
+    data?: { data: IGalleryItem[] };
+    isLoading: boolean;
+    isError: boolean;
+    error?: unknown;
+  };
 
-  const galleryItems: GalleryItem[] = Array.isArray(fetchedGalleryData?.data)
+  const galleryItems: IGalleryItem[] = Array.isArray(fetchedGalleryData?.data)
     ? fetchedGalleryData.data
     : Array.isArray(fetchedGalleryData)
     ? fetchedGalleryData
@@ -45,9 +31,9 @@ const Gallery: React.FC = () => {
 
   const [selectedImage, setSelectedImage] = useState<ModalImage | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [currentGroup, setCurrentGroup] = useState<GalleryItem | null>(null);
+  const [currentGroup, setCurrentGroup] = useState<IGalleryItem | null>(null);
 
-  const openModal = (group: GalleryItem, img: ModalImage, index: number) => {
+  const openModal = (group: IGalleryItem, img: ModalImage, index: number) => {
     setCurrentGroup(group);
     setSelectedImage(img);
     setCurrentIndex(index);
@@ -60,37 +46,48 @@ const Gallery: React.FC = () => {
     document.body.style.overflow = "unset";
   };
 
-  const nextImage = () => {
+  const nextImage = useCallback(() => {
     if (!currentGroup) return;
     const nextIndex = (currentIndex + 1) % currentGroup.images.length;
     const nextImg = currentGroup.images[nextIndex];
     setCurrentIndex(nextIndex);
+
+    const src =
+      typeof nextImg.image === "string"
+        ? nextImg.image.startsWith("http")
+          ? nextImg.image
+          : `${import.meta.env.VITE_BACKEND_SERVER}${nextImg.image}`
+        : ""; // fallback when it's File or FileList
+
     setSelectedImage({
-      src: nextImg.image.startsWith("http")
-        ? nextImg.image
-        : `${import.meta.env.VITE_BACKEND_SERVER}${nextImg.image}`,
+      src: src,
       title: currentGroup.title,
       description: currentGroup.description,
       id: nextImg.id,
     });
-  };
+  }, [currentGroup, currentIndex]);
 
-  const prevImage = () => {
+  const prevImage = useCallback(() => {
     if (!currentGroup) return;
     const prevIndex =
       (currentIndex - 1 + currentGroup.images.length) %
       currentGroup.images.length;
     const prevImg = currentGroup.images[prevIndex];
     setCurrentIndex(prevIndex);
+    const src =
+      typeof prevImg.image === "string"
+        ? prevImg.image.startsWith("http")
+          ? prevImg.image
+          : `${import.meta.env.VITE_BACKEND_SERVER}${prevImg.image}`
+        : ""; // fallback when it's File or FileList
+
     setSelectedImage({
-      src: prevImg.image.startsWith("http")
-        ? prevImg.image
-        : `${import.meta.env.VITE_BACKEND_SERVER}${prevImg.image}`,
+      src: src,
       title: currentGroup.title,
       description: currentGroup.description,
       id: prevImg.id,
     });
-  };
+  }, [currentGroup, currentIndex]);
 
   useEffect(() => {
     const handleDocumentKeyDown = (e: KeyboardEvent) => {
@@ -106,7 +103,7 @@ const Gallery: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", handleDocumentKeyDown);
     };
-  }, [selectedImage, currentIndex, currentGroup]);
+  }, [selectedImage, currentIndex, currentGroup, nextImage, prevImage]);
 
   useEffect(() => {
     return () => {
@@ -128,7 +125,7 @@ const Gallery: React.FC = () => {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { duration: 0.5, ease: "easeOut" },
+      transition: { duration: 0.5, ease: easeOut },
     },
   };
 
@@ -137,7 +134,7 @@ const Gallery: React.FC = () => {
     visible: {
       opacity: 1,
       scale: 1,
-      transition: { duration: 0.3, ease: "easeOut" },
+      transition: { duration: 0.3, ease: easeOut },
     },
     exit: { opacity: 0, scale: 0.8, transition: { duration: 0.2 } },
   };
@@ -203,10 +200,15 @@ const Gallery: React.FC = () => {
               viewport={{ once: true }}
             >
               {group.images.map((img, imgIdx) => {
+                const src =
+                  typeof img.image === "string"
+                    ? img.image.startsWith("http")
+                      ? img.image
+                      : `${import.meta.env.VITE_BACKEND_SERVER}${img.image}`
+                    : ""; // fallback when it's File or FileList
+
                 const imgData: ModalImage = {
-                  src: img.image.startsWith("http")
-                    ? img.image
-                    : `${import.meta.env.VITE_BACKEND_SERVER}${img.image}`,
+                  src: src,
                   title: group.title,
                   description: group.description,
                   id: img.id,
@@ -275,7 +277,7 @@ const Gallery: React.FC = () => {
               exit="exit"
               onClick={(e) => e.stopPropagation()}
             >
-              {currentGroup?.images.length! > 1 && (
+              {currentGroup && currentGroup?.images.length > 1 && (
                 <>
                   <button
                     className={`${styles.navArrow} ${styles.navArrowLeft}`}

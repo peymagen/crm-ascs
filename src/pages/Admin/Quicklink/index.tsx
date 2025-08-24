@@ -87,7 +87,7 @@ const QuickMenuData: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (formData: any) => {
+  const handleSubmit = async (formData: IQuickMenu) => {
     setIsLoading(true);
     try {
       if (mode === "ADD") {
@@ -140,7 +140,7 @@ const QuickMenuData: React.FC = () => {
             {
               label: "✏️",
               onClick: (row) => {
-                setDefaultValues(row as RowData);
+                setDefaultValues(row as unknown as IQuickMenu);
                 setIsOpen(true);
                 setMode("EDIT");
                 console.log("Edit clicked:", row);
@@ -150,7 +150,7 @@ const QuickMenuData: React.FC = () => {
               label: "🗑️",
               onClick: (row) => {
                 setMode("DELETE");
-                setSelectedId((row as RowData).id);
+                setSelectedId((row as unknown as IQuickMenu).id ?? null);
                 setIsOpen(true);
                 console.log("Delete clicked:", row);
               },

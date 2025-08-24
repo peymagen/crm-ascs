@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -9,23 +9,21 @@ import Input from "../../../components/Input";
 import Select from "../../../components/Select";
 
 // Validation schema
-const schema = yup
-  .object({
-    title: yup.string().required("Title is required"),
-    url: yup.string(),
-  }
-  );
+const schema = yup.object({
+  title: yup.string().required("Title is required"),
+  url: yup.string().required("Url is required"),
+});
 
-interface AddBottomMenuProps {
+interface AddSocialLink {
   isOpen: boolean;
   onClose: () => void;
-  defaultValues?: Partial<IFooterMenu>;
-  mode: "ADD" | "EDIT";
-  onSubmitHandler: (data: IFooterMenu) => void;
+  defaultValues?: Partial<ISocialLink>;
+  mode: "ADD" | "EDIT" | "DELETE";
+  onSubmitHandler: (data: ISocialLink) => void;
   isLoading?: boolean;
 }
 
-const AddSocialLink: React.FC<AddBottomMenuProps> = ({
+const AddSocialLink: React.FC<AddSocialLink> = ({
   isOpen,
   onClose,
   defaultValues = {},
@@ -33,16 +31,19 @@ const AddSocialLink: React.FC<AddBottomMenuProps> = ({
   onSubmitHandler,
   isLoading = false,
 }) => {
-  const defaultPropValues: IFooterMenu = {
-    title: "",
-    url: "",
-  };
+  const defaultPropValues = React.useMemo(
+    () => ({
+      title: "",
+      url: "",
+    }),
+    []
+  );
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<IFooterMenu>({
+  } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       ...defaultPropValues,
@@ -57,18 +58,19 @@ const AddSocialLink: React.FC<AddBottomMenuProps> = ({
         ...defaultValues,
       });
     }
-  }, [isOpen, reset]); // Only depend on isOpen and reset
+  }, [defaultPropValues, defaultValues, isOpen, reset]); // Only depend on isOpen and reset
 
-  const onSubmit = (data: IFooterMenu) => {
+  const onSubmit = (data: ISocialLink) => {
     console.log("Form data being submitted:", data);
     onSubmitHandler(data);
   };
 
-  const TitleOptions = [{ label: "Facebook", value: "facebook" },
-    {label: "Instagram", value: "instagram"},
-{label: "Linkedin", value: "linkedin"},
-{label: "Twitter", value: "twitter"}];
-
+  const TitleOptions = [
+    { label: "Facebook", value: "facebook" },
+    { label: "Instagram", value: "instagram" },
+    { label: "Linkedin", value: "linkedin" },
+    { label: "Twitter", value: "twitter" },
+  ];
 
   if (!isOpen) return null;
 
@@ -94,9 +96,7 @@ const AddSocialLink: React.FC<AddBottomMenuProps> = ({
         </div>
 
         <form className={styles.formGrid} onSubmit={handleSubmit(onSubmit)}>
-          
-
-         <div>
+          <div>
             <Select
               label="Title"
               name="title"
@@ -106,7 +106,6 @@ const AddSocialLink: React.FC<AddBottomMenuProps> = ({
               required
             />
           </div>
-
 
           <div>
             <Input
@@ -118,7 +117,6 @@ const AddSocialLink: React.FC<AddBottomMenuProps> = ({
               placeholder="Enter  URL"
             />
           </div>
-
 
           <div className={styles.fullSpan}>
             <div className={styles.formActions}>
@@ -132,7 +130,9 @@ const AddSocialLink: React.FC<AddBottomMenuProps> = ({
               <Button
                 type="submit"
                 buttonType="primary"
-                title={mode === "ADD" ? "Add Social Link" : "Update Social Link"}
+                title={
+                  mode === "ADD" ? "Add Social Link" : "Update Social Link"
+                }
                 isLoading={isLoading}
               />
             </div>

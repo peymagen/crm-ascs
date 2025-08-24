@@ -87,7 +87,7 @@ const SubMenuData: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (formData: any) => {
+  const handleSubmit = async (formData: ISubMenu) => {
     setIsLoading(true);
     try {
       if (mode === "ADD") {
@@ -140,7 +140,7 @@ const SubMenuData: React.FC = () => {
             {
               label: "✏️",
               onClick: (row) => {
-                setDefaultValues(row as RowData);
+                setDefaultValues(row as unknown as ISubMenu);
                 setIsOpen(true);
                 setMode("EDIT");
                 console.log("Edit clicked:", row);
@@ -150,7 +150,7 @@ const SubMenuData: React.FC = () => {
               label: "🗑️",
               onClick: (row) => {
                 setMode("DELETE");
-                setSelectedId((row as RowData).id);
+                setSelectedId((row as unknown as ISubMenu).id ?? null);
                 setIsOpen(true);
                 console.log("Delete clicked:", row);
               },

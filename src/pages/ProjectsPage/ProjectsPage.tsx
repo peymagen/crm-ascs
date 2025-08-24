@@ -10,7 +10,6 @@ const ProjectsPage = () => {
   const { data: mainMenuData, isLoading: mainMenuLoading } =
     useGetMainMenuBySlugQuery(String(id));
 
-  console.log(mainMenuData?.data);
   return (
     <div className={styles.container}>
       {/* Left Column - Projects */}
@@ -18,10 +17,10 @@ const ProjectsPage = () => {
         <div className={styles.leftColumn}>
           <h1 className={styles.mainTitle}>{mainMenuData?.data?.name}</h1>
           <ul className={styles.projectList}>
-            {mainMenuData?.data?.subMenu?.map((project) => (
+            {mainMenuData?.data?.subMenu?.map((project: ISubMenu) => (
               <li key={project.id} className={styles.projectItem}>
                 <Link
-                  to={`/project/${project.slug}`}
+                  to={`/project/${project.url}`}
                   className={styles.projectLink}
                 >
                   {project.name}

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import React, { useEffect } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { motion } from "framer-motion";
@@ -10,9 +10,9 @@ import Input from "../../../components/Input";
 // Validation schema
 const schema = yup.object().shape({
   title: yup.string().required("Title is required"),
-  url: yup.string(),
+  url: yup.string().default(""),
   image: yup
-    .mixed()
+    .mixed<File | FileList | string>()
     .test("fileOrString", "Image is required", (value) => {
       // Allow string (existing image) or FileList (new upload)
       return typeof value === "string" || value instanceof FileList;
@@ -20,18 +20,12 @@ const schema = yup.object().shape({
     .required("Image is required"),
 });
 
-interface FormData {
-  title: string;
-  url: string;
-  image: File;
-}
-
 interface AddSliderMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  defaultValues?: Partial<FormData>;
-  mode: "ADD" | "EDIT";
-  onSubmitHandler: (data: FormData) => void;
+  defaultValues?: Partial<IPortal>;
+  mode: "ADD" | "EDIT" | "DELETE";
+  onSubmitHandler: (data: IPortal) => void;
   isLoading?: boolean;
 }
 
@@ -49,12 +43,12 @@ const AddOtherPortal: React.FC<AddSliderMenuProps> = ({
     formState: { errors },
     reset,
     watch,
-  } = useForm<FormData>({
+  } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       title: "",
-      url: "",
-      image: undefined as unknown as File,
+      url: defaultValues.url ?? "",
+      image: "",
       ...defaultValues,
     },
   });
@@ -63,23 +57,25 @@ const AddOtherPortal: React.FC<AddSliderMenuProps> = ({
     if (isOpen) {
       reset({
         title: "",
-        url: "",
-        image: undefined as unknown as File,
+        url: defaultValues.url ?? "",
+        image: "",
         ...defaultValues,
       });
     }
   }, [isOpen, defaultValues, reset]);
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit: SubmitHandler<IPortal> = (data: IPortal) => {
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("url", data.url);
     if (data.image && data.image instanceof FileList && data.image.length > 0) {
       formData.append("image", data.image[0]);
+    } else if (typeof data.image === "string" && data.image) {
+      formData.append("image", data.image);
     } else {
       console.log(" No image provided, skipping image append");
     }
-    onSubmitHandler(formData as any);
+    onSubmitHandler(formData as unknown as IPortal);
   };
 
   if (!isOpen) return null;

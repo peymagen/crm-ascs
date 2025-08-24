@@ -15,7 +15,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import Home from "./pages/home";
 import OpportunityData from "./pages/admin/Opportunities";
 import ListBottomData from "./pages/admin/BottomMenu";
-import TelephonicData from "../src/pages/admin/telephonic";
+import TelephonicData from "./pages/admin/Telephonic";
 import ListSlider from "./pages/admin/Slider";
 
 import GalleryCategory from "../src/pages/admin/GalleryCategory";
@@ -27,7 +27,7 @@ import QuickMenuData from "./pages/admin/Quicklink";
 import SubMenuData from "./pages/admin/SubMenu";
 import ListPage from "./pages/admin/ListPage";
 import Faqs from "./pages/faq";
-import SocialLinkData from "./pages/admin/socialLink";
+import SocialLinkData from "./pages/admin/SocialLink";
 import PortalData from "./pages/admin/OtherPortal";
 import ProjectsPage from "./pages/ProjectsPage/ProjectsPage";
 

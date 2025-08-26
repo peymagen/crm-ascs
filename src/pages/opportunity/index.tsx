@@ -5,7 +5,11 @@ import { useGetOpportunityTypeQuery } from "../../store/services/opportunities.a
 
 const Opportunity = () => {
   const { type } = useParams();
-  const { data, isLoading } = useGetOpportunityTypeQuery(type?.toUpperCase());
+  const { data, isLoading } = useGetOpportunityTypeQuery({
+    limit: 1000,
+    offset: 0,
+    type: type?.toUpperCase(),
+  });
   return (
     <div className={styles.container}>
       <motion.div
@@ -14,7 +18,7 @@ const Opportunity = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h1 className={styles.galleryTitle}>{type?.toUpperCase()}:</h1>
+        <h1 className={styles.title}>{type?.toUpperCase()}:</h1>
       </motion.div>
       {!isLoading && (
         <div className={styles.links}>

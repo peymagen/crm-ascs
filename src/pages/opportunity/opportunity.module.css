@@ -7,10 +7,22 @@
   text-decoration: none;
   color: black;
 }
+.links :hover {
+  color: var(--secondary-color);
+}
 .container {
   max-width: 1480px;
   margin: 0 auto;
   padding: 2rem;
   font-family: "Arial", sans-serif;
   min-height: 100vh;
+}
+.title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background-clip: text;
+  line-height: 1.2;
+  text-decoration: underline;
+  color: var(--secondary-color);
 }

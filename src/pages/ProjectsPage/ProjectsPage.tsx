@@ -13,7 +13,7 @@ const ProjectsPage = () => {
   return (
     <div className={styles.container}>
       {/* Left Column - Projects */}
-      {!mainMenuLoading && (
+      {!mainMenuLoading && mainMenuData?.data?.subMenu.length > 0 && (
         <div className={styles.leftColumn}>
           <h1 className={styles.mainTitle}>{mainMenuData?.data?.name}</h1>
           <ul className={styles.projectList}>
@@ -35,10 +35,12 @@ const ProjectsPage = () => {
       {!isLoading && (
         <div className={styles.rightColumn}>
           <h2 className={styles.sectionTitle}>{data?.data?.title || ""}</h2>
-          <img
-            src={import.meta.env.VITE_BACKEND_SERVER + data?.data?.image}
-            alt={data?.data?.title || "Project Image"}
-          />
+          {data?.data?.image && (
+            <img
+              src={import.meta.env.VITE_BACKEND_SERVER + data?.data?.image}
+              alt={data?.data?.title || "Project Image"}
+            />
+          )}
           {data?.data?.description ? (
             <div
               className={styles.divBody}

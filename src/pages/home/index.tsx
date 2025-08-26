@@ -35,7 +35,7 @@ const Home = () => {
                 type="button"
                 key={d.id}
                 title={d.name}
-                buttonType="primary"
+                buttonType="secondaryFill"
               />
             ))}
           </div>
@@ -46,7 +46,7 @@ const Home = () => {
         <div className={styles.mainContent}>
           {!noticeLoading && (
             <div className={styles.card}>
-              <h2 className={styles.cardTitle}>Notice</h2>
+              <h2 className={styles.cardTitle}>Notice & Latest Updates</h2>
               <div className={styles.newsItemsContainer}>
                 {noticeData.data.map((item: IOpportunity, index: number) => (
                   <div className={styles.newsItem} key={index}>
@@ -66,7 +66,13 @@ const Home = () => {
             videoUrl={contentData?.data.videoUrl}
           />
         </div>
-        <div className={styles.contentCard}>{contentData?.data.content}</div>
+
+        <div
+          className={styles.contentCard}
+          dangerouslySetInnerHTML={{
+            __html: contentData?.data.content,
+          }}
+        />
       </div>
     </div>
   );

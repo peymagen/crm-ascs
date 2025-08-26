@@ -13,8 +13,14 @@
   opacity: 0.6;
 }
 
-.primary {
+.primaryFill {
   background-color: var(--primary-color);
+  color: var(--light-text-color);
+  border: none;
+}
+
+.secondaryFill {
+  background-color: var(--secondary-color);
   color: var(--light-text-color);
   border: none;
 }

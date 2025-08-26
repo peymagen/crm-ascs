@@ -1,5 +1,5 @@
 .accessibilityNavbar {
-  background-color: var(--secondary-color);
+  background-color: var(--primary-color);
   padding: 0.5rem;
 }
 
@@ -24,7 +24,7 @@
 }
 
 .accessibilityButton {
-  color: var(--primary-color);
+  color: var(--secondary-color);
   background-color: transparent;
   border: none;
   cursor: pointer;
@@ -36,11 +36,11 @@
 }
 
 .accessibilityButton:hover {
-  text-decoration: underline;
+  background-color: var(--bg-secondary-color);
 }
 
 .accessibilitySeparator {
-  color: var(--primary-color);
+  color: var(--secondary-color);
   margin: 0 2px;
 }
 
@@ -81,6 +81,9 @@
   top: 200px;
 }
 
+.dropdownItem :hover {
+  color: #fff;
+}
 /* Hover and active states */
 .draggableIcon:hover {
   transform: scale(1.05);
@@ -280,7 +283,7 @@
 }
 
 .navItemLink {
-  color: #dc2626;
+  color: var(--secondary-color);
   text-decoration: none;
   padding: 12px 16px;
   display: block;
@@ -296,8 +299,7 @@
 
 .navItemLink:hover,
 .navItemLinkHovered {
-  color: #991b1b;
-  text-decoration: underline;
+  background-color: var(--bg-secondary-color);
 }
 
 .navItemArrow {
@@ -328,11 +330,6 @@
   border-bottom: 1px solid #f0f0f0;
 }
 
-.dropdownItem:hover {
-  background-color: var(--primary-color);
-  color: white;
-}
-
 .dropdownItemLabel {
   font-weight: 500;
   margin-bottom: 2px;
@@ -346,8 +343,8 @@
 }
 
 .mainNavigation {
-  background-color: var(--secondary-color);
-  border-bottom: 2px solid var(--primary-color);
+  background-color: #fff;
+  border-bottom: 2px solid var(--secondary-color);
   position: relative;
   overflow: visible;
 }
@@ -488,7 +485,7 @@
   overflow-x: visible;
   position: relative;
   margin: 0 auto;
-  background-color: var(--secondary-color);
+  place-self: center;
 }
 
 .desktopNavigationContent {
@@ -498,7 +495,7 @@
   font-size: 14px;
   font-family: sans-serif;
   white-space: nowrap;
-  min-width: max-content;
+  flex-wrap: wrap;
   position: relative;
 }
 
@@ -559,7 +556,7 @@
 .redBorder {
   width: 100%;
   height: 4px;
-  background-color: var(--primary-color);
+  background-color: var(--secondary-color);
 }
 
 /* Media Queries */
@@ -573,11 +570,6 @@
   .mobileOnly {
     display: none !important;
   }
-}
-
-/* Smooth scrolling for anchor links */
-html {
-  scroll-behavior: smooth;
 }
 
 /* Better touch targets for mobile */

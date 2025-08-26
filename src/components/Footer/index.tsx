@@ -1,8 +1,6 @@
 import React from "react";
 import styles from "./footer.module.css";
 
-import logoUrls from "./logos.json";
-
 // Font Awesome Icons
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { useGetSettingByIdQuery } from "../../store/services/setting.api";
@@ -32,7 +30,7 @@ const Footer: React.FC = () => {
   return (
     <>
       {/* Top Section with Logos */}
-      {!portalLoading && (
+      {!portalLoading && portal.data.length > 0 && (
         <div className={styles.footerTopContainer}>
           <div className={styles.footerTopMiddle}>
             <div className={styles.footerTopCarousel}>
@@ -47,25 +45,6 @@ const Footer: React.FC = () => {
                   </a>
                 </div>
               ))}
-
-              <div className={styles.footerTopCarouselItem}>
-                <a href={logoUrls.portal.link}>
-                  <img
-                    className={styles.footerTopPortalLogo}
-                    src={logoUrls.portal.url}
-                    alt="Portal Logo"
-                  />
-                </a>
-              </div>
-              <div className={styles.footerTopCarouselItem}>
-                <a href={logoUrls.digitalIndia.link}>
-                  <img
-                    className={styles.footerTopDiLogo}
-                    src={logoUrls.digitalIndia.url}
-                    alt="Digital India Logo"
-                  />
-                </a>
-              </div>
             </div>
           </div>
         </div>
@@ -123,6 +102,15 @@ const Footer: React.FC = () => {
               </div>
             </div>
           )}
+          <div>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3428.5896177641384!2d76.77336707631628!3d30.758026984408346!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390fed77c9555555%3A0x277f2d00266754d2!2sChandigarh%20State%20AIDS%20Control%20Society!5e0!3m2!1sen!2sin!4v1756238952675!5m2!1sen!2sin"
+              width="350"
+              height="300"
+              style={{ border: 0 }}
+              loading="lazy"
+            ></iframe>
+          </div>
         </div>
 
         <hr className={styles.footerDivider} />

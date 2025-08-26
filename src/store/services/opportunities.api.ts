@@ -21,7 +21,8 @@ export const apiOpportunities = createApi({
       query: () => "opportunities/notice",
     }),
     getOpportunityType: builder.query({
-      query: (type) => `opportunities/type/${type}`,
+      query: ({ limit = 10, offset = 0, type = "" }) =>
+        `opportunities/type/${type}?limit=${limit}&offset=${offset}`,
     }),
     createOpportunities: builder.mutation({
       query: (newOpportunities) => ({

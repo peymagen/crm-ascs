@@ -17,6 +17,8 @@
   margin-bottom: 1rem;
   background-clip: text;
   line-height: 1.2;
+  text-decoration: underline;
+  color: var(--secondary-color);
 }
 
 .galleryDescription {
@@ -39,7 +41,7 @@
   padding: 0.5rem 1.5rem;
   border-radius: 25px;
   font-weight: 600;
-  color: var(--primary-color);
+  color: var(--secondary-color);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
 }
@@ -52,7 +54,7 @@
   text-align: left;
   margin-bottom: 2.5rem;
   padding: 1rem;
-  background: var(--light-text-color);
+  background: var(--bg-secondary-color);
   border-radius: 15px;
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -65,7 +67,8 @@
   background: linear-gradient(
     135deg,
     var(--primary-color) 0%,
-    rgb(200, 100, 30) 100%
+    var(--secondary-color) 50%,
+    var(--secondary-color) 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -242,7 +245,8 @@
   background: linear-gradient(
     135deg,
     var(--primary-color) 0%,
-    rgb(200, 100, 30) 100%
+    var(--secondary-color) 50%,
+    var(--secondary-color) 100%
   );
   color: white;
   padding: 0.5rem 1rem;
@@ -263,7 +267,8 @@
   background: linear-gradient(
     135deg,
     var(--primary-color) 0%,
-    rgb(200, 100, 30) 100%
+    var(--secondary-color) 50%,
+    var(--secondary-color) 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

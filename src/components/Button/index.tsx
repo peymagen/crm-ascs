@@ -7,14 +7,14 @@ interface ButtonProps {
   onClick?: () => void;
   isLoading?: boolean;
   disabled?: boolean;
-  buttonType?: "primary" | "secondary" | "link";
+  buttonType?: "primaryFill" | "secondary" | "secondaryFill" | "link";
   title: string;
 }
 
 const Button = ({
   type = "button",
   isLoading = false,
-  buttonType = "primary",
+  buttonType = "primaryFill",
   disabled = false,
   title = "",
   onClick = () => {},

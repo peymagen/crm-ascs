@@ -190,7 +190,10 @@ const Gallery: React.FC = () => {
         >
           <div className={styles.eventHeader}>
             <h2 className={styles.eventTitle}>{group.title}</h2>
-            <p className={styles.eventDescription}>{group.description}</p>
+            <div
+              className={styles.eventDescription}
+              dangerouslySetInnerHTML={{ __html: group.description }}
+            />
 
             <motion.div
               className={styles.galleryGrid}
@@ -317,9 +320,13 @@ const Gallery: React.FC = () => {
                     <h2 className={styles.modalImageTitle}>
                       {selectedImage.title}
                     </h2>
-                    <p className={styles.modalImageDescription}>
-                      {selectedImage.description}
-                    </p>
+                    <div
+                      className={styles.modalImageDescription}
+                      dangerouslySetInnerHTML={{
+                        __html: selectedImage.description,
+                      }}
+                    />
+
                     {selectedImage.id && (
                       <div className={styles.modalImageMeta}>
                         <div className={styles.metaItem}>

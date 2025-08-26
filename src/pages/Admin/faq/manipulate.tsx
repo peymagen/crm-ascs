@@ -119,7 +119,7 @@ const AddFaq: React.FC<AddFaq> = ({
               />
               <Button
                 type="submit"
-                buttonType="primary"
+                buttonType="primaryFill"
                 title={mode === "ADD" ? "Add Faq" : "Update Faq"}
                 isLoading={isLoading}
               />

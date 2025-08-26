@@ -125,7 +125,7 @@ const SubMenuData: React.FC = () => {
           <Button
             type="button"
             isLoading={isLoading}
-            buttonType="primary"
+            buttonType="primaryFill"
             title="+ Add New Manu"
             onClick={() => {
               setDefaultValues({});

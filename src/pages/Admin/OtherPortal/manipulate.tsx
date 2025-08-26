@@ -148,7 +148,7 @@ const AddOtherPortal: React.FC<AddSliderMenuProps> = ({
               />
               <Button
                 type="submit"
-                buttonType="primary"
+                buttonType="primaryFill"
                 title={
                   mode === "ADD" ? "Add Other-portal" : "Update Other-portal"
                 }

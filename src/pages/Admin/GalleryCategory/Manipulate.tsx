@@ -117,7 +117,7 @@ const Manipulate: React.FC<Props> = ({
               title={mode === "edit" ? "Save Changes" : "Add Category"}
               type="submit"
               isLoading={isSubmitting}
-              buttonType="primary"
+              buttonType="primaryFill"
             />
           </div>
         </form>

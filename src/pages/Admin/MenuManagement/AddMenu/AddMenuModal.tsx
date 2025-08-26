@@ -173,7 +173,7 @@ export default function AddMenuModal({
               title={mode === "EDIT" ? "Update Menu" : "Add Menu"}
               type="submit"
               isLoading={isSubmitting || isLoading}
-              buttonType="primary"
+              buttonType="primaryFill"
             />
           </div>
         </form>

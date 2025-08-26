@@ -196,7 +196,7 @@ const OpportunityData: React.FC = () => {
             <Button
               type="button"
               isLoading={isLoadingState}
-              buttonType="primary"
+              buttonType="primaryFill"
               title="+ Add New Opportunity"
               onClick={() => {
                 setDefaultValues({});

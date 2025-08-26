@@ -123,7 +123,7 @@ const PortalData: React.FC = () => {
           <Button
             type="button"
             isLoading={isLoading}
-            buttonType="primary"
+            buttonType="primaryFill"
             title="+ Add Other-portal"
             onClick={() => {
               setDefaultValues({});

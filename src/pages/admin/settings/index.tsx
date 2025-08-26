@@ -128,7 +128,7 @@ const ListSetting: React.FC = () => {
           <Button
             type="button"
             isLoading={dataLoading}
-            buttonType="primary"
+            buttonType="primaryFill"
             title="+ Add New Setting"
             onClick={() => {
               setDefaultValues({});

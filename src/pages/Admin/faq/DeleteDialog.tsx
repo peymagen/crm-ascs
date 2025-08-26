@@ -1,6 +1,3 @@
-
-
-
 import React from "react";
 import { motion } from "framer-motion";
 import styles from "./faq.module.css";
@@ -15,7 +12,7 @@ interface DeleteDialogProps {
   isLoading?: boolean;
 }
 
-const DeleteDialog: React.FC<DeleteDialogProps> = ({   
+const DeleteDialog: React.FC<DeleteDialogProps> = ({
   isOpen,
   onClose,
   onConfirm,
@@ -36,11 +33,11 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
         <div className={styles.dialogHeader}>
           <h2 className={styles.dialogTitle}>{title}</h2>
         </div>
-        
+
         <div className={styles.dialogContent}>
           <p className={styles.dialogMessage}>{message}</p>
         </div>
-        
+
         <div className={styles.dialogActions}>
           <Button
             type="button"
@@ -52,7 +49,7 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
           <Button
             type="button"
             onClick={onConfirm}
-            buttonType="primary"
+            buttonType="primaryFill"
             title="Delete"
             isLoading={isLoading}
           />

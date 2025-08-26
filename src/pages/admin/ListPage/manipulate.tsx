@@ -230,7 +230,7 @@ const ManipulateListPage: React.FC<ManipulateListPageProps> = ({
               />
               <Button
                 type="submit"
-                buttonType="primary"
+                buttonType="primaryFill"
                 title={mode === "ADD" ? "Create" : "Update"}
                 isLoading={isLoading}
               />

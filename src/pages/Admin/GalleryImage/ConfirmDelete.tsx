@@ -22,7 +22,7 @@ const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({
         {message && <p className={styles.modalMessage}>{message}</p>}
         <div className={styles.actions}>
           <Button title="Cancel" buttonType="secondary" onClick={onCancel} />
-          <Button title="Delete" buttonType="primary" onClick={onConfirm} />
+          <Button title="Delete" buttonType="primaryFill" onClick={onConfirm} />
         </div>
       </div>
     </div>

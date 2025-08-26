@@ -130,7 +130,7 @@ const GalleryImageManagement: React.FC = () => {
         <h1 className={styles.title}>Gallery Images</h1>
         <Button
           title="+ Add Image"
-          buttonType="primary"
+          buttonType="primaryFill"
           onClick={() => setModalData({ mode: "add" })}
           disabled={isLoadingState}
         />

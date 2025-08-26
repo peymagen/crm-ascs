@@ -191,7 +191,7 @@ const AddBottomMenu: React.FC<AddBottomMenuProps> = ({
               />
               <Button
                 type="submit"
-                buttonType="primary"
+                buttonType="primaryFill"
                 title={mode === "ADD" ? "Add Menu" : "Update Menu"}
                 isLoading={isLoading}
               />

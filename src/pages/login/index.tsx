@@ -145,7 +145,7 @@ const Login: React.FC = () => {
                   <Button
                     type="submit"
                     isLoading={isLoading}
-                    buttonType="primary"
+                    buttonType="primaryFill"
                     title="Sign In"
                   />
                 </form>
@@ -188,7 +188,7 @@ const Login: React.FC = () => {
                       <Button
                         type="submit"
                         isLoading={isLoading}
-                        buttonType="primary"
+                        buttonType="primaryFill"
                         title="Send Reset Link"
                       />
                     </motion.div>
@@ -196,7 +196,7 @@ const Login: React.FC = () => {
                 ) : (
                   <Button
                     type="button"
-                    buttonType="primary"
+                    buttonType="primaryFill"
                     title="Return to Login"
                     onClick={() => {
                       setShowForgotPassword(false);

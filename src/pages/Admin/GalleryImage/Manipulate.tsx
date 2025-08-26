@@ -187,7 +187,7 @@ const Manipulate: React.FC<Props> = ({
                 title={mode === "EDIT" ? "Save Changes" : "Add Image"}
                 type="submit"
                 isLoading={isLoading}
-                buttonType="primary"
+                buttonType="primaryFill"
               />
             </div>
           </form>

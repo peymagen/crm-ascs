@@ -140,7 +140,7 @@ const MenuManagement: React.FC = () => {
           title="+ Add New Menu"
           type="button"
           onClick={handleOpenAdd}
-          buttonType="primary"
+          buttonType="primaryFill"
         />
       </div>
 

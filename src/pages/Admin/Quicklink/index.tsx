@@ -123,7 +123,7 @@ const QuickMenuData: React.FC = () => {
           <Button
             type="button"
             isLoading={isLoading}
-            buttonType="primary"
+            buttonType="primaryFill"
             title="+ Add New Menu"
             onClick={() => {
               setDefaultValues({});

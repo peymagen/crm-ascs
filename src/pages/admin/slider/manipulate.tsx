@@ -152,7 +152,7 @@ const AddSlider: React.FC<AddSliderMenuProps> = ({
               />
               <Button
                 type="submit"
-                buttonType="primary"
+                buttonType="primaryFill"
                 title={mode === "ADD" ? "Add Slider" : "Update Slider"}
                 isLoading={isLoading}
               />

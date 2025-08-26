@@ -190,7 +190,7 @@ const AddQuickMenu: React.FC<AddQuickLink> = ({
               />
               <Button
                 type="submit"
-                buttonType="primary"
+                buttonType="primaryFill"
                 title={mode === "ADD" ? "Add Menu" : "Update Menu"}
                 isLoading={isLoading}
               />

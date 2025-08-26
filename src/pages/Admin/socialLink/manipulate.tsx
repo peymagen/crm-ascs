@@ -129,7 +129,7 @@ const AddSocialLink: React.FC<AddSocialLink> = ({
               />
               <Button
                 type="submit"
-                buttonType="primary"
+                buttonType="primaryFill"
                 title={
                   mode === "ADD" ? "Add Social Link" : "Update Social Link"
                 }

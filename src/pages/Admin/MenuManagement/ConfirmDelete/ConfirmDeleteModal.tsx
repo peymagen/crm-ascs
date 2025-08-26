@@ -29,7 +29,7 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
             title={"Delete"}
             type="button"
             onClick={onConfirm}
-            buttonType="primary"
+            buttonType="primaryFill"
           />
         </div>
       </div>

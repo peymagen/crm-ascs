@@ -43,10 +43,10 @@ const AccessibilityNavbar: React.FC = () => {
     )}px`;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleLanguageChange = (language: "hindi" | "english") => {
-    console.log(`Language changed to: ${language}`);
-  };
+  // // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // const handleLanguageChange = (language: "hindi" | "english") => {
+  //   console.log(`Language changed to: ${language}`);
+  // };
 
   return (
     <nav className={styles.accessibilityNavbar}>

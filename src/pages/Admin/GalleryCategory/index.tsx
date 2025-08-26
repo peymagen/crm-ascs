@@ -135,7 +135,7 @@ const GalleryCategory: React.FC = () => {
           <h1 className={styles.title}>Gallery Categories</h1>
           <Button
             title="+ Add Category"
-            buttonType="primary"
+            buttonType="primaryFill"
             onClick={() => setModalData({ mode: "add" })}
             disabled={isMutating}
           />

@@ -49,7 +49,7 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
           <Button
             type="button"
             onClick={onConfirm}
-            buttonType="primary"
+            buttonType="primaryFill"
             title="Delete"
             isLoading={isLoading}
           />

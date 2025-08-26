@@ -222,7 +222,7 @@ const AddSubMenu: React.FC<AddSubMenu> = ({
               />
               <Button
                 type="submit"
-                buttonType="primary"
+                buttonType="primaryFill"
                 title={mode === "ADD" ? "Add SubMenu" : "Update SubMenu"}
                 isLoading={isLoading}
               />

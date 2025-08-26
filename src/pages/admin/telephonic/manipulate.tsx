@@ -158,7 +158,7 @@ const AddTelephonic: React.FC<AddTelephonic> = ({
               />
               <Button
                 type="submit"
-                buttonType="primary"
+                buttonType="primaryFill"
                 title={mode === "ADD" ? "Add Telephone" : "Update Telephone"}
                 isLoading={isLoading}
               />

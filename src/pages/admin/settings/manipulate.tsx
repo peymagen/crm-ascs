@@ -257,7 +257,7 @@ const AddSetting: React.FC<AddSettings> = ({
               />
               <Button
                 type="submit"
-                buttonType="primary"
+                buttonType="primaryFill"
                 title={mode === "ADD" ? "Add Setting" : "Update Setting"}
                 isLoading={isLoading}
               />

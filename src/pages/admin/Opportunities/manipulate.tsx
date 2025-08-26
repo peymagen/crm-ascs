@@ -185,7 +185,7 @@ const AddOpportunity: React.FC<AddOpportunity> = ({
               />
               <Button
                 type="submit"
-                buttonType="primary"
+                buttonType="primaryFill"
                 title={
                   mode === "ADD" ? "Add Opportunity" : "Update Opportunity"
                 }

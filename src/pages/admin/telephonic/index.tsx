@@ -117,7 +117,7 @@ const TelephonicData: React.FC = () => {
           <Button
             type="button"
             isLoading={isLoading}
-            buttonType="primary"
+            buttonType="primaryFill"
             title="+ Add New Telephonic"
             onClick={() => {
               setDefaultValues({});

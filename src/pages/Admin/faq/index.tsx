@@ -120,7 +120,7 @@ const FaqData: React.FC = () => {
           <Button
             type="button"
             isLoading={isLoading}
-            buttonType="primary"
+            buttonType="primaryFill"
             title="+ Add New Faq"
             onClick={() => {
               setDefaultValues({});

@@ -123,7 +123,7 @@ const ListBottomData: React.FC = () => {
           <Button
             type="button"
             isLoading={isLoading}
-            buttonType="primary"
+            buttonType="primaryFill"
             title="+ Add New"
             onClick={() => {
               setDefaultValues({});

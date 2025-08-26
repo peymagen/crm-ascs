@@ -24,7 +24,13 @@ export const apiListpage = createApi({
       query: (id: string) => `/pages/slug/${id}`,
     }),
     getListpage: builder.query({
-      query: () => "pages",
+      query: ({ limit = 10, offset = 0, search = "" }) => {
+        let url = `pages?limit=${limit}&offset=${offset}`;
+        if (search) {
+          url += `&search=${encodeURIComponent(search)}`;
+        }
+        return url;
+      },
     }),
     createListpage: builder.mutation({
       query: (newListpage) => ({

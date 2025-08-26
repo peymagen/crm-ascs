@@ -9,7 +9,13 @@ export const apiSocial = createApi({
       query: (id) => `/social-links/${id}`,
     }),
     getSocial: builder.query({
-      query: () => "social-links",
+      query: ({ limit = 10, offset = 0, search = "" }) => {
+        let url = `social-links?limit=${limit}&offset=${offset}`;
+        if (search) {
+          url += `&search=${encodeURIComponent(search)}`;
+        }
+        return url;
+      },
     }),
     createSocial: builder.mutation({
       query: (newSocial) => ({

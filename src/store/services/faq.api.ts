@@ -9,7 +9,13 @@ export const apiFaq = createApi({
       query: (id) => `/faq/${id}`,
     }),
     getFaq: builder.query({
-      query: () => "faq",
+      query: ({ limit = 10, offset = 0, search = "" }) => {
+        let url = `faq?limit=${limit}&offset=${offset}`;
+        if (search) {
+          url += `&search=${encodeURIComponent(search)}`;
+        }
+        return url;
+      },
     }),
     createFaq: builder.mutation({
       query: (newFaq) => ({
@@ -42,10 +48,10 @@ export const apiFaq = createApi({
 });
 
 export const {
- useCreateFaqMutation,
- useGetFaqByIdQuery,
- useGetFaqQuery,
- useDeleteFaqMutation,
- usePatchFaqMutation,
- useUpdateFaqMutation
+  useCreateFaqMutation,
+  useGetFaqByIdQuery,
+  useGetFaqQuery,
+  useDeleteFaqMutation,
+  usePatchFaqMutation,
+  useUpdateFaqMutation,
 } = apiFaq;

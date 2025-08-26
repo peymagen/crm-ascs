@@ -9,7 +9,13 @@ export const apiSetting = createApi({
       query: (id) => `/setting/${id}`,
     }),
     getSetting: builder.query({
-      query: () => "setting",
+      query: ({ limit = 10, offset = 0, search = "" }) => {
+        let url = `setting?limit=${limit}&offset=${offset}`;
+        if (search) {
+          url += `&search=${encodeURIComponent(search)}`;
+        }
+        return url;
+      },
     }),
     createSetting: builder.mutation({
       query: (newSetting) => ({
@@ -25,7 +31,7 @@ export const apiSetting = createApi({
         body: updatedSetting,
       }),
     }),
-    patchSetting: builder.mutation<IUser, Partial<IUser>>({
+    patchSetting: builder.mutation({
       query: (updatedSetting) => ({
         url: `setting/${updatedSetting.get("id")}`,
         method: "PATCH",

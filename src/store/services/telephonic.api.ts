@@ -9,7 +9,13 @@ export const apiTelephonic = createApi({
       query: (id) => `/telephonic/${id}`,
     }),
     getTelephonic: builder.query({
-      query: () => "telephonic",
+      query: ({ limit = 10, offset = 0, search = "" }) => {
+        let url = `telephonic?limit=${limit}&offset=${offset}`;
+        if (search) {
+          url += `&search=${encodeURIComponent(search)}`;
+        }
+        return url;
+      },
     }),
     createTelephonic: builder.mutation({
       query: (newTelephonic) => ({
@@ -42,11 +48,10 @@ export const apiTelephonic = createApi({
 });
 
 export const {
-    useCreateTelephonicMutation,
-    useGetTelephonicByIdQuery,
-    useGetTelephonicQuery,
-    usePatchTelephonicMutation,
-    useUpdateTelephonicMutation,
-    useDeleteTelephonicMutation
-
+  useCreateTelephonicMutation,
+  useGetTelephonicByIdQuery,
+  useGetTelephonicQuery,
+  usePatchTelephonicMutation,
+  useUpdateTelephonicMutation,
+  useDeleteTelephonicMutation,
 } = apiTelephonic;

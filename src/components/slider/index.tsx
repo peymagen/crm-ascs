@@ -1,17 +1,22 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./Slider.module.css";
 import { useGetSlidersQuery } from "../../store/services/sliders.api";
+import { useGetSettingByIdQuery } from "../../store/services/setting.api";
 
 const Slider: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [isHovered, setIsHovered] = useState<boolean>(false); // New state to track hover status
   const audioRef = useRef<HTMLAudioElement>(null);
   const [sliderData, setSliderData] = useState<ISliders[]>([]);
   const [totalSlides, setTotalSlides] = useState(0);
 
-  const { data: sliders, isLoading: sliderLoading } =
-    useGetSlidersQuery(undefined);
+  const { data: sliders, isLoading: sliderLoading } = useGetSlidersQuery({
+    limit: 100,
+    offset: 0,
+  });
+  const { data: contentData, isLoading: contentLoading } =
+    useGetSettingByIdQuery(1);
 
   useEffect(() => {
     if (!sliderLoading) {
@@ -64,7 +69,7 @@ const Slider: React.FC = () => {
         className={styles.sliderWrapper}
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
-        {sliderData.map((slide) => (
+        {sliderData?.map((slide) => (
           <div key={slide.id} className={styles.slide}>
             <img
               src={
@@ -110,7 +115,15 @@ const Slider: React.FC = () => {
         ))}
       </div>
 
-      <audio ref={audioRef} src={""} loop />
+      {!contentLoading && (
+        <audio
+          ref={audioRef}
+          src={
+            import.meta.env.VITE_BACKEND_SERVER + contentData?.data?.audioUrl
+          }
+          autoPlay
+        />
+      )}
 
       <button
         onClick={handlePlayPause}

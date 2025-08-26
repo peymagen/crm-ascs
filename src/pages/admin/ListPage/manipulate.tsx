@@ -195,7 +195,6 @@ const ManipulateListPage: React.FC<ManipulateListPageProps> = ({
               watch={watch}
               register={register}
               errors={errors}
-              required
             />
           </div>
 

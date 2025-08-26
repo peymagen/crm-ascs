@@ -14,12 +14,6 @@ import {
   useDeleteGalleryImageMutation,
 } from "../../../store/services/galleryImage.api";
 
-export interface IGalleryImage {
-  id: number;
-  ref_id: number;
-  image: string; // stored path or URL
-}
-
 const GalleryImageManagement: React.FC = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -67,7 +61,7 @@ const GalleryImageManagement: React.FC = () => {
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
     try {
-      await deleteImage(deleteTarget.id).unwrap();
+      await deleteImage(deleteTarget?.id ?? 0).unwrap();
       toast.success("Image deleted successfully!");
       setDeleteTarget(null);
       await refetch();
@@ -89,7 +83,8 @@ const GalleryImageManagement: React.FC = () => {
           queryData?.data.map((item) => ({
             id: item.id,
             ref_id: item.ref_id,
-            image: item.image ?? "",
+            title: item.title ?? "",
+            image: typeof item.image === "string" ? item.image : "",
           })) || [],
         total: queryData?.total ?? 0,
       };
@@ -100,9 +95,8 @@ const GalleryImageManagement: React.FC = () => {
   // Memoize columns to prevent unnecessary re-renders
   const columns = useMemo(
     () => [
-      { label: "ID", accessor: "id" },
-
-      { label: "Reference ID", accessor: "ref_id" },
+      { label: "Title", accessor: "title" },
+      { label: "Image", accessor: "image" },
     ],
     []
   );
@@ -129,7 +123,7 @@ const GalleryImageManagement: React.FC = () => {
 
   const isLoadingState =
     isLoading || isAdding || isUpdating || isDeleting || isFetching;
-
+  console.log(columns);
   return (
     <div className={styles.container}>
       <div className={styles.header}>

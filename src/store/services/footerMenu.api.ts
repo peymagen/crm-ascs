@@ -9,7 +9,13 @@ export const apiFooterMenu = createApi({
       query: (id) => `/footer-menu/${id}`,
     }),
     getFooterMenu: builder.query({
-      query: () => "footer-menu",
+      query: ({ limit = 10, offset = 0, search = "" }) => {
+        let url = `footer-menu?limit=${limit}&offset=${offset}`;
+        if (search) {
+          url += `&search=${encodeURIComponent(search)}`;
+        }
+        return url;
+      },
     }),
     createFooterMenu: builder.mutation({
       query: (newFooterMenu) => ({

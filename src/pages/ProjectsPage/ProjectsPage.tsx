@@ -39,7 +39,14 @@ const ProjectsPage = () => {
             src={import.meta.env.VITE_BACKEND_SERVER + data?.data?.image}
             alt={data?.data?.title || "Project Image"}
           />
-          <p>{data?.data?.description || "No Page Found"}</p>
+          {data?.data?.description ? (
+            <div
+              className={styles.divBody}
+              dangerouslySetInnerHTML={{ __html: data?.data?.description }}
+            />
+          ) : (
+            "No Page Found"
+          )}
         </div>
       )}
     </div>

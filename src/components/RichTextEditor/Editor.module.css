@@ -1,41 +1,171 @@
 .formGroup {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
 }
 
 .label {
   display: block;
-  font-size: 1rem;
-  color: var(--dark-text-color);
-  margin: 0;
+  margin-bottom: 0.5rem;
   font-weight: 500;
-}
-
-.input {
-  width: -webkit-fill-available;
-  padding: 0.8rem 1rem;
-  border-radius: 6px;
-  font-size: 1rem;
-  transition: all 0.3s;
-}
-
-.input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(250, 140, 57, 0.2);
-}
-
-.inputError {
-  border-color: #e74c3c;
-}
-
-.errorMessage {
-  color: #e74c3c;
-  font-size: 0.8rem;
-  margin: 0;
+  color: #333;
 }
 
 .required {
-  color: #e74c3c;
-  margin-left: 0.2rem;
-  font-size: 0.8rem;
+  color: #e53935;
+}
+
+.input {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: border-color 0.2s;
+}
+
+.input:focus-within {
+  border-color: #4285f4;
+  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+}
+
+.inputError {
+  border-color: #e53935;
+}
+
+.errorMessage {
+  color: #e53935;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+/* Style for file links */
+.fileLink {
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>')
+    no-repeat right center;
+  padding-right: 18px;
+  background-size: 14px;
+  color: #0066cc;
+  font-weight: 500;
+}
+
+/* Style for different file types */
+.fileLinkPdf {
+  composes: fileLink;
+  color: #e53935;
+}
+
+.fileLinkDoc {
+  composes: fileLink;
+  color: #2c387e;
+}
+
+.fileLinkXls {
+  composes: fileLink;
+  color: #0d8043;
+}
+
+.fileLinkZip {
+  composes: fileLink;
+  color: #f57c00;
+}
+
+/* Custom button styles */
+.customToolbarButtons {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 10px;
+  gap: 8px;
+}
+
+.customToolbarButtons button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.customToolbarButtons button:hover {
+  background: #e5e5e5;
+}
+
+/* Make sure the editor has enough space */
+.editor {
+  min-height: 250px;
+}
+
+/* Image size adjustment form */
+.imageSizeForm {
+  margin-top: 15px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.imageSizeForm h4 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.sizeInputs {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.inputGroup label {
+  font-size: 12px;
+  color: #666;
+}
+
+.inputGroup input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.applyButton {
+  padding: 8px 16px;
+  background: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.applyButton:hover {
+  background: #3367d6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sizeInputs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .applyButton {
+    align-self: flex-start;
+  }
+}
+
+/* CKEditor overrides */
+.ckEditor :global(.ck-editor__editable) {
+  min-height: 250px;
+}
+
+.ckEditor :global(.ck-content) {
+  min-height: 250px;
 }

@@ -9,7 +9,13 @@ export const apiQuickMenu = createApi({
       query: (id) => `/quick-menu/${id}`,
     }),
     getQuickMenu: builder.query({
-      query: () => "quick-menu",
+      query: ({ limit = 10, offset = 0, search = "" }) => {
+        let url = `quick-menu?limit=${limit}&offset=${offset}`;
+        if (search) {
+          url += `&search=${encodeURIComponent(search)}`;
+        }
+        return url;
+      },
     }),
     createQuickMenu: builder.mutation({
       query: (newQuickMenu) => ({

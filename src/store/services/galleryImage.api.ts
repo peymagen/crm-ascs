@@ -1,7 +1,8 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "./api";
 
-export interface GalleryImage {
+interface IGalleryImage {
+  title: string;
   id: number;
   ref_id: number;
   image: string; // stored path or URL
@@ -15,10 +16,10 @@ interface PaginatedResponse<T> {
 export const galleryImageApi = createApi({
   reducerPath: "galleryImageApi",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["GalleryImage"],
+  tagTypes: ["IGalleryImage"],
   endpoints: (builder) => ({
     getGalleryImages: builder.query<
-      PaginatedResponse<GalleryImage>,
+      PaginatedResponse<IGalleryImage>,
       { limit?: number; offset?: number; search?: string } | void
     >({
       query: ({ limit = 10, offset = 0, search = "" } = {}) => {
@@ -30,22 +31,22 @@ export const galleryImageApi = createApi({
         result?.data?.length
           ? [
               ...result.data.map(({ id }) => ({
-                type: "GalleryImage" as const,
+                type: "IGalleryImage" as const,
                 id,
               })),
-              { type: "GalleryImage", id: "LIST" },
+              { type: "IGalleryImage", id: "LIST" },
             ]
-          : [{ type: "GalleryImage", id: "LIST" }],
+          : [{ type: "IGalleryImage", id: "LIST" }],
     }),
 
-    getGalleryImage: builder.query<GalleryImage, number>({
+    getGalleryImage: builder.query<IGalleryImage, number>({
       query: (id) => ({ url: `gallery-image/${id}`, method: "GET" }),
     }),
-    getGalleryList: builder.query<GalleryImage, number>({
+    getGalleryList: builder.query<IGalleryImage, number>({
       query: () => ({ url: `gallery-image/list`, method: "GET" }),
     }),
 
-    addGalleryImage: builder.mutation<GalleryImage, FormData>({
+    addGalleryImage: builder.mutation<IGalleryImage, FormData>({
       query: (formData) => ({
         url: "gallery-image",
         method: "POST",
@@ -54,7 +55,7 @@ export const galleryImageApi = createApi({
     }),
 
     updateGalleryImage: builder.mutation<
-      GalleryImage,
+      IGalleryImage,
       { id: number; body: FormData }
     >({
       query: ({ id, body }) => ({

@@ -75,6 +75,8 @@ const AddSlider: React.FC<AddSliderMenuProps> = ({
     } else if (typeof values.image === "string") {
       formData.append("image", values.image);
     }
+    formData.append("title", values.title);
+    formData.append("description", values.description);
 
     onSubmit(formData as unknown as ISliders);
   };

@@ -79,7 +79,7 @@
   font-weight: 600;
   cursor: not-allowed;
   transition: all 0.2s;
-  background-color: var(--secondary-color);
+  background-color: var(--bg-secondary-color);
   border: none;
 }
 .exportButtons button {

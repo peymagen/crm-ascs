@@ -19,6 +19,8 @@ import {
   MdShare,
 } from "react-icons/md";
 import { useGetSettingByIdQuery } from "../../store/services/setting.api";
+import { useDispatch } from "react-redux";
+import { resetTokens } from "../../store/reducers/authReducer";
 
 type DropdownItem = {
   label: string;
@@ -29,6 +31,7 @@ type NavItem = {
   icon: ReactElement;
   label: string;
   link?: string;
+  click?: () => void;
   dropdown?: DropdownItem[];
 };
 
@@ -69,11 +72,6 @@ const navItems: NavItem[] = [
   { icon: <MdHelp />, label: "FaQ's", link: "/admin/faq" },
 ];
 
-const secondaryNav: NavItem[] = [
-  { icon: <MdSettings />, label: "Setting", link: "/admin/setting" },
-  { icon: <MdLogout />, label: "Sign Out", link: "#" },
-];
-
 interface SidebarProps {
   children: ReactElement;
 }
@@ -86,6 +84,8 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading } = useGetSettingByIdQuery(1);
+
+  const dispatch = useDispatch();
 
   // Detect mobile
   useEffect(() => {
@@ -129,6 +129,16 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
     if (isMobile) setSidebarVisible(false);
     setOpenDropdown(null);
   };
+
+  const logOut = () => {
+    dispatch(resetTokens());
+    closeSidebar();
+  };
+
+  const secondaryNav: NavItem[] = [
+    { icon: <MdSettings />, label: "Setting", link: "/admin/setting" },
+    { icon: <MdLogout />, label: "Sign Out", click: logOut },
+  ];
 
   return (
     <>
@@ -247,7 +257,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                 <Link
                   to={item.link || "#"}
                   className={styles.navLink}
-                  onClick={closeSidebar}
+                  onClick={item.click || closeSidebar}
                 >
                   <span>{item.icon}</span>
                   <span className={styles.navLabel}>{item.label}</span>

@@ -9,7 +9,13 @@ export const apiSliders = createApi({
       query: (id) => `sliders/${id}`,
     }),
     getSliders: builder.query({
-      query: () => "sliders",
+      query: ({ limit = 10, offset = 0, search = "" }) => {
+        let url = `sliders?limit=${limit}&offset=${offset}`;
+        if (search) {
+          url += `&search=${encodeURIComponent(search)}`;
+        }
+        return url;
+      },
     }),
     createSliders: builder.mutation({
       query: (newSliders) => ({

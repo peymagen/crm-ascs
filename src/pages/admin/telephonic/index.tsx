@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import AddTelephonic from "./manipulate";
+import AddTelephonic from "./Manipulate";
 import { DataTable } from "../../../components/DataTable";
 import Button from "../../../components/Button";
 import styles from "./submenu.module.css";

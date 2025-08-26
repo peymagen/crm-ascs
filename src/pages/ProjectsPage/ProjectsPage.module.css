@@ -142,3 +142,25 @@
 .linkList a:hover {
   background: #f1f1f1; /* Hover pe halka gray */
 }
+
+.divBody table {
+  width: 100%;
+  border-collapse: collapse; /* Collapses adjacent borders into a single border */
+}
+.divBody blockquote {
+  color: var(--secondary-color);
+}
+.divBody thead {
+  background-color: var(--bg-secondary-color);
+}
+.divBody figure {
+  overflow-x: auto;
+  width: 100%;
+  margin: 0;
+}
+.divBody table,
+.divBody th,
+.divBody td {
+  border: 1px solid black;
+  padding: 5px;
+}

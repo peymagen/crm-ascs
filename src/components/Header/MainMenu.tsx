@@ -4,6 +4,18 @@ import { useGetMainMenuAllQuery } from "../../store/services/mainMenu.api";
 import { Link, useNavigate } from "react-router-dom";
 import NavItem from "./NavItem";
 
+interface IDropMenu {
+  label: string;
+  href: string;
+  target: string;
+}
+interface IParentMenu {
+  id: number;
+  label: string;
+  href: string;
+  target: string;
+  children: IDropMenu[];
+}
 const MainNavigation: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -35,17 +47,17 @@ const MainNavigation: React.FC = () => {
   if (isError || !navItemsData)
     return <nav className={styles.mainNavigation}>Error loading menu</nav>;
 
-  const navItems = navItemsData.data.map((item: any) => ({
+  const navItems = navItemsData.data.map((item: IMenus) => ({
     id: item.id,
     label: item.name,
     href: item.other_url || item.url || "#",
     target: item.target || "_self",
     children:
       item.subMenu.length > 0
-        ? item.subMenu.map((child: any) => ({
+        ? item.subMenu.map((child: ISubMenu) => ({
             label: child.name,
             href: child.other_url || child.url || "#",
-            target: item.target || "_self",
+            target: child.target || "_self",
           }))
         : [],
   }));
@@ -85,7 +97,7 @@ const MainNavigation: React.FC = () => {
             isMenuOpen ? styles.mobileMenuOpen : styles.mobileMenuClosed
           } ${isMenuOpen ? styles.mobileMenuVisible : ""}`}
         >
-          {navItems.map((item) => (
+          {navItems.map((item: IParentMenu) => (
             <div key={item.id}>
               <div
                 className={`${styles.mobileMenuItem}`}
@@ -110,16 +122,19 @@ const MainNavigation: React.FC = () => {
 
               {mobileOpenDropdown === item.id && item.children.length > 0 && (
                 <div className={styles.mobileDropdownItems}>
-                  {item.children.map((dropdownItem, dropdownIndex) => (
-                    <Link
-                      to={dropdownItem.href}
-                      key={dropdownIndex}
-                      className={styles.mobileDropdownItem}
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {dropdownItem.label}
-                    </Link>
-                  ))}
+                  {item.children.map(
+                    (dropdownItem: IDropMenu, dropdownIndex: number) => (
+                      <Link
+                        to={dropdownItem.href}
+                        key={dropdownIndex}
+                        className={styles.mobileDropdownItem}
+                        onClick={() => setIsMenuOpen(false)}
+                        target={dropdownItem.target}
+                      >
+                        {dropdownItem.label}
+                      </Link>
+                    )
+                  )}
                 </div>
               )}
             </div>
@@ -134,7 +149,7 @@ const MainNavigation: React.FC = () => {
     <nav id="navigation" className={`${styles.mainNavigation} main-navigation`}>
       <div className={styles.desktopNavigation}>
         <div className={styles.desktopNavigationContent}>
-          {navItems.map((item) => (
+          {navItems.map((item: IParentMenu) => (
             <NavItem
               key={item.id}
               label={item.label}

@@ -9,7 +9,13 @@ export const apiPortal = createApi({
       query: (id) => `/other-portal/${id}`,
     }),
     getPortal: builder.query({
-      query: () => "other-portal",
+      query: ({ limit = 10, offset = 0, search = "" }) => {
+        let url = `other-portal?limit=${limit}&offset=${offset}`;
+        if (search) {
+          url += `&search=${encodeURIComponent(search)}`;
+        }
+        return url;
+      },
     }),
     createPortal: builder.mutation({
       query: (newPortal) => ({
@@ -25,7 +31,7 @@ export const apiPortal = createApi({
         body: updatedPortal,
       }),
     }),
-    patchPortal: builder.mutation<IUser, Partial<IUser>>({
+    patchPortal: builder.mutation({
       query: (updatedPortal) => ({
         url: `other-portal/${updatedPortal.get("id")}`,
         method: "PATCH",

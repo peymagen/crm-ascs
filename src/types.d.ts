@@ -9,7 +9,19 @@ declare module "*.module.css" {
   const classes: { [key: string]: string };
   export default classes;
 }
+// Add this to your global types (e.g., src/types/ckeditor.d.ts)
+declare module "@ckeditor/ckeditor5-build-classic" {
+  const ClassicEditorBuild: {
+    create(
+      elementOrData: HTMLElement | string | Record<string, unknown>,
+      config?: Record<string, unknown>
+    ): Promise<import("@ckeditor/ckeditor5-core").Editor>;
+    EditorWatchdog?: unknown;
+    ContextWatchdog?: unknown;
+  };
 
+  export default ClassicEditorBuild;
+}
 interface Base {
   id?: number;
   status?: number;
@@ -39,10 +51,13 @@ interface IGalleryCategory extends Base {
 
 interface IGalleryImage extends Base {
   ref_id: number;
+  title?: string;
+  ref_id: number;
   image: File | FileList | string; // stored path or URL
 }
 interface IGalleryItem extends Base {
   title: string;
+  ref_id: string;
   description: string;
   images: IGalleryImage[];
 }
@@ -68,16 +83,6 @@ interface IResponse {
   };
   message: string;
   success: boolean;
-}
-
-interface IGalleryItem {
-  id: number;
-  ref_id: string;
-  image: string;
-  title?: string;
-  description?: string;
-  created_at?: string;
-  updated_at?: string;
 }
 
 interface IGalleryResponse {
@@ -130,7 +135,15 @@ interface ISubMenu extends Base {
   sorting_order?: number;
   lang?: string;
 }
-
+interface IMenus extends Base {
+  name: string;
+  url?: string;
+  other_url?: string;
+  target?: string;
+  sorting_order?: number;
+  lang?: string;
+  subMenu: ISubMenu[];
+}
 interface IOpportunity extends Base {
   get(arg0: string): unknown;
   title: string;

@@ -47,8 +47,10 @@ const SubMenuData: React.FC = () => {
 
   const columns = useMemo(
     () => [
+      { label: "Main Menu", accessor: "main_menu" },
       { label: "Menu Name", accessor: "name" },
       { label: "Path / URL", accessor: "url" },
+      { label: "Other Path / URL", accessor: "other_url" },
       { label: "Target", accessor: "target" },
       { label: "Order", accessor: "sorting_order" },
     ],

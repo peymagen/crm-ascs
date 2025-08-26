@@ -9,10 +9,19 @@ export const apiOpportunities = createApi({
       query: (id) => `/opportunities/${id}`,
     }),
     getOpportunities: builder.query({
-      query: () => "opportunities",
+      query: ({ limit = 10, offset = 0, search = "" }) => {
+        let url = `opportunities?limit=${limit}&offset=${offset}`;
+        if (search) {
+          url += `&search=${encodeURIComponent(search)}`;
+        }
+        return url;
+      },
     }),
     getNotice: builder.query({
       query: () => "opportunities/notice",
+    }),
+    getOpportunityType: builder.query({
+      query: (type) => `opportunities/type/${type}`,
     }),
     createOpportunities: builder.mutation({
       query: (newOpportunities) => ({
@@ -28,7 +37,7 @@ export const apiOpportunities = createApi({
         body: updatedOpportunities.body,
       }),
     }),
-    patchOpportunities: builder.mutation<IUser, Partial<IUser>>({
+    patchOpportunities: builder.mutation({
       query: (updatedOpportunities) => ({
         url: `opportunities/${updatedOpportunities.id}`,
         method: "PATCH",
@@ -49,6 +58,7 @@ export const {
   useGetOpportunitiesByIdQuery,
   useGetOpportunitiesQuery,
   useGetNoticeQuery,
+  useGetOpportunityTypeQuery,
   usePatchOpportunitiesMutation,
   useUpdateOpportunitiesMutation,
   useDeleteOpportunitiesMutation,

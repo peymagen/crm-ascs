@@ -36,7 +36,7 @@ const Footer: React.FC = () => {
         <div className={styles.footerTopContainer}>
           <div className={styles.footerTopMiddle}>
             <div className={styles.footerTopCarousel}>
-              {portal.data.map((data) => (
+              {portal.data.map((data: IPortal) => (
                 <div className={styles.footerTopCarouselItem}>
                   <a href={data.url}>
                     <img
@@ -107,7 +107,7 @@ const Footer: React.FC = () => {
             >
               <p className={styles.footerBottomSectionHeader}>Follow Us</p>
               <div className={styles.footerSocialIcons}>
-                {social.data.map((item) => (
+                {social.data.map((item: ISocialLink) => (
                   <a
                     key={item.id}
                     href={item.url}

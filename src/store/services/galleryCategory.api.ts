@@ -44,7 +44,6 @@ export const galleryCategoryApi = createApi({
     // GET /gallery-category/:id
     getGalleryCategory: builder.query<GalleryCategory, number>({
       query: (id) => ({ url: `gallery-category/${id}`, method: "GET" }),
-      providesTags: (result, error, id) => [{ type: "GalleryCategory", id }],
     }),
 
     // POST /gallery-category
@@ -57,7 +56,6 @@ export const galleryCategoryApi = createApi({
         method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: "GalleryCategory", id: "LIST" }],
     }),
 
     // PUT /gallery-category/:id
@@ -70,19 +68,11 @@ export const galleryCategoryApi = createApi({
         method: "PUT",
         body,
       }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: "GalleryCategory", id },
-        { type: "GalleryCategory", id: "LIST" },
-      ],
     }),
 
     // DELETE /gallery-category/:id
     deleteGalleryCategory: builder.mutation<void, number>({
       query: (id) => ({ url: `gallery-category/${id}`, method: "DELETE" }),
-      invalidatesTags: (result, error, id) => [
-        { type: "GalleryCategory", id },
-        { type: "GalleryCategory", id: "LIST" },
-      ],
     }),
   }),
 });

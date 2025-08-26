@@ -18,7 +18,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   return (
     <div className={styles.videoContainer}>
       <video
-        src={videoUrl}
+        src={import.meta.env.VITE_BACKEND_SERVER + videoUrl}
         controls
         autoPlay={false}
         muted

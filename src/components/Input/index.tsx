@@ -84,7 +84,7 @@ const Input = <T extends FieldValues = FieldValues>({
     if (accept?.includes("image") || /\.(jpeg|jpg|png|gif)$/i.test(url)) {
       return (
         <img
-          src={url}
+          src={import.meta.env.VITE_BACKEND_SERVER + url}
           alt="preview"
           className="w-32 h-32 object-cover rounded"
         />
@@ -92,17 +92,29 @@ const Input = <T extends FieldValues = FieldValues>({
     }
 
     if (accept?.includes("video") || /\.(mp4|webm|ogg)$/i.test(url)) {
-      return <video src={url} controls className="w-48 h-32 rounded" />;
+      return (
+        <video
+          src={import.meta.env.VITE_BACKEND_SERVER + url}
+          controls
+          className="w-48 h-32 rounded"
+        />
+      );
     }
 
     if (accept?.includes("audio") || /\.(mp3|wav|ogg)$/i.test(url)) {
-      return <audio src={url} controls className="mt-2" />;
+      return (
+        <audio
+          src={import.meta.env.VITE_BACKEND_SERVER + url}
+          controls
+          className="mt-2"
+        />
+      );
     }
 
     if (accept?.includes("pdf") || /\.pdf$/i.test(url)) {
       return (
         <a
-          href={url}
+          href={import.meta.env.VITE_BACKEND_SERVER + url}
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-500 underline"

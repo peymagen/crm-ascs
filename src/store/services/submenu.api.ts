@@ -9,7 +9,13 @@ export const apiSubmenu = createApi({
       query: (id) => `/sub-menu/${id}`,
     }),
     getSubmenu: builder.query({
-      query: () => "sub-menu",
+      query: ({ limit = 10, offset = 0, search = "" }) => {
+        let url = `sub-menu?limit=${limit}&offset=${offset}`;
+        if (search) {
+          url += `&search=${encodeURIComponent(search)}`;
+        }
+        return url;
+      },
     }),
     createSubmenu: builder.mutation({
       query: (newSubmenu) => ({
@@ -42,10 +48,10 @@ export const apiSubmenu = createApi({
 });
 
 export const {
- useCreateSubmenuMutation,
- useGetSubmenuByIdQuery,
- useGetSubmenuQuery,
- useDeleteSubmenuMutation,
- usePatchSubmenuMutation,
- useUpdateSubmenuMutation
+  useCreateSubmenuMutation,
+  useGetSubmenuByIdQuery,
+  useGetSubmenuQuery,
+  useDeleteSubmenuMutation,
+  usePatchSubmenuMutation,
+  useUpdateSubmenuMutation,
 } = apiSubmenu;

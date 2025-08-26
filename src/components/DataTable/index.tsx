@@ -229,19 +229,93 @@ export const DataTable: React.FC<DataTableProps> = ({
                         const value = (row as Record<string, unknown>)[
                           col.accessor
                         ];
-                        if (
-                          typeof value === "string" ||
-                          typeof value === "number" ||
-                          typeof value === "boolean" ||
-                          value === null ||
-                          value === undefined
-                        ) {
-                          return value ?? " -";
+
+                        if (!value) return " -";
+
+                        if (typeof value === "string") {
+                          const lower = value.toLowerCase();
+
+                          // Check for image
+                          if (/\.(jpg|jpeg|png|gif|webp)$/i.test(lower)) {
+                            return (
+                              <img
+                                src={
+                                  import.meta.env.VITE_BACKEND_SERVER + value
+                                }
+                                alt={col.accessor}
+                                style={{ maxWidth: "80px", maxHeight: "80px" }}
+                              />
+                            );
+                          }
+
+                          // Check for video
+                          if (/\.(mp4|webm|ogg)$/i.test(lower)) {
+                            return (
+                              <video
+                                controls
+                                style={{ maxWidth: "120px", maxHeight: "80px" }}
+                              >
+                                <source
+                                  src={
+                                    import.meta.env.VITE_BACKEND_SERVER + value
+                                  }
+                                />
+                                Your browser does not support the video tag.
+                              </video>
+                            );
+                          }
+
+                          // Check for audio
+                          if (/\.(mp3|wav|ogg)$/i.test(lower)) {
+                            return (
+                              <audio controls>
+                                <source
+                                  src={
+                                    import.meta.env.VITE_BACKEND_SERVER + value
+                                  }
+                                />
+                                Your browser does not support the audio tag.
+                              </audio>
+                            );
+                          }
+
+                          // Check for PDF or DOC
+                          if (/\.(pdf|doc|docx)$/i.test(lower)) {
+                            return (
+                              <a
+                                href={
+                                  import.meta.env.VITE_BACKEND_SERVER + value
+                                }
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "6px",
+                                }}
+                              >
+                                📄 {/* PDF/Doc symbol */}
+                                <span>Open Document</span>
+                              </a>
+                            );
+                          }
+
+                          // Otherwise treat as text
+                          return value;
                         }
-                        return JSON.stringify(value) ?? " -";
+
+                        if (
+                          typeof value === "number" ||
+                          typeof value === "boolean"
+                        ) {
+                          return String(value);
+                        }
+
+                        return JSON.stringify(value);
                       })()}
                     </td>
                   ))}
+
                   {actions && (
                     <td>
                       <div className={styles.action}>

@@ -9,7 +9,13 @@ export const apiMainMenu = createApi({
       query: (id) => `/main-menu/${id}`,
     }),
     getMainMenu: builder.query({
-      query: () => "main-menu",
+      query: ({ limit = 10, offset = 0, search = "" }) => {
+        let url = `main-menu?limit=${limit}&offset=${offset}`;
+        if (search) {
+          url += `&search=${encodeURIComponent(search)}`;
+        }
+        return url;
+      },
     }),
     getMainMenuBySlug: builder.query({
       query: (id: string) => `/main-menu/slug/${id}`,

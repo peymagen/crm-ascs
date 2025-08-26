@@ -30,6 +30,7 @@ import Faqs from "./pages/faq";
 import SocialLinkData from "./pages/admin/SocialLink";
 import PortalData from "./pages/admin/OtherPortal";
 import ProjectsPage from "./pages/ProjectsPage/ProjectsPage";
+import Opportunity from "./pages/opportunity";
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
           <Route path="/faq" element={<Faqs />} />
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/page/:id" element={<ProjectsPage />} />
+          <Route path="/opportunity/:type" element={<Opportunity />} />
         </Route>
 
         <Route

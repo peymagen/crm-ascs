@@ -236,7 +236,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                           const lower = value.toLowerCase();
 
                           // Check for image
-                          if (/\.(jpg|jpeg|png|gif|webp)$/i.test(lower)) {
+                          if (/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(lower)) {
                             return (
                               <img
                                 src={
@@ -280,7 +280,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                           }
 
                           // Check for PDF or DOC
-                          if (/\.(pdf|doc|docx)$/i.test(lower)) {
+                          if (/\.(pdf|doc|docx|zip)$/i.test(lower)) {
                             return (
                               <a
                                 href={

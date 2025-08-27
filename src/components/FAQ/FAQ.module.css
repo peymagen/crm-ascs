@@ -63,11 +63,11 @@
 }
 
 .questionButton:hover {
-  background-color: var(--secondary-color);
+  background-color: var(--bg-secondary-color);
 }
 
 .questionButton.active {
-  background-color: var(--secondary-color);
+  background-color: var(--bg-secondary-color);
   border-bottom: 1px solid var(--primary-color);
 }
 

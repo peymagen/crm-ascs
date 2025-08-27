@@ -19,10 +19,7 @@ const ProjectsPage = () => {
           <ul className={styles.projectList}>
             {mainMenuData?.data?.subMenu?.map((project: ISubMenu) => (
               <li key={project.id} className={styles.projectItem}>
-                <Link
-                  to={`/project/${project.url}`}
-                  className={styles.projectLink}
-                >
+                <Link to={`/${project.url}`} className={styles.projectLink}>
                   {project.name}
                 </Link>
               </li>

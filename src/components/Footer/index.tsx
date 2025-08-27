@@ -107,7 +107,7 @@ const Footer: React.FC = () => {
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3428.5896177641384!2d76.77336707631628!3d30.758026984408346!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390fed77c9555555%3A0x277f2d00266754d2!2sChandigarh%20State%20AIDS%20Control%20Society!5e0!3m2!1sen!2sin!4v1756238952675!5m2!1sen!2sin"
               width="350"
               height="300"
-              style={{ border: 0 }}
+              className={styles.map}
               loading="lazy"
             ></iframe>
           </div>
@@ -117,7 +117,7 @@ const Footer: React.FC = () => {
 
         <div className={styles.footerBottomInfo}>
           <div className={styles.footerBottomManufacture}>
-            <p>Content Owned, updated and maintained by </p>
+            <p>Website updated and maintained by </p>
             <a href="http://peymagen.com/" target="_blank" rel="noreferrer">
               Peymagen Informatics & Automation
             </a>

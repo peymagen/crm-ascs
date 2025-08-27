@@ -57,30 +57,11 @@ const OpportunityData: React.FC = () => {
       {
         label: "File URL",
         accessor: "file_url",
-        render: (value: string) =>
-          value ? (
-            <a
-              href={value}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.fileLink}
-              title="View file"
-            >
-              📄 View File
-            </a>
-          ) : (
-            <span className={styles.noFile}>No file</span>
-          ),
       },
       { label: "Type", accessor: "type" },
       {
         label: "Notice",
         accessor: "notice",
-        render: (value: boolean) => (
-          <span className={value ? styles.noticeYes : styles.noticeNo}>
-            {value ? "Yes" : "No"}
-          </span>
-        ),
       },
     ],
     []

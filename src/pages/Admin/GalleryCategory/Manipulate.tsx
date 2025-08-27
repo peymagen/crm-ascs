@@ -21,11 +21,11 @@ const schema = yup.object().shape({
     .string()
     .required("Title is required")
     .min(3, "Title must be at least 3 characters")
-    .max(100, "Title cannot exceed 100 characters"),
+    .max(500, "Title cannot exceed 100 characters"),
   description: yup
     .string()
     .required("Description is required")
-    .max(300, "Description cannot exceed 300 characters"),
+    .max(3000, "Description cannot exceed 300 characters"),
 });
 
 const Manipulate: React.FC<Props> = ({

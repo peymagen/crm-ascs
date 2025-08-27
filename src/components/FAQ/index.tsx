@@ -3,24 +3,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useGetFaqQuery } from "../../store/services/faq.api";
 import styles from "./FAQ.module.css";
 
-interface FAQItem {
-  id: number;
-  question: string;
-  answer: string;
-  status?: number;
-  created_at?: string;
-  updated_at?: string;
-}
-
-const FAQ: React.FC = () => {
+const FAQ: React.FC<{ count?: number }> = ({ count = 10000 }) => {
   const [openItems, setOpenItems] = useState<number[]>([]);
-  const { data: faqResponse, isLoading, isError, error } = useGetFaqQuery({});
+  const {
+    data: faqResponse,
+    isLoading,
+    isError,
+    error,
+  } = useGetFaqQuery({ limit: count, offset: 0 });
 
-  // Transform API response to match our FAQItem interface
-  const faqData: FAQItem[] = React.useMemo(() => {
+  // Transform API response to match our IFAQ interface
+  const faqData: IFAQ[] = React.useMemo(() => {
     if (!faqResponse) return [];
 
-    let items: FAQItem[] = [];
+    let items: IFAQ[] = [];
 
     if (Array.isArray(faqResponse.data)) {
       items = faqResponse.data;
@@ -31,7 +27,7 @@ const FAQ: React.FC = () => {
     }
 
     return items.filter(
-      (item: FAQItem) => item.status === undefined || item.status === 1
+      (item: IFAQ) => item.status === undefined || item.status === 1
     );
   }, [faqResponse]);
 
@@ -193,15 +189,17 @@ const FAQ: React.FC = () => {
             >
               <button
                 className={`${styles.questionButton} ${
-                  openItems.includes(item.id) ? styles.active : ""
+                  openItems.includes(item.id ?? 0) ? styles.active : ""
                 }`}
-                onClick={() => toggleItem(item.id)}
-                aria-expanded={openItems.includes(item.id)}
+                onClick={() => toggleItem(item.id ?? 0)}
+                aria-expanded={openItems.includes(item.id ?? 0)}
               >
                 <span className={styles.questionText}>{item.question}</span>
                 <motion.span
                   className={styles.icon}
-                  animate={{ rotate: openItems.includes(item.id) ? 180 : 0 }}
+                  animate={{
+                    rotate: openItems.includes(item.id ?? 0) ? 180 : 0,
+                  }}
                   transition={{ duration: 0.2 }}
                 >
                   ▼
@@ -209,7 +207,7 @@ const FAQ: React.FC = () => {
               </button>
 
               <AnimatePresence>
-                {openItems.includes(item.id) && (
+                {openItems.includes(item.id ?? 0) && (
                   <motion.div
                     variants={contentVariants}
                     initial="hidden"
@@ -219,7 +217,6 @@ const FAQ: React.FC = () => {
                   >
                     <div className={styles.answerContent}>
                       <div dangerouslySetInnerHTML={{ __html: item.answer }} />
-                      <p className={styles.answerText}>{item.answer}</p>
                     </div>
                   </motion.div>
                 )}

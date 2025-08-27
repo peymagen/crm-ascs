@@ -82,10 +82,10 @@ const Slider: React.FC = () => {
               alt={slide.title}
               className={styles.slideImage}
             />
-            <div className={styles.slideContent}>
+            {/* <div className={styles.slideContent}>
               <h2 className={styles.slideTitle}>{slide.title}</h2>
               <p className={styles.slideDescription}>{slide.description}</p>
-            </div>
+            </div> */}
           </div>
         ))}
       </div>

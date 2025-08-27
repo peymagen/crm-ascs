@@ -1,4 +1,6 @@
+import { useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
+import FAQ from "../../components/FAQ";
 import Slider from "../../components/Slider";
 import VideoPlayer from "../../components/VideoPlayer";
 import { useGetNoticeQuery } from "../../store/services/opportunities.api";
@@ -12,6 +14,8 @@ const Home = () => {
   const { data: contentData, isLoading: contentLoading } =
     useGetSettingByIdQuery(1);
 
+  const navigate = useNavigate();
+
   const { data: noticeData, isLoading: noticeLoading } = useGetNoticeQuery({});
 
   function formatDate(dateString: string) {
@@ -22,6 +26,31 @@ const Home = () => {
       year: "numeric",
     });
   }
+
+  const handleRedirect = (url: string, othet_url: string, target = "_self") => {
+    const aUrl = url.length > 2 ? url : othet_url;
+    if (!aUrl) return;
+
+    const isExternal = aUrl.startsWith("http"); // detect internal route
+
+    if (!isExternal) {
+      if (target === "_blank") {
+        window.open(
+          window.location.origin + aUrl,
+          "_blank",
+          "noopener,noreferrer"
+        );
+      } else {
+        navigate(aUrl); // React Router navigation
+      }
+    } else {
+      if (target === "_blank") {
+        window.open(aUrl, "_blank", "noopener,noreferrer");
+      } else {
+        window.location.href = aUrl;
+      }
+    }
+  };
 
   return (
     <div>
@@ -36,6 +65,9 @@ const Home = () => {
                 key={d.id}
                 title={d.name}
                 buttonType="secondaryFill"
+                onClick={() =>
+                  handleRedirect(d.url ?? "", d.other_url ?? "", d.target)
+                }
               />
             ))}
           </div>
@@ -73,6 +105,7 @@ const Home = () => {
             __html: contentData?.data.content,
           }}
         />
+        <FAQ count={5} />
       </div>
     </div>
   );

@@ -8,7 +8,7 @@
 }
 .projectLink {
   text-decoration: none !important;
-  color: var(--dark-text-color);
+  color: var(--light-text-color);
 }
 .projectLink:hover {
   color: var(--light-text-color);
@@ -16,7 +16,7 @@
 .leftColumn {
   flex: 1;
   padding: 1.5rem;
-  background: var(--bg-secondary-color);
+  background: var(--secondary-color);
   border-radius: 8px;
   max-width: fit-content;
   min-width: 300px;
@@ -35,7 +35,7 @@
 }
 
 .mainTitle {
-  color: var(--dark-text-color);
+  color: var(--light-text-color);
   font-size: 2rem;
   margin-bottom: 1.5rem;
   border-bottom: 2px solid var(--primary-color);

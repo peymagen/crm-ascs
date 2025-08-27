@@ -43,10 +43,9 @@ const AccessibilityNavbar: React.FC = () => {
     )}px`;
   };
 
-  // // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const handleLanguageChange = (language: "hindi" | "english") => {
-  //   console.log(`Language changed to: ${language}`);
-  // };
+  const handleLanguageChange = (language: "hindi" | "english") => {
+    console.log(`Language changed to: ${language}`);
+  };
 
   return (
     <nav className={styles.accessibilityNavbar}>
@@ -87,7 +86,7 @@ const AccessibilityNavbar: React.FC = () => {
             A-
           </button>
         </div>
-        {/* <span className={styles.accessibilitySeparator}>|</span>
+        <span className={styles.accessibilitySeparator}>|</span>
         <button
           onClick={() => handleLanguageChange("hindi")}
           className={styles.accessibilityButton}
@@ -100,7 +99,7 @@ const AccessibilityNavbar: React.FC = () => {
           className={styles.accessibilityButton}
         >
           English
-        </button> */}
+        </button>
       </div>
     </nav>
   );

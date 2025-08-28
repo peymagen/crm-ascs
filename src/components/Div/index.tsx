@@ -59,6 +59,7 @@ const Div = ({
       whileInView={!immediate && once ? "visible" : undefined}
       animate={immediate || !once ? "visible" : undefined}
       viewport={!immediate && once ? { once } : undefined}
+      style={{ height: "100%", alignContent: "center" }}
     >
       {children}
     </motion.div>

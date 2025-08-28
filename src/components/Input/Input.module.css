@@ -18,6 +18,7 @@
   font-size: 1rem;
   transition: all 0.3s;
   background-color: var(--light-text-color);
+  color: #656565;
 }
 
 .input:focus {

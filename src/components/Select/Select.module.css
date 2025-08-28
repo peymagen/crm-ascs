@@ -18,6 +18,7 @@
   font-size: 1rem;
   transition: all 0.3s;
   background-color: var(--light-text-color);
+  color: #656565;
 
   appearance: none; /* remove native arrow */
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='30,50 70,90 110,50' fill='none' stroke='%23999' stroke-width='14'/%3E%3C/svg%3E");

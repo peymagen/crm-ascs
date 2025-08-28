@@ -57,6 +57,7 @@
   border-radius: 15px;
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px 9px #a1a1a11a;
+  background-color: #fff;
 }
 
 .eventTitle {

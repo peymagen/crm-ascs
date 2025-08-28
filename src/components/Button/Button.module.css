@@ -70,3 +70,8 @@
   height: 8px;
   background-color: currentColor;
 }
+@media (prefers-color-scheme: dark) {
+  .primaryFill {
+    color: var(--dark-text-color);
+  }
+}
